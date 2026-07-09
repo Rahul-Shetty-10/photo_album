@@ -5,9 +5,13 @@
   "type": "commonjs",
   "scripts": {
     "build": "tsc -p tsconfig.app.json",
+    "db:generate": "prisma --config ../../prisma.config.ts generate",
+    "db:migrate": "prisma --config ../../prisma.config.ts migrate dev",
+    "db:migrate:deploy": "prisma --config ../../prisma.config.ts migrate deploy",
     "start": "node ../../dist/apps/api/main.js"
   },
   "dependencies": {
+    "@prisma/client": "^7.8.0",
     "compression": "^1.8.1",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",

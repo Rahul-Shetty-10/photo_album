@@ -1,5 +1,100 @@
 # Process Log
 
+## Database Foundation: Milestone 2
+
+Date: 2026-07-09
+
+### Goal
+
+Implement only the database foundation for the API using Prisma and cloud PostgreSQL configuration.
+
+### Completed Changes
+
+- Installed Prisma CLI and Prisma Client.
+- Added Prisma configuration at the repository root:
+  - `prisma.config.ts`
+- Configured the API Prisma schema under:
+  - `apps/api/prisma/schema.prisma`
+- Configured PostgreSQL as the datasource through `DATABASE_URL`.
+- Added `.env.example` with a cloud PostgreSQL connection string shape and no local database default.
+- Added the initial Prisma models:
+  - `User`
+  - `Upload`
+  - `GenerationJob`
+  - `GeneratedImage`
+- Added the initial migration SQL under:
+  - `apps/api/prisma/migrations/20260709160000_init/migration.sql`
+- Added API database exports:
+  - `apps/api/src/database/prisma.ts`
+  - `apps/api/src/database/index.ts`
+- Added API scripts:
+  - `db:generate`
+  - `db:migrate`
+  - `db:migrate:deploy`
+- Updated environment validation to require `DATABASE_URL`.
+- Updated `GET /api/v1/health` to include database connectivity:
+  - `database.status: "ok"` when `SELECT 1` succeeds
+  - `database.status: "error"` and top-level `status: "degraded"` when the database check fails
+
+### Explicitly Not Implemented
+
+- Authentication
+- Cloudinary
+- Upload APIs
+- Redis
+- BullMQ
+- AI
+- Business logic
+
+### Files Changed
+
+- `.env.example`
+- `package.json`
+- `package-lock.json`
+- `prisma.config.ts`
+- `apps/api/package.json`
+- `apps/api/prisma/schema.prisma`
+- `apps/api/prisma/migrations/20260709160000_init/migration.sql`
+- `apps/api/src/config/env.ts`
+- `apps/api/src/config/index.ts`
+- `apps/api/src/controllers/health.controller.ts`
+- `apps/api/src/database/prisma.ts`
+- `apps/api/src/database/index.ts`
+- `apps/api/src/services/health.service.ts`
+
+### Notes
+
+- Prisma 7 requires datasource URL configuration in `prisma.config.ts`; the schema keeps only the PostgreSQL provider.
+- Prisma generation and schema validation were run with a placeholder cloud-style `DATABASE_URL` because generation does not connect to the database.
+- A real cloud PostgreSQL `DATABASE_URL` is required before running `npm.cmd --workspace @viwaah/api run db:migrate` or `db:migrate:deploy`.
+- No local database configuration was added.
+- `npm install` reported 5 audit findings after Prisma install: 4 moderate and 1 high. No audit fix was run for this milestone.
+
+### Verification
+
+Commands run successfully:
+
+```powershell
+$env:DATABASE_URL='postgresql://user:password@example.com:5432/viwaah?sslmode=require'; npx.cmd prisma generate
+$env:DATABASE_URL='postgresql://user:password@example.com:5432/viwaah?sslmode=require'; npx.cmd prisma validate
+npm.cmd --workspace @viwaah/api run build
+npx.cmd nx build @viwaah/api
+```
+
+Migration SQL was generated successfully with:
+
+```powershell
+$env:DATABASE_URL='postgresql://user:password@example.com:5432/viwaah?sslmode=require'; npx.cmd prisma migrate diff --from-empty --to-schema apps/api/prisma/schema.prisma --script -o apps/api/prisma/migrations/20260709160000_init/migration.sql
+```
+
+Not run:
+
+```powershell
+npm.cmd --workspace @viwaah/api run db:migrate
+```
+
+Reason: no real cloud PostgreSQL `DATABASE_URL` is present in the workspace.
+
 ## UX Refactor: Landing and Generate Workspace
 
 Date: 2026-07-09
