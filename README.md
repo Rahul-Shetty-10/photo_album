@@ -2,7 +2,7 @@
 
 <a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
+Your new, shiny [Nx workspace](https://nx.dev) is ready.
 
 [Learn more about this workspace setup and its capabilities](https://nx.dev/nx-api/js?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
 
@@ -28,19 +28,19 @@ npx nx <target> <project-name>
 
 These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+[More about running tasks in the docs »](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
 
 ## Versioning and releasing
 
 To version and release the library use
 
-```
+```sh
 npx nx release
 ```
 
 Pass `--dry-run` to see what would happen without actually releasing the library.
 
-[Learn more about Nx release &raquo;](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+[Learn more about Nx release »](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
 
 ## Keep TypeScript project references up to date
 
@@ -91,7 +91,7 @@ npx nx g ci-workflow
 
 Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
 
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+[Install Nx Console »](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
 
 ## Useful links
 
@@ -108,34 +108,30 @@ And join the Nx community:
 - [Our Youtube channel](https://www.youtube.com/@nxdevtools)
 - [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
 
-
-```
+```text
 viwaah
-├─ .nx
-├─ eslint.config.mjs
-├─ nx.json
-├─ package-lock.json
-├─ package.json
-├─ packages
-├─ README.md
-├─ tsconfig.base.json
-├─ tsconfig.json
-└─ web
-   ├─ .swcrc
-   ├─ eslint.config.mjs
-   ├─ index.d.ts
-   ├─ next-env.d.ts
-   ├─ next.config.js
-   ├─ package.json
-   ├─ public
-   │  └─ favicon.ico
-   ├─ src
-   │  └─ app
-   │     ├─ api
-   │     │  └─ hello
-   │     ├─ global.css
-   │     ├─ page.module.css
-   │     └─ page.tsx
-   └─ tsconfig.json
-
+|-- .agents
+|-- .nx
+|-- apps
+|   |-- api
+|   `-- web
+|       |-- public
+|       |-- src
+|       |-- .swcrc
+|       |-- components.json
+|       |-- eslint.config.mjs
+|       |-- index.d.ts
+|       |-- next-env.d.ts
+|       |-- next.config.js
+|       |-- package.json
+|       |-- postcss.config.mjs
+|       |-- project.json
+|       `-- tsconfig.json
+|-- eslint.config.mjs
+|-- nx.json
+|-- package-lock.json
+|-- package.json
+|-- README.md
+|-- tsconfig.base.json
+`-- tsconfig.json
 ```

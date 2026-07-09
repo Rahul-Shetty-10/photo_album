@@ -88,3 +88,154 @@ The build route table included:
 /api/hello
 /generate
 ```
+
+## Backend Foundation: Milestone 1
+
+Date: 2026-07-09
+
+### Goal
+
+Implement only the backend foundation in `apps/api` with Express, TypeScript, API versioning, core middleware, structured logging, error handling, environment validation, graceful shutdown, and a health endpoint.
+
+### Completed Changes
+
+- Added `apps/api` as a workspace project and Nx application target.
+- Added Express + TypeScript backend entry files:
+  - `apps/api/src/app.ts`
+  - `apps/api/src/main.ts`
+- Added required backend folder structure:
+  - `config`
+  - `controllers`
+  - `middleware`
+  - `routes`
+  - `services`
+  - `validators`
+  - `utils`
+  - `types`
+  - `workers`
+  - `queues`
+  - `ai`
+- Added `/api/v1` API versioning.
+- Added Helmet, CORS, Compression, Pino, and Pino HTTP request logging.
+- Added request ID middleware with `x-request-id` response propagation.
+- Added async error wrapper.
+- Added global JSON error handler.
+- Added JSON 404 handler.
+- Added graceful shutdown for `SIGINT`, `SIGTERM`, unhandled rejections, and uncaught exceptions.
+- Added environment validation with Zod and a typed config loader.
+- Added `GET /api/v1/health` returning:
+  - `status`
+  - `uptime`
+  - `timestamp`
+  - `environment`
+  - `version`
+- Added backend dependencies and TypeScript types to the workspace package manifests and lockfile.
+
+### Explicitly Not Implemented
+
+- Prisma
+- PostgreSQL
+- Authentication
+- Cloudinary
+- Redis
+- BullMQ
+- Upload APIs
+- AI
+- Business logic
+
+### Files Changed
+
+- `package.json`
+- `package-lock.json`
+- `apps/api/package.json`
+- `apps/api/project.json`
+- `apps/api/tsconfig.json`
+- `apps/api/tsconfig.app.json`
+- `apps/api/src/app.ts`
+- `apps/api/src/main.ts`
+- `apps/api/src/config/env.ts`
+- `apps/api/src/config/index.ts`
+- `apps/api/src/controllers/health.controller.ts`
+- `apps/api/src/middleware/error-handler.ts`
+- `apps/api/src/middleware/not-found.ts`
+- `apps/api/src/middleware/request-id.ts`
+- `apps/api/src/routes/health.routes.ts`
+- `apps/api/src/routes/index.ts`
+- `apps/api/src/services/health.service.ts`
+- `apps/api/src/types/express.d.ts`
+- `apps/api/src/utils/app-error.ts`
+- `apps/api/src/utils/async-handler.ts`
+- `apps/api/src/utils/logger.ts`
+- `apps/api/src/ai/.gitkeep`
+- `apps/api/src/queues/.gitkeep`
+- `apps/api/src/validators/.gitkeep`
+- `apps/api/src/workers/.gitkeep`
+
+### Notes
+
+- The backend uses direct workspace dependencies for runtime packages instead of relying on transitive Nx packages.
+- On Windows PowerShell, `npm` may be blocked by execution policy; use `npm.cmd` and `npx.cmd`.
+- `npm install` reported existing audit findings: 1 moderate and 1 high vulnerability. No audit fix was run for this milestone.
+
+### Verification
+
+Commands run successfully:
+
+```powershell
+npm.cmd --workspace @viwaah/api run build
+npx.cmd nx build @viwaah/api
+```
+
+Runtime checks passed on port `4100`:
+
+```text
+GET /api/v1/health -> 200
+GET /api/v1/missing -> 404
+```
+
+## Repository Refactor: Move Frontend to apps/web
+
+Date: 2026-07-09
+
+### Goal
+
+Refactor the repository structure so the Next.js frontend lives at `apps/web` as a proper Nx application without changing frontend or backend behavior.
+
+### Completed Changes
+
+- Moved the frontend application structure from `web` to `apps/web`.
+- Added explicit Nx project metadata for the frontend at `apps/web/project.json`.
+- Updated the root npm workspaces so the frontend is discovered through `apps/*`.
+- Updated the root TypeScript project reference from `./web` to `./apps/web`.
+- Updated the frontend TypeScript config to extend the root config from its new depth and to point generated type includes at `apps/web/.next` and `dist/apps/web`.
+- Updated the frontend ESLint config import path to the root flat config from its new depth.
+- Updated lockfile workspace metadata and the local workspace resolution for `@viwaah/web`.
+- Updated repository documentation to reflect the new monorepo structure.
+- Removed the obsolete source/config copy under `web`; only generated legacy build artifacts may remain if held by the local file lock during the move.
+
+### Files Changed
+
+- `package.json`
+- `package-lock.json`
+- `tsconfig.json`
+- `README.md`
+- `.agents/process.md`
+- `apps/web/project.json`
+- `apps/web/tsconfig.json`
+- `apps/web/eslint.config.mjs`
+
+### Notes
+
+- The backend in `apps/api` was left structurally unchanged.
+- `git mv` could not be used in this environment because creating `.git/index.lock` was denied, so the frontend was copied into `apps/web` and then validated there. Git should still detect the rename from content similarity.
+- The old `web/.next` and `web/dist` directories were generated artifacts and initially held a lock on the directory during the move.
+
+### Verification
+
+Commands to run for this refactor:
+
+```powershell
+npx.cmd nx show projects
+npx.cmd nx build @viwaah/web
+npx.cmd nx build @viwaah/api
+```
