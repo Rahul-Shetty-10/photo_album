@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 
 import { AnimatedGradient } from "@/components/design/animated-gradient";
 import { GlassCard } from "@/components/design/glass-card";
-import { UploadDropzone } from "@/components/design/upload-dropzone";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -33,7 +32,7 @@ export function Hero() {
           </p>
           <div className="mt-9 flex flex-col gap-4 sm:flex-row">
             <Button asChild size="lg">
-              <a href="#create">
+              <a href="/generate">
                 Start Creating
                 <ArrowRight aria-hidden="true" />
               </a>
@@ -99,9 +98,6 @@ export function Hero() {
               </GlassCard>
             </div>
           </GlassCard>
-          <div className="absolute -bottom-10 -left-6 hidden w-72 xl:block">
-            <UploadDropzone />
-          </div>
         </motion.div>
       </div>
     </section>

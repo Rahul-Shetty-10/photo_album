@@ -14,7 +14,7 @@ export function Navbar() {
         className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 sm:px-8"
         aria-label="Main navigation"
       >
-        <a className="font-serif text-2xl tracking-wide text-foreground" href="#top">
+        <a className="font-serif text-2xl tracking-wide text-foreground" href="/">
           ViWaah
         </a>
         <div className="hidden items-center gap-8 md:flex">
@@ -29,7 +29,7 @@ export function Navbar() {
           ))}
         </div>
         <Button asChild size="sm">
-          <a href="#create">Start Creating</a>
+          <a href="/generate">Start Creating</a>
         </Button>
       </nav>
     </header>

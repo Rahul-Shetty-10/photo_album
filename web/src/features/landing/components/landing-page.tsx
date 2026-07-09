@@ -1,4 +1,3 @@
-import { CreatePreview } from "@/features/landing/components/create-preview";
 import { FaqSection } from "@/features/landing/components/faq-section";
 import { FeaturesSection } from "@/features/landing/components/features-section";
 import { Footer } from "@/features/landing/components/footer";
@@ -16,7 +15,6 @@ export function LandingPage() {
         <FeaturesSection />
         <HowItWorksSection />
         <StylesSection />
-        <CreatePreview />
         <FaqSection />
       </main>
       <Footer />
