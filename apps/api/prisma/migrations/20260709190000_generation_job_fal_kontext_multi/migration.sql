@@ -1,0 +1,22 @@
+-- AlterTable
+ALTER TABLE "GenerationJob"
+ADD COLUMN "theme" TEXT NOT NULL DEFAULT 'South Indian',
+ADD COLUMN "aspectRatio" TEXT NOT NULL DEFAULT '3:4',
+ADD COLUMN "customPrompt" TEXT,
+ADD COLUMN "prompt" TEXT NOT NULL DEFAULT '',
+ADD COLUMN "provider" TEXT NOT NULL DEFAULT 'fal',
+ADD COLUMN "model" TEXT NOT NULL DEFAULT 'fal-ai/flux-pro/kontext/multi',
+ADD COLUMN "seeds" INTEGER[] NOT NULL DEFAULT ARRAY[]::INTEGER[],
+ADD COLUMN "numberOfImages" INTEGER NOT NULL DEFAULT 4,
+ADD COLUMN "errorMessage" TEXT,
+ADD COLUMN "startedAt" TIMESTAMP(3),
+ADD COLUMN "completedAt" TIMESTAMP(3),
+ADD COLUMN "failedAt" TIMESTAMP(3);
+
+-- AlterTable
+ALTER TABLE "GeneratedImage"
+ADD COLUMN "publicId" TEXT NOT NULL DEFAULT '',
+ALTER COLUMN "score" DROP NOT NULL,
+ADD COLUMN "seed" INTEGER,
+ADD COLUMN "width" INTEGER,
+ADD COLUMN "height" INTEGER;

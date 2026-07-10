@@ -1,5 +1,441 @@
 # Process Log
 
+## FAL.ai Integration Layer: Milestone 7
+
+Date: 2026-07-09
+
+### Goal
+
+Implement only the FAL.ai integration layer behind a provider abstraction.
+
+### Completed Changes
+
+- Installed the FAL AI SDK:
+  - `@fal-ai/client`
+- Added FAL environment validation:
+  - `FAL_API_KEY`
+  - `FAL_MODEL`
+- Updated `.env.example` with FAL configuration placeholders.
+- Added the AI provider abstraction:
+  - `apps/api/src/ai/providers/provider.interface.ts`
+  - `apps/api/src/ai/providers/fal.provider.ts`
+  - `apps/api/src/ai/providers/index.ts`
+- Added the generator service facade:
+  - `apps/api/src/ai/generator.service.ts`
+- Added provider health checking to `GET /api/v1/health`.
+- FAL provider initialization now constructs the SDK client from configured credentials and model.
+
+### Explicitly Not Implemented
+
+- Image generation
+- Prompt building
+- Worker-to-provider calls
+- GenerationJob updates
+- GeneratedImage storage
+- Evaluator logic
+- Business logic
+
+### Files Changed
+
+- `.env.example`
+- `package.json`
+- `package-lock.json`
+- `apps/api/package.json`
+- `apps/api/src/config/env.ts`
+- `apps/api/src/config/index.ts`
+- `apps/api/src/services/health.service.ts`
+- `apps/api/src/ai/providers/provider.interface.ts`
+- `apps/api/src/ai/providers/fal.provider.ts`
+- `apps/api/src/ai/providers/index.ts`
+- `apps/api/src/ai/generator.service.ts`
+- `.agents/data-flow.md`
+- `.agents/process.md`
+
+### Notes
+
+- The provider health check verifies configuration and SDK client initialization only.
+- The health check does not call `fal.run`, `fal.subscribe`, queue submission, or any image generation endpoint.
+- Workers still do not call AI and only perform the Milestone 6 status transition to `PROCESSING`.
+
+### Verification
+
+Commands run successfully:
+
+```powershell
+$env:DATABASE_URL='postgresql://user:password@example.com:5432/viwaah?sslmode=require'; $env:CLOUDINARY_CLOUD_NAME='demo-cloud'; $env:CLOUDINARY_API_KEY='demo-key'; $env:CLOUDINARY_API_SECRET='demo-secret'; $env:UPSTASH_REDIS_URL='rediss://default:password@example.com:6379'; $env:FAL_API_KEY='fal-demo-key'; $env:FAL_MODEL='fal-ai/example-model'; npm.cmd --workspace @viwaah/api run build
+$env:DATABASE_URL='postgresql://user:password@example.com:5432/viwaah?sslmode=require'; $env:CLOUDINARY_CLOUD_NAME='demo-cloud'; $env:CLOUDINARY_API_KEY='demo-key'; $env:CLOUDINARY_API_SECRET='demo-secret'; $env:UPSTASH_REDIS_URL='rediss://default:password@example.com:6379'; $env:FAL_API_KEY='fal-demo-key'; $env:FAL_MODEL='fal-ai/example-model'; node -e "require('./dist/apps/api/ai/generator.service').generatorService.healthCheck().then((result) => { console.log(JSON.stringify(result)); })"
+```
+
+Runtime initialization check returned:
+
+```json
+{"status":"ok","provider":"fal","model":"fal-ai/example-model"}
+```
+
+Not run:
+
+```powershell
+FAL image generation request
+```
+
+Reason: image generation is explicitly outside Milestone 7.
+
+## Queue Infrastructure: Milestone 6
+
+Date: 2026-07-09
+
+### Goal
+
+Implement only BullMQ queue infrastructure for GenerationJob dispatch and worker status pickup.
+
+### Completed Changes
+
+- Installed BullMQ.
+- Added Upstash Redis configuration through:
+  - `UPSTASH_REDIS_URL`
+- Added BullMQ queue connection configuration:
+  - `apps/api/src/queues/config.ts`
+- Added the Generation Queue:
+  - `apps/api/src/queues/generation.queue.ts`
+- Added a worker scaffold:
+  - `apps/api/src/workers/generation.worker.ts`
+  - `apps/api/src/workers/index.ts`
+- API startup now initializes the worker and closes it during graceful shutdown.
+- GenerationJob creation now:
+  - creates the database record with `status: "PENDING"`
+  - enqueues the `jobId` in BullMQ
+  - updates the job to `status: "QUEUED"`
+- Worker processing now:
+  - receives `jobId`
+  - logs `Processing GenerationJob <jobId>`
+  - updates the job to `status: "PROCESSING"`
+- Added queue health checking to `GET /api/v1/health`.
+- Added a queue health service:
+  - `apps/api/src/services/queue-health.service.ts`
+- Updated `.env.example` with the Upstash Redis variable.
+
+### Explicitly Not Implemented
+
+- AI calls
+- Image generation
+- Evaluator
+- Authentication
+- Business logic
+
+### Files Changed
+
+- `.env.example`
+- `package.json`
+- `package-lock.json`
+- `apps/api/package.json`
+- `apps/api/src/config/env.ts`
+- `apps/api/src/config/index.ts`
+- `apps/api/src/repositories/generation-job.repository.ts`
+- `apps/api/src/services/generation-job.service.ts`
+- `apps/api/src/services/health.service.ts`
+- `apps/api/src/services/queue-health.service.ts`
+- `apps/api/src/main.ts`
+- `apps/api/src/queues/config.ts`
+- `apps/api/src/queues/generation.queue.ts`
+- `apps/api/src/queues/index.ts`
+- `apps/api/src/workers/generation.worker.ts`
+- `apps/api/src/workers/index.ts`
+- `.agents/data-flow.md`
+- `.agents/process.md`
+
+### Notes
+
+- BullMQ uses the Redis protocol URL from Upstash, not the Upstash REST URL.
+- Queue health checks use BullMQ's Redis client and mark the API health as `degraded` if Redis is unavailable.
+- The worker scaffold performs only the required status transition and log line; it does not call AI, generate images, evaluate output, or run business workflows.
+
+### Verification
+
+Command run successfully:
+
+```powershell
+$env:DATABASE_URL='postgresql://user:password@example.com:5432/viwaah?sslmode=require'; $env:CLOUDINARY_CLOUD_NAME='demo-cloud'; $env:CLOUDINARY_API_KEY='demo-key'; $env:CLOUDINARY_API_SECRET='demo-secret'; $env:UPSTASH_REDIS_URL='rediss://default:password@example.com:6379'; npm.cmd --workspace @viwaah/api run build
+```
+
+Not run:
+
+```powershell
+POST /api/v1/generation-jobs against live PostgreSQL and Upstash Redis
+Worker runtime dequeue against live Upstash Redis
+```
+
+Reason: no real cloud PostgreSQL or Upstash Redis credentials are present in the workspace.
+
+## Generation Job Management: Milestone 5
+
+Date: 2026-07-09
+
+### Goal
+
+Implement only Generation Job management for creating pending jobs and reading job status.
+
+### Completed Changes
+
+- Added a GenerationJob repository:
+  - `apps/api/src/repositories/generation-job.repository.ts`
+- Added a GenerationJob service:
+  - `apps/api/src/services/generation-job.service.ts`
+- Added a GenerationJob controller:
+  - `apps/api/src/controllers/generation-job.controller.ts`
+- Added GenerationJob routes:
+  - `apps/api/src/routes/generation-job.routes.ts`
+- Mounted GenerationJob routes under `/api/v1`.
+- Added `POST /api/v1/generation-jobs`.
+- Added `GET /api/v1/generation-jobs/:id`.
+- `POST /api/v1/generation-jobs` accepts:
+  - `brideUploadId`
+  - `groomUploadId`
+  - `style`
+- Upload ID validation now:
+  - Requires both upload IDs to be valid UUID strings.
+  - Confirms both Upload records exist before creating a job.
+- Job creation persists a `GenerationJob` with:
+  - `brideUploadId`
+  - `groomUploadId`
+  - `style`
+  - `status: "PENDING"`
+  - `progress: 0`
+- Job creation returns:
+  - `jobId`
+- Job status returns:
+  - `id`
+  - `status`
+  - `progress`
+  - `createdAt`
+  - `updatedAt`
+- Made `GenerationJob.userId` nullable so jobs can be created before authentication exists.
+- Added a Prisma migration for nullable generation job ownership:
+  - `apps/api/prisma/migrations/20260709182000_optional_generation_job_user/migration.sql`
+
+### Explicitly Not Implemented
+
+- AI calls
+- Image generation
+- BullMQ
+- Redis
+- Authentication
+- Evaluator
+- Business logic
+
+### Files Changed
+
+- `apps/api/prisma/schema.prisma`
+- `apps/api/prisma/migrations/20260709182000_optional_generation_job_user/migration.sql`
+- `apps/api/src/controllers/generation-job.controller.ts`
+- `apps/api/src/repositories/generation-job.repository.ts`
+- `apps/api/src/routes/generation-job.routes.ts`
+- `apps/api/src/routes/index.ts`
+- `apps/api/src/services/generation-job.service.ts`
+- `.agents/data-flow.md`
+- `.agents/process.md`
+
+### Notes
+
+- `style` is required, trimmed, validated as a non-empty string, and persisted on the GenerationJob.
+- `brideUploadId` and `groomUploadId` are validated against existing Upload records and persisted on the GenerationJob.
+- `GenerationJob` has explicit Upload relations for bride and groom inputs with restrictive upload deletes while jobs reference them.
+- The job remains `PENDING`; no worker, queue, AI provider, evaluator, or progress update logic exists yet.
+
+### Verification
+
+Commands run successfully:
+
+```powershell
+$env:DATABASE_URL='postgresql://user:password@example.com:5432/viwaah?sslmode=require'; npm.cmd --workspace @viwaah/api run db:generate
+$env:DATABASE_URL='postgresql://user:password@example.com:5432/viwaah?sslmode=require'; $env:CLOUDINARY_CLOUD_NAME='demo-cloud'; $env:CLOUDINARY_API_KEY='demo-key'; $env:CLOUDINARY_API_SECRET='demo-secret'; npm.cmd --workspace @viwaah/api run build
+```
+
+Not run:
+
+```powershell
+POST /api/v1/generation-jobs against PostgreSQL
+GET /api/v1/generation-jobs/:id against PostgreSQL
+```
+
+Reason: no real cloud PostgreSQL connection is present in the workspace.
+
+## Upload Persistence: Milestone 4
+
+Date: 2026-07-09
+
+### Goal
+
+Implement only upload persistence for successful Cloudinary uploads.
+
+### Completed Changes
+
+- Added an Upload repository:
+  - `apps/api/src/repositories/upload.repository.ts`
+- Added an Upload service:
+  - `apps/api/src/services/upload.service.ts`
+- Persisted every successful Cloudinary upload to the Prisma `Upload` table.
+- Updated `POST /api/v1/upload` responses to include:
+  - `uploadId`
+  - `publicId`
+  - `secureUrl`
+  - `width`
+  - `height`
+  - `format`
+- Added `DELETE /api/v1/upload/:id`.
+- Delete flow now:
+  - Finds the Upload record by ID.
+  - Deletes the Cloudinary image by stored public ID.
+  - Deletes the Prisma Upload record.
+- Added rollback handling:
+  - If Cloudinary upload succeeds but Prisma persistence fails, the uploaded Cloudinary asset is deleted.
+- Added HTTP error handling for:
+  - Missing upload file: `400`
+  - Invalid upload ID: `400`
+  - Missing upload record: `404`
+- Made `Upload.userId` nullable so upload persistence can work before authentication exists.
+- Added a Prisma migration for the nullable upload owner field:
+  - `apps/api/prisma/migrations/20260709171000_optional_upload_user/migration.sql`
+
+### Explicitly Not Implemented
+
+- Authentication
+- Generation Jobs
+- AI
+- Redis
+- BullMQ
+- History
+- Business logic
+
+### Files Changed
+
+- `apps/api/prisma/schema.prisma`
+- `apps/api/prisma/migrations/20260709171000_optional_upload_user/migration.sql`
+- `apps/api/src/controllers/upload.controller.ts`
+- `apps/api/src/repositories/upload.repository.ts`
+- `apps/api/src/routes/upload.routes.ts`
+- `apps/api/src/services/upload.service.ts`
+- `.agents/data-flow.md`
+- `.agents/process.md`
+
+### Notes
+
+- Upload persistence stores Cloudinary metadata only.
+- `Upload.userId` remains available for future authenticated ownership, but it is optional for this milestone.
+- A real Cloudinary account and database are required to verify end-to-end upload/delete behavior against external services.
+
+### Verification
+
+Commands run successfully:
+
+```powershell
+$env:DATABASE_URL='postgresql://user:password@example.com:5432/viwaah?sslmode=require'; npm.cmd --workspace @viwaah/api run db:generate
+$env:DATABASE_URL='postgresql://user:password@example.com:5432/viwaah?sslmode=require'; $env:CLOUDINARY_CLOUD_NAME='demo-cloud'; $env:CLOUDINARY_API_KEY='demo-key'; $env:CLOUDINARY_API_SECRET='demo-secret'; npm.cmd --workspace @viwaah/api run build
+```
+
+Not run:
+
+```powershell
+POST /api/v1/upload against Cloudinary
+DELETE /api/v1/upload/:id against Cloudinary and PostgreSQL
+```
+
+Reason: no real Cloudinary credentials or cloud PostgreSQL connection are present in the workspace.
+
+## Upload Infrastructure: Milestone 3
+
+Date: 2026-07-09
+
+### Goal
+
+Implement only the image upload infrastructure for the API using Multer memory storage and Cloudinary.
+
+### Completed Changes
+
+- Installed upload dependencies:
+  - `multer`
+  - `cloudinary`
+  - `@types/multer`
+- Added Cloudinary environment validation:
+  - `CLOUDINARY_CLOUD_NAME`
+  - `CLOUDINARY_API_KEY`
+  - `CLOUDINARY_API_SECRET`
+- Added Cloudinary configuration and image storage services:
+  - `apps/api/src/storage/cloudinary.ts`
+  - `apps/api/src/storage/index.ts`
+- Added memory-only Multer upload middleware:
+  - `apps/api/src/middleware/upload.ts`
+- Added upload API route:
+  - `POST /api/v1/upload`
+- Added upload controller:
+  - `apps/api/src/controllers/upload.controller.ts`
+- Uploads are sent directly from memory to Cloudinary.
+- Upload responses include:
+  - `publicId`
+  - `secureUrl`
+  - `width`
+  - `height`
+  - `format`
+- Added a Cloudinary delete service:
+  - `deleteImage(publicId)`
+- Added upload validation:
+  - JPEG, PNG, and WebP MIME types only
+  - Max file size: 10MB
+  - One file per request
+- Updated global error handling for Multer validation errors.
+- Updated `.env.example` with Cloudinary variables.
+
+### Explicitly Not Implemented
+
+- Disk upload storage
+- Authentication
+- Prisma upload metadata persistence
+- AI generation
+- BullMQ
+- Redis
+- Business logic
+
+### Files Changed
+
+- `.env.example`
+- `package.json`
+- `package-lock.json`
+- `apps/api/package.json`
+- `apps/api/src/config/env.ts`
+- `apps/api/src/config/index.ts`
+- `apps/api/src/controllers/upload.controller.ts`
+- `apps/api/src/middleware/error-handler.ts`
+- `apps/api/src/middleware/upload.ts`
+- `apps/api/src/routes/index.ts`
+- `apps/api/src/routes/upload.routes.ts`
+- `apps/api/src/storage/cloudinary.ts`
+- `apps/api/src/storage/index.ts`
+- `.agents/data-flow.md`
+- `.agents/process.md`
+
+### Notes
+
+- The upload form field is `image`.
+- Multer uses `memoryStorage()` only; no uploaded file is written to disk by the API.
+- Uploaded images are stored under the Cloudinary folder `viwaah/uploads`.
+- A real Cloudinary account configuration is required to verify that images appear in Cloudinary.
+- `npm install` reported 3 moderate audit findings after dependency install. No audit fix was run for this milestone.
+
+### Verification
+
+Command run successfully:
+
+```powershell
+$env:DATABASE_URL='postgresql://user:password@example.com:5432/viwaah?sslmode=require'; $env:CLOUDINARY_CLOUD_NAME='demo-cloud'; $env:CLOUDINARY_API_KEY='demo-key'; $env:CLOUDINARY_API_SECRET='demo-secret'; npm.cmd --workspace @viwaah/api run build
+```
+
+Not run:
+
+```powershell
+POST /api/v1/upload against Cloudinary
+```
+
+Reason: no real Cloudinary credentials are present in the workspace.
+
 ## Database Foundation: Milestone 2
 
 Date: 2026-07-09

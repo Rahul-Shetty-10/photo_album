@@ -17,37 +17,62 @@ model User {
 }
 
 model Upload {
-  id                 String   @id @default(uuid()) @db.Uuid
-  userId             String   @db.Uuid
+  id                 String          @id @default(uuid()) @db.Uuid
+  userId             String?         @db.Uuid
   cloudinaryPublicId String
   secureUrl          String
   width              Int
   height             Int
-  createdAt          DateTime @default(now())
-  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt          DateTime        @default(now())
+  user               User?           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  brideJobs          GenerationJob[] @relation("GenerationJobBrideUpload")
+  groomJobs          GenerationJob[] @relation("GenerationJobGroomUpload")
 
   @@index([userId])
 }
 
 model GenerationJob {
   id              String           @id @default(uuid()) @db.Uuid
-  userId          String           @db.Uuid
+  userId          String?          @db.Uuid
+  brideUploadId   String           @db.Uuid
+  groomUploadId   String           @db.Uuid
+  style           String
+  theme           String
+  aspectRatio     String
+  customPrompt    String?
+  prompt          String
+  provider        String
+  model           String
+  seeds           Int[]
+  numberOfImages  Int              @default(4)
+  errorMessage    String?
+  startedAt       DateTime?
+  completedAt     DateTime?
+  failedAt        DateTime?
   status          String
   progress        Int              @default(0)
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
-  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user            User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  brideUpload     Upload           @relation("GenerationJobBrideUpload", fields: [brideUploadId], references: [id], onDelete: Restrict)
+  groomUpload     Upload           @relation("GenerationJobGroomUpload", fields: [groomUploadId], references: [id], onDelete: Restrict)
   generatedImages GeneratedImage[]
 
   @@index([userId])
+  @@index([brideUploadId])
+  @@index([groomUploadId])
   @@index([status])
 }
 
 model GeneratedImage {
   id        String        @id @default(uuid()) @db.Uuid
   jobId     String        @db.Uuid
+  publicId  String
   secureUrl String
-  score     Float
+  seed      Int?
+  width     Int?
+  height    Int?
+  score     Float?
   createdAt DateTime      @default(now())
   job       GenerationJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
 

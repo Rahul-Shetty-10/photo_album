@@ -9,6 +9,7 @@ import { UploadDropzone } from "@/components/design/upload-dropzone";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
@@ -26,16 +27,255 @@ const weddingStyles = [
   "Custom",
 ];
 
-const aspectRatios = ["1:1", "4:5", "3:4", "16:9"];
+const aspectRatios = ["1:1", "2:3", "3:4", "4:3", "16:9"];
 const qualities = ["Standard", "High", "Ultra"];
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:4000/api/v1";
+
+type UploadResponse = {
+  secureUrl: string;
+  uploadId: string;
+};
+
+type GenerationResponse = {
+  jobId: string;
+  status: string;
+};
+
+type GenerationStatus = {
+  errorMessage?: string | null;
+  generatedImageUrls: string[];
+  id: string;
+  progress: number;
+  status: string;
+};
+
+const lastGenerationJobKey = "viwaah:last-generation-job-id";
+
+const getErrorMessage = async (response: Response, fallback: string) => {
+  try {
+    const body = (await response.json()) as { message?: string; requestId?: string };
+    return body.message ? `${body.message}${body.requestId ? ` (${body.requestId})` : ""}` : fallback;
+  } catch {
+    return fallback;
+  }
+};
+
+const uploadImage = async (file: File) => {
+  const formData = new FormData();
+  formData.append("image", file);
+
+  const response = await fetch(`${apiBaseUrl}/upload`, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error(await getErrorMessage(response, `Upload failed with status ${response.status}`));
+  }
+
+  return response.json() as Promise<UploadResponse>;
+};
+
+const createGeneration = async (payload: {
+  aspectRatio: string;
+  brideUploadId: string;
+  customPrompt?: string;
+  groomUploadId: string;
+  numberOfImages: number;
+  style: string;
+  theme: string;
+}) => {
+  const response = await fetch(`${apiBaseUrl}/generate`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw new Error(await getErrorMessage(response, `Generation request failed with status ${response.status}`));
+  }
+
+  return response.json() as Promise<GenerationResponse>;
+};
+
+const getGenerationStatus = async (jobId: string) => {
+  const response = await fetch(`${apiBaseUrl}/generate/${jobId}/status`);
+
+  if (!response.ok) {
+    throw new Error(await getErrorMessage(response, `Status request failed with status ${response.status}`));
+  }
+
+  return response.json() as Promise<GenerationStatus>;
+};
 
 export function GenerateWorkspace() {
   const [bridePhoto, setBridePhoto] = React.useState<File | null>(null);
   const [groomPhoto, setGroomPhoto] = React.useState<File | null>(null);
+  const [brideUpload, setBrideUpload] = React.useState<UploadResponse | null>(null);
+  const [groomUpload, setGroomUpload] = React.useState<UploadResponse | null>(null);
   const [selectedStyle, setSelectedStyle] = React.useState("Royal");
-  const [aspectRatio, setAspectRatio] = React.useState("4:5");
+  const [aspectRatio, setAspectRatio] = React.useState("3:4");
   const [quality, setQuality] = React.useState("High");
-  const canGenerate = Boolean(bridePhoto && groomPhoto);
+  const [customPrompt, setCustomPrompt] = React.useState("");
+  const [generationStatus, setGenerationStatus] = React.useState<GenerationStatus | null>(null);
+  const [activeJobId, setActiveJobId] = React.useState<string | null>(null);
+  const [error, setError] = React.useState<string | null>(null);
+  const [isGenerating, setIsGenerating] = React.useState(false);
+  const canGenerate = Boolean(bridePhoto && groomPhoto) && !isGenerating;
+
+  React.useEffect(() => {
+    const lastJobId = window.localStorage.getItem(lastGenerationJobKey);
+
+    if (!lastJobId) {
+      return;
+    }
+
+    let isMounted = true;
+
+    const restoreLastGeneration = async () => {
+      try {
+        const status = await getGenerationStatus(lastJobId);
+
+        if (!isMounted) {
+          return;
+        }
+
+        setActiveJobId(lastJobId);
+        setGenerationStatus(status);
+
+        if (!["Completed", "Failed"].includes(status.status)) {
+          setIsGenerating(true);
+        }
+      } catch {
+        window.localStorage.removeItem(lastGenerationJobKey);
+      }
+    };
+
+    void restoreLastGeneration();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  React.useEffect(() => {
+    if (!activeJobId || !isGenerating) {
+      return;
+    }
+
+    let isCancelled = false;
+
+    const poll = async () => {
+      try {
+        const status = await getGenerationStatus(activeJobId);
+
+        if (isCancelled) {
+          return;
+        }
+
+        setGenerationStatus(status);
+
+        if (status.status === "Completed") {
+          setIsGenerating(false);
+          return;
+        }
+
+        if (status.status === "Failed") {
+          setError(status.errorMessage ?? "Generation failed");
+          setIsGenerating(false);
+          return;
+        }
+
+        window.setTimeout(poll, 2500);
+      } catch (caughtError) {
+        if (!isCancelled) {
+          const message = caughtError instanceof Error ? caughtError.message : "Unable to check generation status";
+          setError(message);
+          setIsGenerating(false);
+        }
+      }
+    };
+
+    const timeoutId = window.setTimeout(poll, 500);
+
+    return () => {
+      isCancelled = true;
+      window.clearTimeout(timeoutId);
+    };
+  }, [activeJobId, isGenerating]);
+
+  const handleBridePhotoChange = (file: File | null) => {
+    setBridePhoto(file);
+    setBrideUpload(null);
+  };
+
+  const handleGroomPhotoChange = (file: File | null) => {
+    setGroomPhoto(file);
+    setGroomUpload(null);
+  };
+
+  const handleGenerate = async () => {
+    console.log("Generate clicked", {
+      bridePhoto,
+      groomPhoto,
+      brideUpload,
+      groomUpload,
+    });
+
+    setError(null);
+    setGenerationStatus(null);
+    setActiveJobId(null);
+
+    if (!bridePhoto || !groomPhoto) {
+      setError("Please upload both bride and groom photos before generating.");
+      return;
+    }
+
+    console.log("Validation passed");
+    setIsGenerating(true);
+
+    try {
+      const [nextBrideUpload, nextGroomUpload] = await Promise.all([
+        brideUpload ?? uploadImage(bridePhoto),
+        groomUpload ?? uploadImage(groomPhoto),
+      ]);
+
+      setBrideUpload(nextBrideUpload);
+      setGroomUpload(nextGroomUpload);
+
+      const payload = {
+        aspectRatio,
+        brideUploadId: nextBrideUpload.uploadId,
+        customPrompt: customPrompt.trim() || undefined,
+        groomUploadId: nextGroomUpload.uploadId,
+        numberOfImages: quality === "Ultra" ? 6 : 4,
+        style: selectedStyle,
+        theme: selectedStyle,
+      };
+
+      console.log("Preparing payload", payload);
+      console.log("Calling API", `${apiBaseUrl}/generate`);
+
+      const generation = await createGeneration(payload);
+      console.log("API response", generation);
+
+      window.localStorage.setItem(lastGenerationJobKey, generation.jobId);
+      setActiveJobId(generation.jobId);
+      setGenerationStatus({
+        generatedImageUrls: [],
+        id: generation.jobId,
+        progress: 0,
+        status: generation.status,
+      });
+    } catch (caughtError) {
+      const message = caughtError instanceof Error ? caughtError.message : "Generation failed";
+      setError(message);
+      setIsGenerating(false);
+      console.error("Generate failed", caughtError);
+    }
+  };
 
   return (
     <main className="relative isolate min-h-screen overflow-hidden px-6 py-8 sm:px-8">
@@ -68,9 +308,9 @@ export function GenerateWorkspace() {
               Upload both portraits, choose a wedding style, and prepare the generation inputs in one focused studio.
             </p>
           </div>
-          <Button size="lg" type="button" disabled={!canGenerate}>
+          <Button size="lg" type="button" disabled={!canGenerate} onClick={handleGenerate}>
             <Sparkles aria-hidden="true" />
-            Generate Portrait
+            {isGenerating ? "Generating..." : "Generate Portrait"}
           </Button>
         </motion.header>
 
@@ -86,14 +326,14 @@ export function GenerateWorkspace() {
               title="Bride Photo"
               description="Upload a clear bride portrait with good lighting and an unobstructed face."
               value={bridePhoto}
-              onChange={setBridePhoto}
+              onChange={handleBridePhotoChange}
             />
             <UploadDropzone
               id="groom-photo"
               title="Groom Photo"
               description="Upload a clear groom portrait with good lighting and an unobstructed face."
               value={groomPhoto}
-              onChange={setGroomPhoto}
+              onChange={handleGroomPhotoChange}
             />
           </motion.div>
 
@@ -162,7 +402,11 @@ export function GenerateWorkspace() {
               <div className="grid gap-5 px-6 pb-6">
                 <label className="grid gap-2 text-sm text-muted-foreground">
                   Additional prompt (optional)
-                  <Textarea placeholder="Add wardrobe, location, lighting, or cultural details." />
+                  <Textarea
+                    placeholder="Add wardrobe, location, lighting, or cultural details."
+                    value={customPrompt}
+                    onChange={(event) => setCustomPrompt(event.target.value)}
+                  />
                 </label>
                 <div className="grid gap-5 sm:grid-cols-2">
                   <fieldset className="grid gap-2">
@@ -206,6 +450,34 @@ export function GenerateWorkspace() {
                 </div>
               </div>
             </details>
+
+            {(error || generationStatus) && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Generation Status</CardTitle>
+                  <CardDescription>
+                    {error ?? `${generationStatus?.status ?? "Preparing"} - ${generationStatus?.progress ?? 0}%`}
+                  </CardDescription>
+                </CardHeader>
+                {generationStatus && (
+                  <CardContent className="grid gap-4">
+                    <Progress value={generationStatus.progress} />
+                    {generationStatus.generatedImageUrls.length > 0 && (
+                      <div className="grid grid-cols-2 gap-3">
+                        {generationStatus.generatedImageUrls.map((url) => (
+                          <img
+                            key={url}
+                            src={url}
+                            alt="Generated wedding portrait"
+                            className="aspect-[4/5] rounded-2xl object-cover"
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                )}
+              </Card>
+            )}
           </motion.aside>
         </section>
       </div>

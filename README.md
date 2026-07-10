@@ -1,110 +1,149 @@
-# Viwaah
+# ViWaah
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+ViWaah is an AI wedding portrait studio. Users upload separate bride and groom portraits, choose a wedding style, and create generated wedding portraits through an asynchronous API pipeline.
 
-Your new, shiny [Nx workspace](https://nx.dev) is ready.
+## Current Status
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/nx-api/js?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+This repository is an Nx monorepo with:
 
-## Generate a library
+- `apps/web`: Next.js 16 frontend with a landing page and generation workspace.
+- `apps/api`: Express 5 API with PostgreSQL persistence, Cloudinary uploads, BullMQ job processing, and an OpenAI image-edit provider.
+- `docs`: implementation-aligned project documentation.
 
-```sh
-npx nx g @nx/js:lib packages/pkg1 --publishable --importPath=@my-org/pkg1
+The app currently has no authentication, payment, album, admin, or production deployment code.
+
+## Tech Stack
+
+| Area | Technology |
+|---|---|
+| Monorepo | Nx 23 |
+| Frontend | Next.js 16, React 19, Tailwind CSS 4, shadcn/ui-style components, Framer Motion |
+| Backend | Express 5, TypeScript, CommonJS |
+| Database | PostgreSQL, Prisma 7, `@prisma/adapter-pg` |
+| Queue | BullMQ, Redis/Upstash-compatible URL |
+| Storage | Cloudinary |
+| AI provider | OpenAI Images API, `gpt-image-1` by default |
+| Logging | Pino, Pino HTTP |
+
+## Repository Structure
+
+```text
+viwaah/
+├── apps/
+│   ├── api/
+│   │   ├── prisma/
+│   │   │   ├── schema.prisma
+│   │   │   └── migrations/
+│   │   └── src/
+│   │       ├── ai/
+│   │       ├── config/
+│   │       ├── controllers/
+│   │       ├── database/
+│   │       ├── middleware/
+│   │       ├── queues/
+│   │       ├── repositories/
+│   │       ├── routes/
+│   │       ├── services/
+│   │       ├── storage/
+│   │       ├── utils/
+│   │       └── workers/
+│   └── web/
+│       └── src/
+│           ├── app/
+│           ├── components/
+│           ├── features/
+│           └── lib/
+├── docs/
+├── nx.json
+├── package.json
+├── prisma.config.ts
+└── tsconfig.base.json
 ```
 
-## Run tasks
+## Setup
 
-To build the library use:
+### Prerequisites
 
-```sh
-npx nx build pkg1
+- Node.js 18+
+- npm 9+
+- PostgreSQL database URL
+- Redis URL for BullMQ
+- Cloudinary account
+- OpenAI API key with image generation access
+
+### Install
+
+```bash
+npm install
+cp .env.example apps/api/.env
 ```
 
-To run any task with Nx use:
+Fill `apps/api/.env` with your database, Redis, Cloudinary, and OpenAI credentials.
 
-```sh
-npx nx <target> <project-name>
+### Environment Variables
+
+| Variable | Purpose |
+|---|---|
+| `NODE_ENV` | `development`, `test`, or `production` |
+| `PORT` | API port, default `4000` |
+| `API_VERSION` | API prefix version, default `v1` |
+| `APP_VERSION` | Version returned by health checks |
+| `LOG_LEVEL` | Pino log level |
+| `CORS_ORIGIN` | Allowed CORS origin |
+| `DATABASE_URL` | PostgreSQL connection string |
+| `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name |
+| `CLOUDINARY_API_KEY` | Cloudinary API key |
+| `CLOUDINARY_API_SECRET` | Cloudinary API secret |
+| `UPSTASH_REDIS_URL` | Redis URL used by BullMQ |
+| `OPENAI_API_KEY` | OpenAI API key |
+| `OPENAI_IMAGE_MODEL` | Image model, default `gpt-image-1` |
+
+The frontend reads `NEXT_PUBLIC_API_BASE_URL`; when unset it uses `http://localhost:4000/api/v1`.
+
+## Development
+
+```bash
+npx nx serve api
+npx nx dev web
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+The API listens on `http://localhost:4000` by default and the frontend runs on `http://localhost:3000`.
 
-[More about running tasks in the docs »](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+## Database
 
-## Versioning and releasing
-
-To version and release the library use
-
-```sh
-npx nx release
+```bash
+npm run --workspace @viwaah/api db:generate
+npm run --workspace @viwaah/api db:migrate
+npm run --workspace @viwaah/api db:migrate:deploy
 ```
 
-Pass `--dry-run` to see what would happen without actually releasing the library.
+## API Overview
 
-[Learn more about Nx release »](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+All routes are mounted under `/api/v1` by default.
 
-## Keep TypeScript project references up to date
+| Method | Path | Purpose |
+|---|---|---|
+| `GET` | `/health` | Check database, queue, and AI provider health |
+| `POST` | `/upload` | Upload one JPEG, PNG, or WebP image |
+| `DELETE` | `/upload/:id` | Delete an uploaded image |
+| `POST` | `/generate` | Create and enqueue a generation job |
+| `GET` | `/generate/:id` | Get generation status and results |
+| `GET` | `/generate/:id/status` | Status polling alias |
+| `POST` | `/generation-jobs` | Backward-compatible create alias |
+| `GET` | `/generation-jobs/:id` | Backward-compatible read alias |
 
-Nx automatically updates TypeScript [project references](https://www.typescriptlang.org/docs/handbook/project-references.html) in `tsconfig.json` files to ensure they remain accurate based on your project dependencies (`import` or `require` statements). This sync is automatically done when running tasks such as `build` or `typecheck`, which require updated references to function correctly.
+See [docs/data_api.md](./docs/data_api.md) for request and response details.
 
-To manually trigger the process to sync the project graph dependencies information to the TypeScript project references, run the following command:
+## Documentation
 
-```sh
-npx nx sync
-```
+- [Documentation index](./docs/README.md)
+- [Architecture](./docs/architecture.md)
+- [Data API](./docs/data_api.md)
+- [Database schema](./docs/schema.md)
+- [Application flow](./docs/appflow.md)
+- [Requirements](./docs/requirements.md)
+- [Phase scope](./docs/phase_scope.md)
 
-You can enforce that the TypeScript project references are always in the correct state when running in CI by adding a step to your CI job configuration that runs the following command:
+## License
 
-```sh
-npx nx sync:check
-```
-
-[Learn more about nx sync](https://nx.dev/reference/nx-commands#sync)
-
-## Set up CI!
-
-### Step 1
-
-To connect to Nx Cloud, run the following command:
-
-```sh
-npx nx connect
-```
-
-Connecting to Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
-
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-### Step 2
-
-Use the following command to configure a CI workflow for your workspace:
-
-```sh
-npx nx g ci-workflow
-```
-
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console »](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Useful links
-
-Learn more:
-
-- [Learn more about this workspace setup](https://nx.dev/nx-api/js?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
+MIT
