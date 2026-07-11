@@ -91,7 +91,9 @@ export const createGenerationWorker = () =>
         logger.info({ jobId, progress: 100, status: "Completed" }, "GenerationJob completed");
       } catch (error) {
         const message = getGenerationErrorMessage(error);
-        const isNonRetryable = getGenerationErrorStatus(error) === 401 || getGenerationErrorStatus(error) === 403;
+        const errorStatus = getGenerationErrorStatus(error);
+        const isProviderError = error instanceof Error && error.name.endsWith("ProviderError");
+        const isNonRetryable = isProviderError || errorStatus === 401 || errorStatus === 402 || errorStatus === 403;
         const isFinalAttempt = isNonRetryable || job.attemptsMade + 1 >= (job.opts.attempts ?? 1);
 
         await updateGenerationJob(jobId, {

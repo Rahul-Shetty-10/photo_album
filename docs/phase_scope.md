@@ -16,11 +16,11 @@ Related docs: [Requirements](./requirements.md), [Architecture](./architecture.m
 | Generation jobs | Create/status service, repository, controller, routes, legacy aliases |
 | Queue | BullMQ queue, Redis URL parsing, retry/backoff options |
 | Worker | In-process generation worker, progress updates, resume by missing seed, final failure handling |
-| AI provider | `ImageGenerationProvider` interface and OpenAI image edit provider |
+| AI provider | `ImageGenerationProvider` interface and Pollinations image generation provider |
 | Themes | Three canonical themes, aliases, prompt builder |
 | Health | Database, queue, and generator health response |
 | Frontend landing | Marketing page with process, themes, gallery, features, testimonials, pricing, and FAQ sections |
-| Frontend workspace | Photo selection, upload on generate, style/aspect/quality options, generation status, image grid |
+| Frontend workspace | Photo selection, upload on generate, style/aspect/quality options, generation status, image grid, fullscreen image viewer with zoom, metadata, original-image download, and open-in-new-tab actions |
 | Polling restore | Status polling and last job restore from `localStorage` |
 
 ## Current Boundaries
@@ -30,9 +30,9 @@ In scope:
 - Unauthenticated source image upload.
 - Cloudinary-backed image storage.
 - Three backend-supported wedding themes with alias fallback.
-- OpenAI-backed image generation.
+- Pollinations-backed image generation.
 - Asynchronous job processing with BullMQ.
-- Status polling and generated image display.
+- Status polling, generated image display, fullscreen viewing, and original Cloudinary image download.
 - Health endpoint.
 
 Out of scope:
@@ -40,7 +40,7 @@ Out of scope:
 - Login, registration, sessions, and user-specific history.
 - Payment or credit management.
 - Album management.
-- Dedicated download/export workflow.
+- Album-level export workflow.
 - Admin operations.
 - Notifications.
 - Production deployment manifests.
@@ -52,7 +52,7 @@ Out of scope:
 |---|---|
 | Frontend theme labels exceed backend themes | Unsupported labels fall back to `South Indian` in the backend. |
 | Quality selector is not a true provider quality setting | The UI maps `Ultra` to 6 images and other qualities to 4 images. |
-| Download wording appears on the landing page | The workspace displays generated images but has no dedicated download button. |
+| Download wording appears on the landing page | The workspace supports downloading generated Cloudinary originals from the image viewer; broader album export is not implemented. |
 | `User` model exists without auth | `userId` fields are nullable and not populated by request code. |
 | `GeneratedImage.score` exists without evaluator | No quality evaluator writes this field. |
 | Worker scaling is not separate yet | Workers start in the API process via `main.ts`. |
@@ -64,7 +64,7 @@ Out of scope:
 |---|---|
 | Authentication | Registration, login, sessions, user-scoped uploads/jobs |
 | Payments | Stripe, credits, subscriptions, invoices |
-| Generation UX | Real download buttons, history, reruns, negative prompts, custom themes |
+| Generation UX | History, reruns, negative prompts, custom themes, album export |
 | AI operations | Provider failover, quality scoring, cost tracking |
 | Albums | Saved collections, sharing links, privacy controls |
 | Admin | Queue monitoring, user management, usage metrics |

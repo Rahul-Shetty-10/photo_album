@@ -12,9 +12,9 @@ export const config = {
   databaseUrl: env.DATABASE_URL,
   logLevel: env.LOG_LEVEL,
   nodeEnv: env.NODE_ENV,
-  openai: {
-    apiKey: env.OPENAI_API_KEY,
-    imageModel: env.OPENAI_IMAGE_MODEL,
+  pollinations: {
+    apiKey: env.POLLINATIONS_API_KEY,
+    imageModel: env.POLLINATIONS_IMAGE_MODEL,
   },
   port: env.PORT,
   upstashRedisUrl: env.UPSTASH_REDIS_URL,

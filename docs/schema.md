@@ -129,10 +129,10 @@ Tracks a generation request from queueing through completion or failure.
 | `aspectRatio` | `String` | Required |
 | `customPrompt` | `String?` | Optional |
 | `prompt` | `String` | Full generated prompt sent to the provider |
-| `provider` | `String` | Current value is `openai` |
-| `model` | `String` | Current default is `gpt-image-1` |
+| `provider` | `String` | Current value is `pollinations` |
+| `model` | `String` | Current default is `flux` |
 | `seeds` | `Int[]` | Base seed plus sequential offsets |
-| `numberOfImages` | `Int` | Default `4` |
+| `numberOfImages` | `Int` | Database default `4`; API service default `1` |
 | `errorMessage` | `String?` | Last error message |
 | `startedAt` | `DateTime?` | Worker start time |
 | `completedAt` | `DateTime?` | Completion time |

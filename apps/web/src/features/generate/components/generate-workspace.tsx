@@ -1,8 +1,22 @@
 "use client";
 
 import * as React from "react";
-import { ArrowLeft, Check, ChevronDown, SlidersHorizontal, Sparkles } from "lucide-react";
-import { motion } from "framer-motion";
+import {
+  ArrowLeft,
+  Check,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  ExternalLink,
+  Maximize2,
+  Minus,
+  Plus,
+  SlidersHorizontal,
+  Sparkles,
+  X,
+} from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 
 import { AnimatedGradient } from "@/components/design/animated-gradient";
 import { UploadDropzone } from "@/components/design/upload-dropzone";
@@ -42,14 +56,64 @@ type GenerationResponse = {
 };
 
 type GenerationStatus = {
+  aspectRatio?: string;
+  createdAt?: string;
   errorMessage?: string | null;
+  generatedImages?: GeneratedImage[];
   generatedImageUrls: string[];
   id: string;
   progress: number;
   status: string;
+  theme?: string;
+  updatedAt?: string;
 };
 
 const lastGenerationJobKey = "viwaah:last-generation-job-id";
+
+type GeneratedImage = {
+  height?: number | null;
+  id?: string;
+  seed?: number | null;
+  url: string;
+  width?: number | null;
+};
+
+type GalleryImage = GeneratedImage & {
+  createdAt?: string;
+  theme?: string;
+};
+
+const cloudinaryTransformationPattern = /^(https:\/\/res\.cloudinary\.com\/[^/]+\/image\/upload\/)(?:(?!v\d+\/)[^/]+\/)+(v\d+\/.+)$/;
+
+const getOriginalImageUrl = (url: string) => url.replace(cloudinaryTransformationPattern, "$1$2");
+
+const formatDateTime = (value?: string) => {
+  if (!value) {
+    return "Not available";
+  }
+
+  return new Intl.DateTimeFormat(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(new Date(value));
+};
+
+const getGalleryImages = (status: GenerationStatus | null): GalleryImage[] => {
+  if (!status) {
+    return [];
+  }
+
+  const images =
+    status.generatedImages && status.generatedImages.length > 0
+      ? status.generatedImages
+      : status.generatedImageUrls.map((url) => ({ url }));
+
+  return images.map((image) => ({
+    ...image,
+    theme: status.theme,
+    createdAt: status.updatedAt ?? status.createdAt,
+  }));
+};
 
 const getErrorMessage = async (response: Response, fallback: string) => {
   try {
@@ -110,6 +174,189 @@ const getGenerationStatus = async (jobId: string) => {
   return response.json() as Promise<GenerationStatus>;
 };
 
+function GeneratedImageLightbox({
+  images,
+  initialIndex,
+  onClose,
+}: {
+  images: GalleryImage[];
+  initialIndex: number;
+  onClose: () => void;
+}) {
+  const [activeIndex, setActiveIndex] = React.useState(initialIndex);
+  const [zoom, setZoom] = React.useState(1);
+  const [naturalSize, setNaturalSize] = React.useState<{ height: number; width: number } | null>(null);
+  const activeImage = images[activeIndex];
+  const originalUrl = activeImage ? getOriginalImageUrl(activeImage.url) : "";
+  const hasMultipleImages = images.length > 1;
+  const displayWidth = activeImage?.width ?? naturalSize?.width;
+  const displayHeight = activeImage?.height ?? naturalSize?.height;
+
+  const showPrevious = React.useCallback(() => {
+    setActiveIndex((currentIndex) => (currentIndex - 1 + images.length) % images.length);
+    setZoom(1);
+    setNaturalSize(null);
+  }, [images.length]);
+
+  const showNext = React.useCallback(() => {
+    setActiveIndex((currentIndex) => (currentIndex + 1) % images.length);
+    setZoom(1);
+    setNaturalSize(null);
+  }, [images.length]);
+
+  React.useEffect(() => {
+    setActiveIndex(initialIndex);
+  }, [initialIndex]);
+
+  React.useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+
+      if (event.key === "ArrowLeft" && hasMultipleImages) {
+        showPrevious();
+      }
+
+      if (event.key === "ArrowRight" && hasMultipleImages) {
+        showNext();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [hasMultipleImages, onClose, showNext, showPrevious]);
+
+  React.useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, []);
+
+  if (!activeImage) {
+    return null;
+  }
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        className="fixed inset-0 z-50 flex items-stretch justify-center bg-[#070403]/90 p-3 text-foreground backdrop-blur-xl sm:p-5"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Generated image viewer"
+        onMouseDown={(event) => {
+          if (event.target === event.currentTarget) {
+            onClose();
+          }
+        }}
+      >
+        <motion.div
+          className="grid h-full w-full max-w-7xl grid-rows-[auto_1fr_auto] overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#100b08]/95 shadow-2xl shadow-black/50"
+          initial={{ opacity: 0, scale: 0.96, y: 18 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.98, y: 10 }}
+          transition={{ duration: 0.22, ease: "easeOut" }}
+        >
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-4 py-3 sm:px-5">
+            <div className="min-w-0">
+              <p className="text-xs uppercase tracking-[0.28em] text-primary">Generated portrait</p>
+              <p className="mt-1 truncate font-serif text-xl text-[#fff8e8]">{activeImage.theme ?? "Wedding portrait"}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button type="button" variant="outline" size="icon-sm" aria-label="Zoom out" onClick={() => setZoom((value) => Math.max(1, value - 0.25))}>
+                <Minus aria-hidden="true" />
+              </Button>
+              <span className="min-w-14 text-center text-xs text-muted-foreground">{Math.round(zoom * 100)}%</span>
+              <Button type="button" variant="outline" size="icon-sm" aria-label="Zoom in" onClick={() => setZoom((value) => Math.min(4, value + 0.25))}>
+                <Plus aria-hidden="true" />
+              </Button>
+              <Button type="button" variant="outline" size="icon-sm" aria-label="Reset zoom" onClick={() => setZoom(1)}>
+                <Maximize2 aria-hidden="true" />
+              </Button>
+              <Button type="button" variant="outline" size="icon-sm" aria-label="Close viewer" onClick={onClose}>
+                <X aria-hidden="true" />
+              </Button>
+            </div>
+          </div>
+
+          <div className="relative min-h-0 overflow-hidden bg-black/25">
+            {hasMultipleImages && (
+              <>
+                <Button type="button" variant="outline" size="icon" aria-label="Previous image" onClick={showPrevious} className="absolute left-3 top-1/2 z-10 -translate-y-1/2 bg-black/35 sm:left-5">
+                  <ChevronLeft aria-hidden="true" />
+                </Button>
+                <Button type="button" variant="outline" size="icon" aria-label="Next image" onClick={showNext} className="absolute right-3 top-1/2 z-10 -translate-y-1/2 bg-black/35 sm:right-5">
+                  <ChevronRight aria-hidden="true" />
+                </Button>
+              </>
+            )}
+            <motion.div className="flex h-full cursor-grab items-center justify-center overflow-hidden p-3 active:cursor-grabbing sm:p-6" drag={zoom > 1} dragMomentum={false} dragElastic={0.04}>
+              <motion.img
+                key={originalUrl}
+                src={originalUrl}
+                alt="Full resolution generated wedding portrait"
+                className="max-h-full max-w-full select-none object-contain shadow-2xl shadow-black/40"
+                draggable={false}
+                style={{ scale: zoom }}
+                transition={{ type: "spring", stiffness: 260, damping: 28 }}
+                onLoad={(event) => {
+                  setNaturalSize({
+                    height: event.currentTarget.naturalHeight,
+                    width: event.currentTarget.naturalWidth,
+                  });
+                }}
+              />
+            </motion.div>
+          </div>
+
+          <div className="grid gap-3 border-t border-white/10 px-4 py-3 sm:grid-cols-[1fr_auto] sm:items-center sm:px-5">
+            <dl className="grid grid-cols-2 gap-3 text-xs text-muted-foreground sm:flex sm:flex-wrap sm:gap-x-6">
+              <div>
+                <dt className="text-[#eee3cf]/55">Theme</dt>
+                <dd className="mt-1 text-[#fff8e8]">{activeImage.theme ?? "Not available"}</dd>
+              </div>
+              <div>
+                <dt className="text-[#eee3cf]/55">Generated</dt>
+                <dd className="mt-1 text-[#fff8e8]">{formatDateTime(activeImage.createdAt)}</dd>
+              </div>
+              <div>
+                <dt className="text-[#eee3cf]/55">Dimensions</dt>
+                <dd className="mt-1 text-[#fff8e8]">{displayWidth && displayHeight ? `${displayWidth} x ${displayHeight}` : "Loading..."}</dd>
+              </div>
+              {hasMultipleImages && (
+                <div>
+                  <dt className="text-[#eee3cf]/55">Image</dt>
+                  <dd className="mt-1 text-[#fff8e8]">{activeIndex + 1} of {images.length}</dd>
+                </div>
+              )}
+            </dl>
+            <div className="flex flex-wrap gap-2 sm:justify-end">
+              <Button asChild variant="outline" size="sm">
+                <a href={originalUrl} target="_blank" rel="noreferrer">
+                  <ExternalLink aria-hidden="true" />
+                  Open
+                </a>
+              </Button>
+              <Button asChild size="sm">
+                <a href={originalUrl} download>
+                  <Download aria-hidden="true" />
+                  Download
+                </a>
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
 export function GenerateWorkspace() {
   const [bridePhoto, setBridePhoto] = React.useState<File | null>(null);
   const [groomPhoto, setGroomPhoto] = React.useState<File | null>(null);
@@ -120,10 +367,12 @@ export function GenerateWorkspace() {
   const [quality, setQuality] = React.useState("High");
   const [customPrompt, setCustomPrompt] = React.useState("");
   const [generationStatus, setGenerationStatus] = React.useState<GenerationStatus | null>(null);
+  const [activeGalleryIndex, setActiveGalleryIndex] = React.useState<number | null>(null);
   const [activeJobId, setActiveJobId] = React.useState<string | null>(null);
   const [error, setError] = React.useState<string | null>(null);
   const [isGenerating, setIsGenerating] = React.useState(false);
   const canGenerate = Boolean(bridePhoto && groomPhoto) && !isGenerating;
+  const galleryImages = getGalleryImages(generationStatus);
 
   React.useEffect(() => {
     const lastJobId = window.localStorage.getItem(lastGenerationJobKey);
@@ -250,7 +499,7 @@ export function GenerateWorkspace() {
         brideUploadId: nextBrideUpload.uploadId,
         customPrompt: customPrompt.trim() || undefined,
         groomUploadId: nextGroomUpload.uploadId,
-        numberOfImages: quality === "Ultra" ? 6 : 4,
+        numberOfImages: quality === "Ultra" ? 2 : 1,
         style: selectedStyle,
         theme: selectedStyle,
       };
@@ -264,10 +513,12 @@ export function GenerateWorkspace() {
       window.localStorage.setItem(lastGenerationJobKey, generation.jobId);
       setActiveJobId(generation.jobId);
       setGenerationStatus({
+        generatedImages: [],
         generatedImageUrls: [],
         id: generation.jobId,
         progress: 0,
         status: generation.status,
+        theme: selectedStyle,
       });
     } catch (caughtError) {
       const message = caughtError instanceof Error ? caughtError.message : "Generation failed";
@@ -462,15 +713,25 @@ export function GenerateWorkspace() {
                 {generationStatus && (
                   <CardContent className="grid gap-4">
                     <Progress value={generationStatus.progress} />
-                    {generationStatus.generatedImageUrls.length > 0 && (
+                    {galleryImages.length > 0 && (
                       <div className="grid grid-cols-2 gap-3">
-                        {generationStatus.generatedImageUrls.map((url) => (
-                          <img
-                            key={url}
-                            src={url}
-                            alt="Generated wedding portrait"
-                            className="aspect-[4/5] rounded-2xl object-cover"
-                          />
+                        {galleryImages.map((image, index) => (
+                          <button
+                            key={image.id ?? image.url}
+                            type="button"
+                            className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] text-left outline-none transition hover:border-primary/45 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/35"
+                            onClick={() => setActiveGalleryIndex(index)}
+                          >
+                            <img
+                              src={image.url}
+                              alt="Generated wedding portrait"
+                              className="aspect-[4/5] w-full object-cover transition duration-500 group-hover:scale-105"
+                            />
+                            <span className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-gradient-to-t from-black/75 to-transparent p-3 text-xs text-[#fff8e8] opacity-0 transition group-hover:opacity-100 group-focus-visible:opacity-100">
+                              <span>View full size</span>
+                              <Maximize2 className="size-4" aria-hidden="true" />
+                            </span>
+                          </button>
                         ))}
                       </div>
                     )}
@@ -481,6 +742,15 @@ export function GenerateWorkspace() {
           </motion.aside>
         </section>
       </div>
+      <AnimatePresence>
+        {activeGalleryIndex !== null && galleryImages.length > 0 && (
+          <GeneratedImageLightbox
+            images={galleryImages}
+            initialIndex={activeGalleryIndex}
+            onClose={() => setActiveGalleryIndex(null)}
+          />
+        )}
+      </AnimatePresence>
     </main>
   );
 }

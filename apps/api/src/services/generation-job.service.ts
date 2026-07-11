@@ -9,10 +9,13 @@ import {
 import { findUploadById } from "../repositories/upload.repository";
 import { AppError } from "../utils/app-error";
 import { logger } from "../utils/logger";
+import { Prisma } from "@prisma/client";
 
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const validAspectRatios = new Set(["21:9", "16:9", "4:3", "3:2", "1:1", "2:3", "3:4", "9:16", "9:21"]);
 const maxImages = 8;
+const databaseAttempts = 3;
+const databaseRetryDelayMs = 750;
 
 export type CreateGenerationJobRequest = {
   aspectRatio?: unknown;
@@ -38,10 +41,10 @@ export const createPendingGenerationJob = async (input: CreateGenerationJobReque
   const style = typeof input.style === "string" && input.style.trim().length > 0 ? input.style.trim() : themeName;
   const prompt = buildWeddingPrompt(themeName, customPrompt);
 
-  const [brideUpload, groomUpload] = await Promise.all([
-    findUploadById(brideUploadId),
-    findUploadById(groomUploadId),
-  ]);
+  const [brideUpload, groomUpload] = await withDatabaseRetry(
+    () => Promise.all([findUploadById(brideUploadId), findUploadById(groomUploadId)]),
+    "find generation uploads",
+  );
 
   if (!brideUpload) {
     logger.warn({ brideUploadId }, "Generation validation failed: bride upload not found");
@@ -56,21 +59,25 @@ export const createPendingGenerationJob = async (input: CreateGenerationJobReque
   validateCloudinaryHttpsUrl(brideUpload.secureUrl, "brideUpload");
   validateCloudinaryHttpsUrl(groomUpload.secureUrl, "groomUpload");
 
-  const job = await createGenerationJob({
-    aspectRatio,
-    brideUploadId,
-    customPrompt,
-    groomUploadId,
-    model: generatorService.model,
-    numberOfImages,
-    prompt,
-    progress: 0,
-    provider: generatorService.providerName,
-    seeds,
-    status: "Queued",
-    style,
-    theme: themeName,
-  });
+  const job = await withDatabaseRetry(
+    () =>
+      createGenerationJob({
+        aspectRatio,
+        brideUploadId,
+        customPrompt,
+        groomUploadId,
+        model: generatorService.model,
+        numberOfImages,
+        prompt,
+        progress: 0,
+        provider: generatorService.providerName,
+        seeds,
+        status: "Queued",
+        style,
+        theme: themeName,
+      }),
+    "create generation job",
+  );
 
   logger.info(
     {
@@ -90,7 +97,7 @@ export const createPendingGenerationJob = async (input: CreateGenerationJobReque
   const queueJob = await enqueueGenerationJob(job.id);
   logger.info({ bullJobId: queueJob.id, generationJobId: job.id }, "GenerationJob enqueued");
 
-  await updateGenerationJobStatus(job.id, "Queued");
+  await withDatabaseRetry(() => updateGenerationJobStatus(job.id, "Queued"), "confirm generation queued status");
 
   const response = {
     jobId: job.id,
@@ -101,6 +108,41 @@ export const createPendingGenerationJob = async (input: CreateGenerationJobReque
 
   return response;
 };
+
+const withDatabaseRetry = async <T>(operation: () => Promise<T>, label: string) => {
+  let lastError: unknown;
+
+  for (let attempt = 1; attempt <= databaseAttempts; attempt += 1) {
+    try {
+      return await operation();
+    } catch (error) {
+      lastError = error;
+
+      if (!isRetryablePrismaConnectionError(error) || attempt === databaseAttempts) {
+        break;
+      }
+
+      logger.warn(
+        {
+          attempt,
+          error,
+          label,
+          nextAttemptInMs: databaseRetryDelayMs,
+        },
+        "Retrying generation database operation after connection error",
+      );
+
+      await delay(databaseRetryDelayMs);
+    }
+  }
+
+  throw lastError;
+};
+
+const isRetryablePrismaConnectionError = (error: unknown) =>
+  error instanceof Prisma.PrismaClientKnownRequestError && ["P1001", "P1017", "P2024"].includes(error.code);
+
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const getGenerationJobStatus = async (id: string) => {
   if (!uuidPattern.test(id)) {
@@ -176,7 +218,7 @@ const validateOptionalString = (value: unknown, fieldName: string) => {
 
 const validateNumberOfImages = (value: unknown) => {
   if (value === undefined || value === null || value === "") {
-    return 4;
+    return 1;
   }
 
   if (typeof value !== "number" || !Number.isInteger(value) || value < 1 || value > maxImages) {

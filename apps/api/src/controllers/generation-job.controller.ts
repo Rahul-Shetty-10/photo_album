@@ -18,6 +18,7 @@ export const getGenerationJob = async (request: Request, response: Response) => 
 
   const job = await getGenerationJobStatus(id);
 
+  response.setHeader("Cache-Control", "no-store");
   response.status(200).json(job);
 };
 

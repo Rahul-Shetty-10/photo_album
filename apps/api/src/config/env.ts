@@ -17,8 +17,8 @@ const envSchema = z.object({
   DATABASE_URL: z.string().url().startsWith("postgresql://"),
   LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]).default("info"),
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
-  OPENAI_API_KEY: z.string().min(1),
-  OPENAI_IMAGE_MODEL: z.string().min(1).default("gpt-image-1"),
+  POLLINATIONS_API_KEY: z.string().min(1),
+  POLLINATIONS_IMAGE_MODEL: z.string().min(1).default("flux"),
   PORT: z.coerce.number().int().positive().max(65535).default(4000),
   UPSTASH_REDIS_URL: z.string().url(),
 });

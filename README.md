@@ -7,7 +7,7 @@ ViWaah is an AI wedding portrait studio. Users upload separate bride and groom p
 This repository is an Nx monorepo with:
 
 - `apps/web`: Next.js 16 frontend with a landing page and generation workspace.
-- `apps/api`: Express 5 API with PostgreSQL persistence, Cloudinary uploads, BullMQ job processing, and an OpenAI image-edit provider.
+- `apps/api`: Express 5 API with PostgreSQL persistence, Cloudinary uploads, BullMQ job processing, and a Pollinations image-generation provider.
 - `docs`: implementation-aligned project documentation.
 
 The app currently has no authentication, payment, album, admin, or production deployment code.
@@ -22,7 +22,7 @@ The app currently has no authentication, payment, album, admin, or production de
 | Database | PostgreSQL, Prisma 7, `@prisma/adapter-pg` |
 | Queue | BullMQ, Redis/Upstash-compatible URL |
 | Storage | Cloudinary |
-| AI provider | OpenAI Images API, `gpt-image-1` by default |
+| AI provider | Pollinations image API, `flux` by default |
 | Logging | Pino, Pino HTTP |
 
 ## Repository Structure
@@ -69,7 +69,7 @@ viwaah/
 - PostgreSQL database URL
 - Redis URL for BullMQ
 - Cloudinary account
-- OpenAI API key with image generation access
+- Pollinations API key with image generation access
 
 ### Install
 
@@ -78,7 +78,7 @@ npm install
 cp .env.example apps/api/.env
 ```
 
-Fill `apps/api/.env` with your database, Redis, Cloudinary, and OpenAI credentials.
+Fill `apps/api/.env` with your database, Redis, Cloudinary, and Pollinations credentials.
 
 ### Environment Variables
 
@@ -95,8 +95,8 @@ Fill `apps/api/.env` with your database, Redis, Cloudinary, and OpenAI credentia
 | `CLOUDINARY_API_KEY` | Cloudinary API key |
 | `CLOUDINARY_API_SECRET` | Cloudinary API secret |
 | `UPSTASH_REDIS_URL` | Redis URL used by BullMQ |
-| `OPENAI_API_KEY` | OpenAI API key |
-| `OPENAI_IMAGE_MODEL` | Image model, default `gpt-image-1` |
+| `POLLINATIONS_API_KEY` | Pollinations API key |
+| `POLLINATIONS_IMAGE_MODEL` | Image model, default `flux`; `kontext` supports image references only on Pollinations accounts/endpoints that expose it |
 
 The frontend reads `NEXT_PUBLIC_API_BASE_URL`; when unset it uses `http://localhost:4000/api/v1`.
 

@@ -1,7 +1,7 @@
-import { openAIProvider, type ImageGenerationProvider } from "./providers";
+import { pollinationsProvider, type ImageGenerationProvider } from "./providers";
 
 export class GeneratorService {
-  constructor(private readonly provider: ImageGenerationProvider = openAIProvider) {}
+  constructor(private readonly provider: ImageGenerationProvider = pollinationsProvider) {}
 
   get model() {
     return this.provider.model;

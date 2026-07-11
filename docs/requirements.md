@@ -25,7 +25,7 @@ This document describes requirements reflected by the current implementation plu
 | FR-10 | The backend supports aliases for common theme labels. |
 | FR-11 | Unknown theme labels fall back to `South Indian`. |
 | FR-12 | Users can specify one of the supported aspect ratios. |
-| FR-13 | Users can request 1 to 8 images per job. |
+| FR-13 | Users can request 1 to 8 images per job. The frontend currently requests 1 image by default, or 2 in Ultra quality mode. |
 | FR-14 | Users can provide an optional custom prompt. |
 | FR-15 | Users can provide an optional non-negative integer seed. |
 | FR-16 | The system creates sequential seeds from the base seed. |
@@ -42,7 +42,7 @@ This document describes requirements reflected by the current implementation plu
 | FR-22 | The worker updates status, progress, and lifecycle timestamps. |
 | FR-23 | The status endpoint returns progress, status, error message, and completed image URLs. |
 | FR-24 | Jobs retry up to 3 attempts with exponential backoff. |
-| FR-25 | OpenAI provider errors with status `401` or `403` are not retried. |
+| FR-25 | Pollinations provider errors with status `401` or `403` are not retried. |
 | FR-26 | The frontend polls active jobs every 2.5 seconds after an initial 500 ms delay. |
 | FR-27 | The frontend restores the last generation job from `localStorage`. |
 
@@ -80,10 +80,10 @@ This document describes requirements reflected by the current implementation plu
 | ID | Requirement |
 |---|---|
 | AIR-01 | The AI provider is selected through `GeneratorService` and the `ImageGenerationProvider` interface. |
-| AIR-02 | The implemented provider is `OpenAIProvider`. |
-| AIR-03 | The provider default model is `gpt-image-1`, configurable through `OPENAI_IMAGE_MODEL`. |
-| AIR-04 | The provider sends both source images as references to the OpenAI Images edit endpoint. |
-| AIR-05 | The provider maps aspect ratios to OpenAI image sizes. |
+| AIR-02 | The implemented provider is `PollinationsProvider`. |
+| AIR-03 | The provider default model is `flux`, configurable through `POLLINATIONS_IMAGE_MODEL`. |
+| AIR-04 | The provider sends the wedding prompt and source image URLs to the Pollinations image endpoint. If configured for `kontext`, it also sends the bride image reference parameter. |
+| AIR-05 | The provider maps aspect ratios to Pollinations width and height parameters. |
 | AIR-06 | The provider returns a generated image data URL and seed. |
 
 ## Theme Requirements

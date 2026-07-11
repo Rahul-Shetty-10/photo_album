@@ -41,8 +41,8 @@ Response:
   },
   "generator": {
     "status": "ok",
-    "provider": "openai",
-    "model": "gpt-image-1"
+    "provider": "pollinations",
+    "model": "flux"
   }
 }
 ```
@@ -120,7 +120,7 @@ Content type: `application/json`
 | `theme` | string | No | `South Indian` |
 | `style` | string | No | Canonical theme name |
 | `aspectRatio` | string | No | `3:4` |
-| `numberOfImages` | integer | No | `4` |
+| `numberOfImages` | integer | No | `1` |
 | `customPrompt` | string | No | None |
 | `seed` | integer | No | Random base seed |
 
@@ -185,12 +185,12 @@ Success response: `200 OK`
   "status": "Completed",
   "progress": 100,
   "theme": "Royal Palace",
-  "model": "gpt-image-1",
-  "provider": "openai",
+  "model": "flux",
+  "provider": "pollinations",
   "prompt": "Create a photorealistic wedding portrait...",
   "aspectRatio": "3:4",
-  "numberOfImages": 4,
-  "seeds": [123, 124, 125, 126],
+  "numberOfImages": 1,
+  "seeds": [123],
   "errorMessage": null,
   "createdAt": "2026-07-10T18:30:00.000Z",
   "updatedAt": "2026-07-10T18:31:30.000Z",
@@ -202,8 +202,8 @@ Success response: `200 OK`
       "id": "image-id",
       "url": "https://res.cloudinary.com/example/image/upload/v1/viwaah/generated/image.jpg",
       "seed": 123,
-      "width": 1024,
-      "height": 1536
+      "width": 512,
+      "height": 768
     }
   ]
 }

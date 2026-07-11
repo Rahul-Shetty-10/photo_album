@@ -20,13 +20,13 @@ flowchart TD
     K --> L[API enqueues BullMQ job]
     L --> M[Frontend polls status endpoint]
     L --> N[Worker processes queued job]
-    N --> O[OpenAI generates one image per seed]
+    N --> O[Pollinations generates one image per seed]
     O --> P[Worker uploads output to Cloudinary]
     P --> Q[Worker saves GeneratedImage]
     Q --> R{More seeds?}
     R -->|Yes| O
     R -->|No| S[Worker marks job Completed]
-    M --> T[Frontend displays progress and generated images]
+    M --> T[Frontend displays progress, generated images, and fullscreen image viewer]
 ```
 
 ## Upload Flow
@@ -91,15 +91,15 @@ sequenceDiagram
     participant Q as BullMQ
     participant W as Worker
     participant DB as PostgreSQL
-    participant OAI as OpenAI Images API
+    participant POL as Pollinations image API
     participant C as Cloudinary
 
     Q->>W: process-generation-job
     W->>DB: Set status Running, progress 5, startedAt
     W->>DB: Load job with uploads and existing generated images
     loop For each missing seed
-        W->>OAI: POST /v1/images/edits with bride and groom images
-        OAI-->>W: b64_json generated image
+        W->>POL: GET /prompt/{prompt} with model, size, seed, and optional image reference
+        POL-->>W: image response bytes
         W->>C: Upload data URL to viwaah/generated
         C-->>W: public_id, secure_url, width, height
         W->>DB: Create GeneratedImage
@@ -126,10 +126,11 @@ sequenceDiagram
     FE->>LS: Save job ID
     loop Active job
         FE->>API: GET /api/v1/generate/:id/status
-        API-->>FE: status, progress, generatedImageUrls
+        API-->>FE: status, progress, generatedImageUrls, generatedImages
         FE->>FE: Update progress and image grid
     end
     FE->>FE: Stop when Completed or Failed
+    FE->>FE: Open generated images in fullscreen viewer
 ```
 
 Details:
@@ -137,7 +138,7 @@ Details:
 - The key is `viwaah:last-generation-job-id`.
 - Polling starts 500 ms after job creation and repeats every 2.5 seconds.
 - On page load, the workspace tries to restore the last job from `localStorage`.
-- The current UI displays generated images, but it does not implement a dedicated download button.
+- Generated image thumbnails open a responsive fullscreen viewer with zoom controls, drag panning when zoomed, previous/next navigation, ESC/outside-click close, metadata, original Cloudinary download, and open-in-new-tab actions.
 
 ## Error Flow
 
@@ -151,7 +152,7 @@ flowchart TD
     F -->|Success| G[2xx response]
     F -->|Operational failure| H[Configured AppError status]
     F -->|Unknown failure| I[500 error]
-    J[Worker error] --> K{OpenAI status 401 or 403?}
+    J[Worker error] --> K{Pollinations status 401 or 403?}
     K -->|Yes| L[Mark Failed]
     K -->|No| M{Attempts remain?}
     M -->|Yes| N[Mark Queued and retry]

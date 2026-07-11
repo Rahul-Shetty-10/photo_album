@@ -7,7 +7,7 @@ ViWaah is an Nx monorepo with two applications:
 - `apps/web`: Next.js 16 frontend.
 - `apps/api`: Express 5 API and in-process BullMQ worker.
 
-The API uploads images to Cloudinary, stores metadata in PostgreSQL with Prisma, enqueues generation jobs in BullMQ, and delegates image generation to an AI provider abstraction. The current provider implementation is OpenAI image edits.
+The API uploads images to Cloudinary, stores metadata in PostgreSQL with Prisma, enqueues generation jobs in BullMQ, and delegates image generation to an AI provider abstraction. The current provider implementation is Pollinations image generation.
 
 ```mermaid
 graph TB
@@ -17,7 +17,7 @@ graph TB
     API -->|BullMQ add| REDIS[(Redis)]
     WORKER[BullMQ worker] -->|BullMQ process| REDIS
     WORKER -->|Prisma| PG
-    WORKER -->|OpenAI Images API| OPENAI[OpenAI]
+    WORKER -->|Pollinations image API| POLLINATIONS[Pollinations]
     WORKER -->|Cloudinary SDK| CLOUD
     WEB -->|image URLs| CLOUD
 ```
@@ -28,7 +28,7 @@ Related docs: [Data API](./data_api.md), [Schema](./schema.md), [Application flo
 
 ```text
 apps/api/src/
-├── ai/              # Provider interface, OpenAI provider, prompt themes
+├── ai/              # Provider interface, Pollinations provider, prompt themes
 ├── config/          # Environment parsing and app config
 ├── controllers/     # Express request handlers
 ├── database/        # Prisma client singleton
@@ -187,20 +187,20 @@ The provider abstraction is defined in `apps/api/src/ai/providers/provider.inter
 ```mermaid
 graph LR
     SERVICE[GeneratorService] --> IFACE[ImageGenerationProvider]
-    IFACE --> OPENAI[OpenAIProvider]
+    IFACE --> POLLINATIONS[PollinationsProvider]
 ```
 
-The only implemented provider is `OpenAIProvider` in `openai.provider.ts`.
+The only implemented provider is `PollinationsProvider` in `pollinations.provider.ts`.
 
 | Field | Current value |
 |---|---|
-| Provider name | `openai` |
-| Default model | `gpt-image-1` |
-| API endpoint | `POST https://api.openai.com/v1/images/edits` |
-| Output handling | Expects `b64_json`, converts to `data:image/png;base64,...`, then uploads to Cloudinary |
-| Size mapping | `1:1` -> `1024x1024`; landscape -> `1536x1024`; portrait -> `1024x1536` |
+| Provider name | `pollinations` |
+| Default model | `flux` |
+| API endpoint | `GET https://image.pollinations.ai/prompt/{prompt}` |
+| Output handling | Reads the image response body, converts it to a data URL, then uploads to Cloudinary |
+| Size mapping | `1:1` -> `512x512`; landscape -> `768x512`; portrait -> `512x768` |
 
-The provider downloads both source Cloudinary URLs, appends them as `image[]` multipart fields, and sends the generated wedding prompt to OpenAI.
+The provider sends source image URLs in the generated wedding prompt and sends width, height, seed, model, and bearer authentication to Pollinations. When `POLLINATIONS_IMAGE_MODEL=kontext`, the bride source image is also sent as Pollinations' `image` reference parameter, but that model is only usable on Pollinations accounts/endpoints that expose it.
 
 ## Health and Shutdown
 

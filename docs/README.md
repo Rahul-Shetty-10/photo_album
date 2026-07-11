@@ -17,7 +17,7 @@ This folder documents the current implementation of ViWaah. The codebase is the 
 
 ViWaah is an Nx monorepo with a Next.js frontend in `apps/web` and an Express API in `apps/api`.
 
-The backend stores metadata in PostgreSQL through Prisma, uploads source and generated images to Cloudinary, enqueues generation jobs with BullMQ, and generates wedding portraits through an `ImageGenerationProvider` abstraction. The only implemented provider is OpenAI image edits, using `OPENAI_IMAGE_MODEL` with `gpt-image-1` as the default.
+The backend stores metadata in PostgreSQL through Prisma, uploads source and generated images to Cloudinary, enqueues generation jobs with BullMQ, and generates wedding portraits through an `ImageGenerationProvider` abstraction. The only implemented provider is Pollinations image generation, using `POLLINATIONS_IMAGE_MODEL` with `flux` as the default.
 
 The frontend includes:
 
