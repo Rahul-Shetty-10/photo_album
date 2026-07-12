@@ -75,11 +75,11 @@ Success response: `201 Created`
 ```json
 {
   "uploadId": "a1b2c3d4-e5f6-4890-abcd-ef1234567890",
-  "secureUrl": "https://res.cloudinary.com/example/image/upload/v1/viwaah/uploads/image.jpg",
+  "secureUrl": "https://res.cloudinary.com/example/image/upload/v1/alankar/uploads/image.jpg",
   "width": 1024,
   "height": 768,
   "format": "jpg",
-  "publicId": "viwaah/uploads/image"
+  "publicId": "alankar/uploads/image"
 }
 ```
 
@@ -195,12 +195,12 @@ Success response: `200 OK`
   "createdAt": "2026-07-10T18:30:00.000Z",
   "updatedAt": "2026-07-10T18:31:30.000Z",
   "generatedImageUrls": [
-    "https://res.cloudinary.com/example/image/upload/v1/viwaah/generated/image.jpg"
+    "https://res.cloudinary.com/example/image/upload/v1/alankar/generated/image.jpg"
   ],
   "generatedImages": [
     {
       "id": "image-id",
-      "url": "https://res.cloudinary.com/example/image/upload/v1/viwaah/generated/image.jpg",
+      "url": "https://res.cloudinary.com/example/image/upload/v1/alankar/generated/image.jpg",
       "seed": 123,
       "width": 512,
       "height": 768

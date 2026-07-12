@@ -50,7 +50,7 @@ export function FeaturesSection() {
       id="features"
       eyebrow="Capabilities"
       title="A compact studio for impossible wedding shoots"
-      description="ViWaah focuses on the product surface: upload, style, preview, refine, and export."
+      description="ALANKAR focuses on the product surface: upload, style, preview, refine, and export."
     >
       <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {features.map((feature) => (

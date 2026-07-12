@@ -15,7 +15,7 @@ export function Navbar() {
         aria-label="Main navigation"
       >
         <a className="font-serif text-2xl tracking-wide text-foreground" href="/">
-          ViWaah
+          ALANKAR
         </a>
         <div className="hidden items-center gap-8 md:flex">
           {navItems.map((item) => (
@@ -29,7 +29,7 @@ export function Navbar() {
           ))}
         </div>
         <Button asChild size="sm">
-          <a href="/generate">Start Creating</a>
+          <a href="/choose-style">Start Creating</a>
         </Button>
       </nav>
     </header>

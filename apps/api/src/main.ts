@@ -14,7 +14,7 @@ const server = app.listen(config.port, () => {
       environment: config.nodeEnv,
       port: config.port,
     },
-    "ViWaah API started",
+    "ALANKAR API started",
   );
 });
 
@@ -29,7 +29,7 @@ const shutdown = (signal: NodeJS.Signals, activeServer: Server) => {
 
     await workers.close();
 
-    logger.info("ViWaah API stopped");
+    logger.info("ALANKAR API stopped");
     process.exit(0);
   });
 };

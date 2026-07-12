@@ -68,7 +68,7 @@ type GenerationStatus = {
   updatedAt?: string;
 };
 
-const lastGenerationJobKey = "viwaah:last-generation-job-id";
+const lastGenerationJobKey = "alankar:last-generation-job-id";
 
 type GeneratedImage = {
   height?: number | null;
@@ -534,7 +534,7 @@ export function GenerateWorkspace() {
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-8">
         <nav className="flex items-center justify-between" aria-label="Workspace navigation">
           <a className="font-serif text-2xl tracking-wide text-foreground" href="/">
-            ViWaah
+            ALANKAR
           </a>
           <Button asChild variant="outline" size="sm">
             <a href="/">

@@ -1,6 +1,6 @@
-# ViWaah
+# ALANKAR
 
-ViWaah is an AI wedding portrait studio. Users upload separate bride and groom portraits, choose a wedding style, and create generated wedding portraits through an asynchronous API pipeline.
+ALANKAR is an AI wedding portrait studio. Users upload separate bride and groom portraits, choose a wedding style, and create generated wedding portraits through an asynchronous API pipeline.
 
 ## Current Status
 
@@ -28,7 +28,7 @@ The app currently has no authentication, payment, album, admin, or production de
 ## Repository Structure
 
 ```text
-viwaah/
+alankar/
 ├── apps/
 │   ├── api/
 │   │   ├── prisma/
@@ -112,9 +112,9 @@ The API listens on `http://localhost:4001` by default and the frontend runs on `
 ## Database
 
 ```bash
-npm run --workspace @viwaah/api db:generate
-npm run --workspace @viwaah/api db:migrate
-npm run --workspace @viwaah/api db:migrate:deploy
+npm run --workspace @alankar/api db:generate
+npm run --workspace @alankar/api db:migrate
+npm run --workspace @alankar/api db:migrate:deploy
 ```
 
 ## API Overview

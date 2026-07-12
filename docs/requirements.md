@@ -11,7 +11,7 @@ This document describes requirements reflected by the current implementation plu
 | FR-01 | Users can upload a bride portrait image. |
 | FR-02 | Users can upload a groom portrait image. |
 | FR-03 | Uploads accept JPEG, PNG, and WebP files. |
-| FR-04 | Each uploaded image is stored in Cloudinary under `viwaah/uploads`. |
+| FR-04 | Each uploaded image is stored in Cloudinary under `alankar/uploads`. |
 | FR-05 | Upload metadata is persisted in PostgreSQL. |
 | FR-06 | Successful uploads return an `uploadId`. |
 | FR-07 | Uploaded images can be deleted by upload ID. |
@@ -30,7 +30,7 @@ This document describes requirements reflected by the current implementation plu
 | FR-15 | Users can provide an optional non-negative integer seed. |
 | FR-16 | The system creates sequential seeds from the base seed. |
 | FR-17 | The system builds a full wedding prompt from theme attributes and custom prompt text. |
-| FR-18 | Generated images are uploaded to Cloudinary under `viwaah/generated`. |
+| FR-18 | Generated images are uploaded to Cloudinary under `alankar/generated`. |
 | FR-19 | Generated image metadata is persisted in PostgreSQL. |
 
 ### Job Management

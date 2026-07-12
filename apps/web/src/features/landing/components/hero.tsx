@@ -32,7 +32,7 @@ export function Hero() {
           </p>
           <div className="mt-9 flex flex-col gap-4 sm:flex-row">
             <Button asChild size="lg">
-              <a href="/generate">
+              <a href="/choose-style">
                 Start Creating
                 <ArrowRight aria-hidden="true" />
               </a>
@@ -65,14 +65,14 @@ export function Hero() {
         >
           <GlassCard className="relative overflow-hidden p-3">
             <div className="absolute inset-x-8 top-8 z-10 flex items-center justify-between rounded-full border border-white/10 bg-background/55 px-4 py-2 backdrop-blur-xl">
-              <span className="text-xs text-muted-foreground">ViWaah Studio</span>
+              <span className="text-xs text-muted-foreground">ALANKAR Studio</span>
               <span className="flex items-center gap-2 text-xs text-primary">
                 <Sparkles className="size-3.5" aria-hidden="true" />
                 Cinematic
               </span>
             </div>
             <Image
-              src="/viwaah-hero-preview.png"
+              src="/alankar-hero-preview.png"
               alt="Cinematic AI-generated wedding portrait preview of a couple"
               width={1536}
               height={1024}

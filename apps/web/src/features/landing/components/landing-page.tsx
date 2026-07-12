@@ -32,7 +32,7 @@ const steps = [
   {
     icon: Upload,
     title: "Upload Bride & Groom Photos",
-    text: "Begin with clear portraits. ViWaah studies facial identity, expression, and light before styling the scene.",
+    text: "Begin with clear portraits. ALANKAR studies facial identity, expression, and light before styling the scene.",
   },
   {
     icon: Palette,
@@ -105,7 +105,7 @@ const pricing = [
 ];
 
 const faqs = [
-  ["Will the portraits still look like us?", "ViWaah is designed around identity preservation, using your uploaded photos as the visual foundation for every generated portrait."],
+  ["Will the portraits still look like us?", "ALANKAR is designed around identity preservation, using your uploaded photos as the visual foundation for every generated portrait."],
   ["Can we choose cultural wedding styles?", "Yes. Themes include Indian regional styles, palace ceremonies, beach weddings, Christian weddings, Muslim weddings, receptions, and more."],
   ["Are the images ready for print?", "Premium and Studio exports are prepared for high-resolution albums, announcements, framed prints, and social sharing."],
   ["Do we need professional source photos?", "Professional photos help, but clear phone portraits with visible faces and balanced lighting are enough to start."],
@@ -149,7 +149,7 @@ function ArtPanel({ label, tall = false }: { label: string; tall?: boolean }) {
   return (
     <div className={`group relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#17130f] ${tall ? "min-h-[520px]" : "min-h-[320px]"}`}>
       <Image
-        src="/viwaah-hero-preview.png"
+        src="/alankar-hero-preview.png"
         alt={`${label} wedding portrait`}
         fill
         sizes="(max-width: 768px) 100vw, 40vw"
@@ -159,7 +159,7 @@ function ArtPanel({ label, tall = false }: { label: string; tall?: boolean }) {
       <div className="absolute bottom-6 left-6 right-6 flex items-end justify-between gap-4">
         <p className="font-serif text-3xl text-[#fff8e8]">{label}</p>
         <span className="rounded-full border border-primary/30 bg-black/40 px-4 py-2 text-xs uppercase tracking-[0.2em] text-primary backdrop-blur">
-          ViWaah
+          ALANKAR
         </span>
       </div>
     </div>
@@ -172,9 +172,9 @@ function ComparisonSlider() {
   return (
     <div className="relative mx-auto max-w-5xl overflow-hidden rounded-[2rem] border border-white/10 bg-[#15110e] shadow-2xl shadow-black/40">
       <div className="relative aspect-[4/5] sm:aspect-[16/9]">
-        <Image src="/viwaah-hero-preview.png" alt="Original uploaded couple photo" fill sizes="100vw" className="object-cover grayscale saturate-50 opacity-55" />
+        <Image src="/alankar-hero-preview.png" alt="Original uploaded couple photo" fill sizes="100vw" className="object-cover grayscale saturate-50 opacity-55" />
         <div className="absolute inset-0 overflow-hidden" style={{ width: `${value}%` }}>
-          <Image src="/viwaah-hero-preview.png" alt="AI-generated cinematic wedding portrait" fill sizes="100vw" className="object-cover saturate-125" />
+          <Image src="/alankar-hero-preview.png" alt="AI-generated cinematic wedding portrait" fill sizes="100vw" className="object-cover saturate-125" />
           <div className="absolute inset-0 bg-gradient-to-r from-primary/15 to-transparent" />
         </div>
         <div className="absolute inset-y-0 z-10 w-px bg-primary" style={{ left: `${value}%` }} />
@@ -203,7 +203,7 @@ function Hero() {
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 py-28">
       <motion.div style={{ y, scale }} className="absolute inset-0">
-        <Image src="/viwaah-hero-preview.png" alt="Cinematic AI wedding portrait" fill priority sizes="100vw" className="object-cover" />
+        <Image src="/alankar-hero-preview.png" alt="Cinematic AI wedding portrait" fill priority sizes="100vw" className="object-cover" />
       </motion.div>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(213,171,93,0.18),transparent_34rem),linear-gradient(180deg,rgba(6,5,4,0.48),rgba(6,5,4,0.9)_72%,#0b0908)]" />
       <motion.div style={{ opacity }} className="relative z-10 mx-auto max-w-6xl text-center">
@@ -218,7 +218,7 @@ function Hero() {
         </motion.p>
         <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.36, duration: 0.75 }} className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
           <Button asChild size="lg" className="rounded-full px-8">
-            <a href="/generate">Generate Now <ArrowRight className="size-4" /></a>
+            <a href="/choose-style">Generate Now <ArrowRight className="size-4" /></a>
           </Button>
           <Button asChild size="lg" variant="outline" className="rounded-full border-white/20 bg-black/25 px-8 backdrop-blur">
             <a href="#gallery">Explore Gallery</a>
@@ -237,14 +237,14 @@ export function LandingPage() {
     <div className="min-h-screen bg-[#0b0908] text-[#fff8e8]">
       <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-black/35 backdrop-blur-2xl">
         <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 sm:px-8">
-          <a href="/" className="font-serif text-3xl tracking-wide">ViWaah</a>
+          <a href="/" className="font-serif text-3xl tracking-wide">ALANKAR</a>
           <div className="hidden items-center gap-8 lg:flex">
             {navItems.map((item) => (
               <a key={item.href} href={item.href} className="text-sm text-[#eee3cf]/70 transition hover:text-primary">{item.label}</a>
             ))}
           </div>
           <Button asChild size="sm" className="rounded-full">
-            <a href="/generate">Generate Now</a>
+            <a href="/choose-style">Generate Now</a>
           </Button>
         </nav>
       </header>
@@ -253,7 +253,7 @@ export function LandingPage() {
         <Hero />
 
         <section id="process" className="px-6 py-28 sm:px-8">
-          <SectionHeading eyebrow="How ViWaah Works" title="A calm, cinematic path from portrait to keepsake." text="The experience feels more like entering a private creative studio than filling out a form." />
+          <SectionHeading eyebrow="How ALANKAR Works" title="A calm, cinematic path from portrait to keepsake." text="The experience feels more like entering a private creative studio than filling out a form." />
           <div className="mx-auto grid max-w-7xl gap-5 lg:grid-cols-4">
             {steps.map((step, index) => {
               const Icon = step.icon;
@@ -274,7 +274,7 @@ export function LandingPage() {
           <div className="mx-auto grid max-w-7xl gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {themes.map((theme, index) => (
               <motion.div key={theme} initial={{ opacity: 0, y: 28, scale: 0.96 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} whileHover={{ y: -8 }} viewport={{ once: true, amount: 0.25 }} transition={{ delay: index * 0.045, duration: 0.55 }} className="group relative min-h-[310px] overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#15110e] p-6">
-                <Image src="/viwaah-hero-preview.png" alt={`${theme} theme`} fill sizes="(max-width: 768px) 100vw, 25vw" className="object-cover opacity-45 transition duration-700 group-hover:scale-110 group-hover:opacity-65" />
+                <Image src="/alankar-hero-preview.png" alt={`${theme} theme`} fill sizes="(max-width: 768px) 100vw, 25vw" className="object-cover opacity-45 transition duration-700 group-hover:scale-110 group-hover:opacity-65" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
                 <div className="relative flex h-full flex-col justify-end">
                   <p className="font-serif text-3xl">{theme}</p>
@@ -330,7 +330,7 @@ export function LandingPage() {
         </section>
 
         <section id="pricing" className="px-6 py-28 sm:px-8">
-          <SectionHeading eyebrow="Pricing" title="Choose the album your story deserves." text="Start small, create a full wedding portrait collection, or scale ViWaah for studio workflows." />
+          <SectionHeading eyebrow="Pricing" title="Choose the album your story deserves." text="Start small, create a full wedding portrait collection, or scale ALANKAR for studio workflows." />
           <div className="mx-auto grid max-w-6xl gap-5 lg:grid-cols-3">
             {pricing.map((tier) => (
               <motion.article key={tier.name} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.25 }} variants={fadeUp} className={`rounded-[1.75rem] border p-8 ${tier.featured ? "border-primary/50 bg-primary/10 shadow-2xl shadow-primary/10" : "border-white/10 bg-white/[0.045]"}`}>
@@ -343,7 +343,7 @@ export function LandingPage() {
                   ))}
                 </div>
                 <Button asChild className="mt-9 w-full rounded-full" variant={tier.featured ? "default" : "outline"}>
-                  <a href="/generate">Select {tier.name}</a>
+                  <a href="/choose-style">Select {tier.name}</a>
                 </Button>
               </motion.article>
             ))}
@@ -368,7 +368,7 @@ export function LandingPage() {
 
       <footer className="border-t border-white/10 px-6 py-12 sm:px-8">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 text-sm text-[#d6cbb5]/70 sm:flex-row sm:items-center sm:justify-between">
-          <p className="font-serif text-3xl text-[#fff8e8]">ViWaah</p>
+          <p className="font-serif text-3xl text-[#fff8e8]">ALANKAR</p>
           <p>AI wedding portraits for modern love stories.</p>
         </div>
       </footer>

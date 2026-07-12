@@ -43,7 +43,7 @@ sequenceDiagram
     FE->>FE: Store File in component state
     FE->>API: POST /api/v1/upload
     API->>API: Multer validates MIME type, size, and file count
-    API->>C: upload_stream to viwaah/uploads
+    API->>C: upload_stream to alankar/uploads
     C-->>API: public_id, secure_url, width, height, format
     API->>DB: Create Upload
     DB-->>API: Upload row
@@ -100,7 +100,7 @@ sequenceDiagram
     loop For each missing seed
         W->>POL: GET /prompt/{prompt} with model, size, seed, and optional image reference
         POL-->>W: image response bytes
-        W->>C: Upload data URL to viwaah/generated
+        W->>C: Upload data URL to alankar/generated
         C-->>W: public_id, secure_url, width, height
         W->>DB: Create GeneratedImage
         W->>DB: Update progress
@@ -135,7 +135,7 @@ sequenceDiagram
 
 Details:
 
-- The key is `viwaah:last-generation-job-id`.
+- The key is `alankar:last-generation-job-id`.
 - Polling starts 500 ms after job creation and repeats every 2.5 seconds.
 - On page load, the workspace tries to restore the last job from `localStorage`.
 - Generated image thumbnails open a responsive fullscreen viewer with zoom controls, drag panning when zoomed, previous/next navigation, ESC/outside-click close, metadata, original Cloudinary download, and open-in-new-tab actions.

@@ -40,7 +40,7 @@ function validateFile(file: File) {
 export function UploadDropzone({
   id = "photo-upload",
   title = "Upload couple photos",
-  description = "Add clear portraits and let ViWaah preserve faces while composing a cinematic wedding frame.",
+  description = "Add clear portraits and let ALANKAR preserve faces while composing a cinematic wedding frame.",
   value = null,
   onChange,
 }: UploadDropzoneProps) {

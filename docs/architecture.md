@@ -2,7 +2,7 @@
 
 ## Overview
 
-ViWaah is an Nx monorepo with two applications:
+ALANKAR is an Nx monorepo with two applications:
 
 - `apps/web`: Next.js 16 frontend.
 - `apps/api`: Express 5 API and in-process BullMQ worker.
@@ -63,7 +63,7 @@ The generation workspace:
 - Uploads images through `POST /upload`.
 - Creates jobs through `POST /generate`.
 - Polls `GET /generate/:id/status` every 2.5 seconds after an initial 500 ms delay.
-- Stores the last job ID in `localStorage` under `viwaah:last-generation-job-id`.
+- Stores the last job ID in `localStorage` under `alankar:last-generation-job-id`.
 - Uses `NEXT_PUBLIC_API_BASE_URL`, defaulting to `http://localhost:4000/api/v1`.
 
 The visible style options include values beyond the backend's three canonical themes. Backend aliases map `Royal`, `Traditional`, `Temple`, `Palace`, `Beach`, and `Reception` to canonical themes. Unknown values such as `North Indian`, `Christian`, `Muslim`, and `Custom` currently fall back to `South Indian`.
@@ -176,8 +176,8 @@ Cloudinary integration lives in `apps/api/src/storage/cloudinary.ts`.
 
 | Function | Use |
 |---|---|
-| `uploadImageBuffer` | Uploads source upload buffers to `viwaah/uploads` |
-| `uploadImageUrl` | Uploads generated image URLs or data URLs to `viwaah/generated` |
+| `uploadImageBuffer` | Uploads source upload buffers to `alankar/uploads` |
+| `uploadImageUrl` | Uploads generated image URLs or data URLs to `alankar/generated` |
 | `deleteImage` | Deletes a Cloudinary image by public ID |
 
 ## AI Provider

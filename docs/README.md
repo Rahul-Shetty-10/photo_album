@@ -1,6 +1,6 @@
-# ViWaah Documentation
+# ALANKAR Documentation
 
-This folder documents the current implementation of ViWaah. The codebase is the source of truth; these documents were reviewed against the repository structure, API code, Prisma schema, queue worker, provider abstraction, and frontend flows.
+This folder documents the current implementation of ALANKAR. The codebase is the source of truth; these documents were reviewed against the repository structure, API code, Prisma schema, queue worker, provider abstraction, and frontend flows.
 
 ## Document Map
 
@@ -15,7 +15,7 @@ This folder documents the current implementation of ViWaah. The codebase is the 
 
 ## Current Implementation Summary
 
-ViWaah is an Nx monorepo with a Next.js frontend in `apps/web` and an Express API in `apps/api`.
+ALANKAR is an Nx monorepo with a Next.js frontend in `apps/web` and an Express API in `apps/api`.
 
 The backend stores metadata in PostgreSQL through Prisma, uploads source and generated images to Cloudinary, enqueues generation jobs with BullMQ, and generates wedding portraits through an `ImageGenerationProvider` abstraction. The only implemented provider is Pollinations image generation, using `POLLINATIONS_IMAGE_MODEL` with `flux` as the default.
 

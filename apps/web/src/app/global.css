@@ -142,3 +142,63 @@
     @apply bg-primary/30 text-foreground;
   }
 }
+
+@keyframes style-scroll-left {
+  from {
+    transform: translateX(-50%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes style-scroll-right {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-style-scroll-left {
+  animation: style-scroll-left 34s linear infinite;
+}
+
+.animate-style-scroll-right {
+  animation: style-scroll-right 38s linear infinite;
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes form-section-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-modal-in {
+  animation: modal-in 180ms ease-out both;
+}
+
+.animate-form-section {
+  animation: form-section-in 220ms ease-out both;
+}

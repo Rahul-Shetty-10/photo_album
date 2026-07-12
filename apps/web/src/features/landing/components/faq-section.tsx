@@ -8,9 +8,9 @@ import { Section } from "@/components/design/section";
 
 const faqs = [
   {
-    question: "Is ViWaah a wedding planning website?",
+    question: "Is ALANKAR a wedding planning website?",
     answer:
-      "No. ViWaah is an AI SaaS product for transforming couple photos into professional wedding portraits.",
+      "No. ALANKAR is an AI SaaS product for transforming couple photos into professional wedding portraits.",
   },
   {
     question: "Does the product generate real wedding photos?",

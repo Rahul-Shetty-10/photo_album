@@ -1,6 +1,6 @@
 # Database Schema
 
-ViWaah uses PostgreSQL with Prisma 7. The schema is defined in `apps/api/prisma/schema.prisma`.
+ALANKAR uses PostgreSQL with Prisma 7. The schema is defined in `apps/api/prisma/schema.prisma`.
 
 Related docs: [Architecture](./architecture.md), [Data API](./data_api.md), [Application flow](./appflow.md).
 

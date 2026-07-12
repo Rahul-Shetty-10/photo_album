@@ -1,7 +1,7 @@
 import './global.css';
 
 export const metadata = {
-  title: 'ViWaah | AI Wedding Portraits',
+  title: 'ALANKAR | AI Wedding Portraits',
   description:
     'Transform ordinary couple photos into cinematic wedding portraits with AI.',
 }

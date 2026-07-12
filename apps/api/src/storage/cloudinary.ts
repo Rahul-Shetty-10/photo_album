@@ -33,7 +33,7 @@ export const uploadImageBuffer = async (file: Express.Multer.File): Promise<Clou
   const result = await new Promise<UploadApiResponse>((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       {
-        folder: "viwaah/uploads",
+        folder: "alankar/uploads",
         resource_type: "image",
       },
       (error, uploadResult) => {
@@ -64,7 +64,7 @@ export const uploadImageUrl = async (url: string): Promise<CloudinaryImageUpload
   logger.info({ url }, "Uploading remote generated image to Cloudinary");
 
   const result = await cloudinary.uploader.upload(url, {
-    folder: "viwaah/generated",
+    folder: "alankar/generated",
     resource_type: "image",
   });
 
