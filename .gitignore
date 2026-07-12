@@ -54,3 +54,5 @@ apps/api/.env
 
 *.log
 *.err.log
+
+.env
