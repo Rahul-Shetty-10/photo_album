@@ -43,7 +43,7 @@ const weddingStyles = [
 
 const aspectRatios = ["1:1", "2:3", "3:4", "4:3", "16:9"];
 const qualities = ["Standard", "High", "Ultra"];
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:4000/api/v1";
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:4001/api/v1";
 
 type UploadResponse = {
   secureUrl: string;

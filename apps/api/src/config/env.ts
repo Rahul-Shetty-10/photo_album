@@ -3,6 +3,7 @@ import path from "node:path";
 
 import { z } from "zod";
 
+loadEnv({ path: path.resolve(__dirname, "../../../../.env"), override: true });
 loadEnv();
 loadEnv({ path: path.resolve(process.cwd(), "apps/api/.env") });
 loadEnv({ path: path.resolve(process.cwd(), ".env.local"), override: false });
@@ -19,7 +20,7 @@ const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   POLLINATIONS_API_KEY: z.string().min(1),
   POLLINATIONS_IMAGE_MODEL: z.string().min(1).default("flux"),
-  PORT: z.coerce.number().int().positive().max(65535).default(4000),
+  PORT: z.coerce.number().int().positive().max(65535).default(4001),
   UPSTASH_REDIS_URL: z.string().url(),
 });
 

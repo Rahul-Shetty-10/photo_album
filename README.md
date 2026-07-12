@@ -85,7 +85,7 @@ Fill `apps/api/.env` with your database, Redis, Cloudinary, and Pollinations cre
 | Variable | Purpose |
 |---|---|
 | `NODE_ENV` | `development`, `test`, or `production` |
-| `PORT` | API port, default `4000` |
+| `PORT` | API port, default `4001` |
 | `API_VERSION` | API prefix version, default `v1` |
 | `APP_VERSION` | Version returned by health checks |
 | `LOG_LEVEL` | Pino log level |
@@ -98,7 +98,7 @@ Fill `apps/api/.env` with your database, Redis, Cloudinary, and Pollinations cre
 | `POLLINATIONS_API_KEY` | Pollinations API key |
 | `POLLINATIONS_IMAGE_MODEL` | Image model, default `flux`; `kontext` supports image references only on Pollinations accounts/endpoints that expose it |
 
-The frontend reads `NEXT_PUBLIC_API_BASE_URL`; when unset it uses `http://localhost:4000/api/v1`.
+The frontend reads `NEXT_PUBLIC_API_BASE_URL`; when unset it uses `http://localhost:4001/api/v1`.
 
 ## Development
 
@@ -107,7 +107,7 @@ npx nx serve api
 npx nx dev web
 ```
 
-The API listens on `http://localhost:4000` by default and the frontend runs on `http://localhost:3000`.
+The API listens on `http://localhost:4001` by default and the frontend runs on `http://localhost:3000`.
 
 ## Database
 
