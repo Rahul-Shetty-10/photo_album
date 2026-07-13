@@ -613,7 +613,7 @@ export function GenerateWorkspace() {
                         aria-pressed={isSelected}
                         onClick={() => setSelectedStyle(style)}
                         className={cn(
-                          "group relative min-h-24 rounded-2xl border border-border/70 bg-white/[0.04] p-4 text-left transition-all hover:border-primary/50 hover:bg-primary/10 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:outline-none",
+                          "group relative min-h-24 rounded-2xl border border-border/70 bg-background/50 p-4 text-left transition-all hover:border-primary/50 hover:bg-primary/10 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:outline-none",
                           isSelected && "border-primary/70 bg-primary/15 shadow-lg shadow-primary/10"
                         )}
                       >
@@ -670,7 +670,7 @@ export function GenerateWorkspace() {
                           aria-pressed={aspectRatio === ratio}
                           onClick={() => setAspectRatio(ratio)}
                           className={cn(
-                            "rounded-full border border-border/70 bg-white/[0.04] px-4 py-2 text-sm text-foreground transition-colors hover:border-primary/50 hover:bg-primary/10 focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:outline-none",
+                            "rounded-full border border-border/70 bg-background/50 px-4 py-2 text-sm text-foreground transition-colors hover:border-primary/50 hover:bg-primary/10 focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:outline-none",
                             aspectRatio === ratio && "border-primary/70 bg-primary/15 text-primary"
                           )}
                         >
@@ -689,7 +689,7 @@ export function GenerateWorkspace() {
                           aria-pressed={quality === item}
                           onClick={() => setQuality(item)}
                           className={cn(
-                            "rounded-full border border-border/70 bg-white/[0.04] px-4 py-2 text-sm text-foreground transition-colors hover:border-primary/50 hover:bg-primary/10 focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:outline-none",
+                            "rounded-full border border-border/70 bg-background/50 px-4 py-2 text-sm text-foreground transition-colors hover:border-primary/50 hover:bg-primary/10 focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:outline-none",
                             quality === item && "border-primary/70 bg-primary/15 text-primary"
                           )}
                         >
@@ -719,7 +719,7 @@ export function GenerateWorkspace() {
                           <button
                             key={image.id ?? image.url}
                             type="button"
-                            className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] text-left outline-none transition hover:border-primary/45 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/35"
+                            className="group relative overflow-hidden rounded-2xl border border-border bg-card text-left outline-none transition hover:border-primary/45 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/35"
                             onClick={() => setActiveGalleryIndex(index)}
                           >
                             <img
@@ -727,7 +727,7 @@ export function GenerateWorkspace() {
                               alt="Generated wedding portrait"
                               className="aspect-[4/5] w-full object-cover transition duration-500 group-hover:scale-105"
                             />
-                            <span className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-gradient-to-t from-black/75 to-transparent p-3 text-xs text-[#fff8e8] opacity-0 transition group-hover:opacity-100 group-focus-visible:opacity-100">
+                            <span className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-gradient-to-t from-black/75 to-transparent p-3 text-xs text-white opacity-0 transition group-hover:opacity-100 group-focus-visible:opacity-100">
                               <span>View full size</span>
                               <Maximize2 className="size-4" aria-hidden="true" />
                             </span>

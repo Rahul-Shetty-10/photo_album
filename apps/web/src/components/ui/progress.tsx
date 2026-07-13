@@ -13,7 +13,7 @@ function Progress({ className, value = 0, ...props }: ProgressProps) {
     <div
       data-slot="progress"
       className={cn(
-        "h-2 overflow-hidden rounded-full bg-white/10 shadow-inner shadow-black/20",
+        "h-2 overflow-hidden rounded-full bg-muted shadow-inner shadow-black/10",
         className
       )}
       role="progressbar"

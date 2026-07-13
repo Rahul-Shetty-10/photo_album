@@ -95,7 +95,7 @@ export function UploadDropzone({
       <motion.div
         animate={{ scale: isDragging ? 1.01 : 1 }}
         className={cn(
-          "relative overflow-hidden rounded-[1.5rem] border border-dashed border-primary/30 bg-black/15 p-6 text-center transition-colors",
+          "relative overflow-hidden rounded-[1.5rem] border border-dashed border-primary/30 bg-background/45 p-6 text-center transition-colors",
           isDragging && "border-primary/70 bg-primary/10"
         )}
         onClick={() => {
