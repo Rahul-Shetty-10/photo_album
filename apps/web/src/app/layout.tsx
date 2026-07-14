@@ -1,11 +1,14 @@
 import './global.css';
 
+import { Toaster } from 'sonner';
+
 import { ThemeToggle } from '@/components/theme-toggle';
+import { AuthProvider } from '@/features/auth/auth-provider';
 
 export const metadata = {
-  title: 'ALANKAR | AI Wedding Portraits',
+  title: 'ALANKAAR | Photography Workflow Platform',
   description:
-    'Transform ordinary couple photos into cinematic wedding portraits with AI.',
+    'AI-powered photography workflows for photographers, studios, and creative professionals.',
 }
 
 export default function RootLayout({
@@ -21,8 +24,11 @@ export default function RootLayout({
             __html: "try{document.documentElement.classList.toggle('dark',localStorage.getItem('alankar-theme')==='dark')}catch(e){}",
           }}
         />
-        {children}
-        <ThemeToggle />
+        <AuthProvider>
+          {children}
+          <ThemeToggle />
+          <Toaster richColors position="top-right" />
+        </AuthProvider>
       </body>
     </html>
   )

@@ -14,6 +14,40 @@ model User {
   updatedAt    DateTime        @updatedAt
   uploads      Upload[]
   jobs         GenerationJob[]
+  projects     Project[]
+}
+
+enum ProjectStatus {
+  DRAFT
+  IN_PROGRESS
+  COMPLETED
+  ARCHIVED
+}
+
+enum ProjectStep {
+  EVENT
+  SUBJECTS
+  RELATIONSHIPS
+  THEME
+  TEMPLATE
+  REVIEW
+  GENERATE
+}
+
+model Project {
+  id            String        @id @default(uuid()) @db.Uuid
+  userId        String        @db.Uuid
+  name          String
+  eventCategory String
+  status        ProjectStatus @default(DRAFT)
+  currentStep   ProjectStep   @default(EVENT)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, updatedAt])
+  @@index([status])
 }
 
 model Upload {

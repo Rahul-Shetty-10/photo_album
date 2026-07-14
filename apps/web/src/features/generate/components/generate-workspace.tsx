@@ -27,17 +27,17 @@ import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
-const weddingStyles = [
-  "Royal",
-  "Traditional",
-  "Temple",
-  "Palace",
-  "Beach",
-  "Reception",
-  "South Indian",
-  "North Indian",
-  "Christian",
-  "Muslim",
+const photographyStyles = [
+  "Editorial",
+  "Portrait",
+  "Event",
+  "Corporate",
+  "Cultural",
+  "Family",
+  "Couple",
+  "Sports",
+  "Studio",
+  "Documentary",
   "Custom",
 ];
 
@@ -266,7 +266,7 @@ function GeneratedImageLightbox({
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-4 py-3 sm:px-5">
             <div className="min-w-0">
               <p className="text-xs uppercase tracking-[0.28em] text-primary">Generated portrait</p>
-              <p className="mt-1 truncate font-serif text-xl text-[#fff8e8]">{activeImage.theme ?? "Wedding portrait"}</p>
+              <p className="mt-1 truncate font-serif text-xl text-[#fff8e8]">{activeImage.theme ?? "Generated photograph"}</p>
             </div>
             <div className="flex items-center gap-2">
               <Button type="button" variant="outline" size="icon-sm" aria-label="Zoom out" onClick={() => setZoom((value) => Math.max(1, value - 0.25))}>
@@ -300,7 +300,7 @@ function GeneratedImageLightbox({
               <motion.img
                 key={originalUrl}
                 src={originalUrl}
-                alt="Full resolution generated wedding portrait"
+                alt="Full resolution generated photograph"
                 className="max-h-full max-w-full select-none object-contain shadow-2xl shadow-black/40"
                 draggable={false}
                 style={{ scale: zoom }}
@@ -362,7 +362,7 @@ export function GenerateWorkspace() {
   const [groomPhoto, setGroomPhoto] = React.useState<File | null>(null);
   const [brideUpload, setBrideUpload] = React.useState<UploadResponse | null>(null);
   const [groomUpload, setGroomUpload] = React.useState<UploadResponse | null>(null);
-  const [selectedStyle, setSelectedStyle] = React.useState("Royal");
+  const [selectedStyle, setSelectedStyle] = React.useState("Editorial");
   const [aspectRatio, setAspectRatio] = React.useState("3:4");
   const [quality, setQuality] = React.useState("High");
   const [customPrompt, setCustomPrompt] = React.useState("");
@@ -478,7 +478,7 @@ export function GenerateWorkspace() {
     setActiveJobId(null);
 
     if (!bridePhoto || !groomPhoto) {
-      setError("Please upload both bride and groom photos before generating.");
+      setError("Please upload both subject photos before generating.");
       return;
     }
 
@@ -534,7 +534,7 @@ export function GenerateWorkspace() {
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-8">
         <nav className="flex items-center justify-between" aria-label="Workspace navigation">
           <a className="font-serif text-2xl tracking-wide text-foreground" href="/">
-            ALANKAR
+            ALANKAAR
           </a>
           <Button asChild variant="outline" size="sm">
             <a href="/">
@@ -553,10 +553,10 @@ export function GenerateWorkspace() {
           <div>
             <Badge>AI workspace</Badge>
             <h1 className="mt-5 max-w-4xl font-serif text-5xl leading-tight text-foreground sm:text-6xl">
-              Generate a cinematic wedding portrait
+              Prepare a polished photography output
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
-              Upload both portraits, choose a wedding style, and prepare the generation inputs in one focused studio.
+              Upload subject references, choose a creative direction, and prepare the generation inputs in one focused studio.
             </p>
           </div>
           <Button size="lg" type="button" disabled={!canGenerate} onClick={handleGenerate}>
@@ -574,15 +574,15 @@ export function GenerateWorkspace() {
           >
             <UploadDropzone
               id="bride-photo"
-              title="Bride Photo"
-              description="Upload a clear bride portrait with good lighting and an unobstructed face."
+              title="Primary Subject"
+              description="Upload a clear primary subject portrait with good lighting and an unobstructed face."
               value={bridePhoto}
               onChange={handleBridePhotoChange}
             />
             <UploadDropzone
               id="groom-photo"
-              title="Groom Photo"
-              description="Upload a clear groom portrait with good lighting and an unobstructed face."
+              title="Secondary Subject"
+              description="Upload a clear secondary subject portrait with good lighting and an unobstructed face."
               value={groomPhoto}
               onChange={handleGroomPhotoChange}
             />
@@ -596,14 +596,14 @@ export function GenerateWorkspace() {
           >
             <Card>
               <CardHeader>
-                <CardTitle>Wedding Style</CardTitle>
+                <CardTitle>Creative Direction</CardTitle>
                 <CardDescription>
                   Select the visual direction for the final portrait.
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-2">
-                  {weddingStyles.map((style) => {
+                  {photographyStyles.map((style) => {
                     const isSelected = selectedStyle === style;
 
                     return (
@@ -724,7 +724,7 @@ export function GenerateWorkspace() {
                           >
                             <img
                               src={image.url}
-                              alt="Generated wedding portrait"
+                              alt="Generated photograph"
                               className="aspect-[4/5] w-full object-cover transition duration-500 group-hover:scale-105"
                             />
                             <span className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-gradient-to-t from-black/75 to-transparent p-3 text-xs text-white opacity-0 transition group-hover:opacity-100 group-focus-visible:opacity-100">

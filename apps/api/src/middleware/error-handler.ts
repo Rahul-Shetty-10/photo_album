@@ -6,6 +6,8 @@ import { AppError } from "../utils/app-error";
 import { logger } from "../utils/logger";
 
 export const globalErrorHandler: ErrorRequestHandler = (error, request, response, _next) => {
+  void _next;
+
   const appError =
     error instanceof AppError
       ? error

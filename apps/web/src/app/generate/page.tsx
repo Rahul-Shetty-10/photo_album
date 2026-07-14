@@ -1,5 +1,10 @@
 import { GenerateWorkspace } from "@/features/generate/components/generate-workspace";
+import { ProtectedRoute } from "@/features/auth/protected-route";
 
 export default function GeneratePage() {
-  return <GenerateWorkspace />;
+  return (
+    <ProtectedRoute>
+      <GenerateWorkspace />
+    </ProtectedRoute>
+  );
 }

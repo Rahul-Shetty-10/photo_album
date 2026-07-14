@@ -1,118 +1,112 @@
 "use client";
 
-import Image from "next/image";
 import {
+  Aperture,
   ArrowRight,
+  Building2,
   Check,
   ChevronDown,
-  Crown,
   Download,
-  Fingerprint,
   Images,
-  Lock,
+  Layers3,
   Palette,
-  Upload,
-  WandSparkles,
-  Zap,
+  Sparkles,
+  Users,
 } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/features/auth/auth-provider";
 
 const navItems = [
-  { label: "Process", href: "#process" },
-  { label: "Themes", href: "#themes" },
-  { label: "Gallery", href: "#gallery" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "FAQ", href: "#faq" },
+  { label: "Home", href: "/" },
+  { label: "Features", href: "#features" },
+  { label: "Workflow", href: "#workflow" },
 ];
 
-const steps = [
-  {
-    icon: Upload,
-    title: "Upload Bride & Groom Photos",
-    text: "Begin with clear portraits. ALANKAR studies facial identity, expression, and light before styling the scene.",
-  },
-  {
-    icon: Palette,
-    title: "Choose Wedding Theme",
-    text: "Select a ceremony mood, wardrobe language, venue atmosphere, and cultural direction.",
-  },
-  {
-    icon: WandSparkles,
-    title: "AI Generates Wedding Portraits",
-    text: "The studio composes cinematic portraits with refined styling, warm skin tones, and album-ready detail.",
-  },
-  {
-    icon: Download,
-    title: "Download Your Album",
-    text: "Export polished portraits for invitations, keepsakes, announcements, and your private gallery.",
-  },
+const heroImage =
+  "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=2200&q=90";
+
+const categoryImages = [
+  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=900&q=85",
+  "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=900&q=85",
+  "https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&w=900&q=85",
+  "https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=900&q=85",
+  "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=900&q=85",
+  "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=900&q=85",
+  "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=900&q=85",
+  "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=900&q=85",
+  "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=900&q=85",
+  "https://images.unsplash.com/photo-1504609813442-a8924e83f76e?auto=format&fit=crop&w=900&q=85",
 ];
 
-const themes = [
-  "Royal Palace",
-  "South Indian",
-  "North Indian",
-  "Beach Wedding",
-  "Garden Wedding",
-  "Christian Wedding",
-  "Muslim Wedding",
-  "Reception",
+const categories = [
+  { title: "Weddings", type: "Personal", image: categoryImages[2] },
+  { title: "Portraits", type: "Personal", image: categoryImages[0] },
+  { title: "Couple Shoots", type: "Personal", image: categoryImages[1] },
+  { title: "Family Events", type: "Personal", image: categoryImages[3] },
+  { title: "Parties", type: "Personal", image: categoryImages[4] },
+  { title: "Conferences", type: "Professional", image: categoryImages[5] },
+  { title: "Seminars", type: "Professional", image: categoryImages[6] },
+  { title: "Corporate Events", type: "Professional", image: categoryImages[7] },
+  { title: "Sports", type: "Professional", image: categoryImages[8] },
+  { title: "Cultural Events", type: "Professional", image: categoryImages[9] },
 ];
 
 const features = [
-  { icon: Fingerprint, title: "Identity Preservation", text: "Portraits are guided by the couple's real facial details and natural expression." },
-  { icon: Crown, title: "AI Wedding Styling", text: "Attire, jewelry, backdrop, florals, and lighting are composed as one elegant frame." },
-  { icon: Images, title: "High Resolution", text: "Designed for premium albums, framed prints, wedding sites, and social announcements." },
-  { icon: Zap, title: "Fast Generation", text: "Move from upload to cinematic preview in seconds, then refine the mood instantly." },
-  { icon: Palette, title: "Multiple Themes", text: "Explore cultural ceremonies, venue styles, and reception looks without reshoots." },
-  { icon: Lock, title: "Secure Uploads", text: "Private photos are handled with a product flow built around trust and discretion." },
-];
-
-const gallery = [
-  { title: "Sangeet Glow", size: "md:row-span-2" },
-  { title: "Palace Vows", size: "" },
-  { title: "Coastal Ceremony", size: "md:row-span-2" },
-  { title: "Garden Portrait", size: "" },
-  { title: "Cathedral Light", size: "" },
-  { title: "Reception Night", size: "" },
-];
-
-const testimonials = [
   {
-    quote:
-      "It felt like seeing our wedding mood board become real before the actual shoot. The portraits looked emotional, not artificial.",
-    name: "Aarav & Meera",
+    icon: Sparkles,
+    title: "AI-assisted Photo Enhancement",
+    text: "Refine light, mood, styling, and image clarity while keeping the photographer's intent at the center.",
   },
   {
-    quote:
-      "The styling had the richness of an editorial campaign while still looking like us. That balance is rare.",
-    name: "Nisha R.",
+    icon: Images,
+    title: "Intelligent Album Creation",
+    text: "Shape event stories into polished album directions with clear visual hierarchy and export-ready structure.",
   },
   {
-    quote:
-      "We used the images for our announcement and everyone thought we had already done a destination pre-wedding shoot.",
-    name: "Daniel & Sara",
+    icon: Palette,
+    title: "Theme-aware Editing",
+    text: "Adapt color, atmosphere, wardrobe cues, and scene treatment to each event category.",
+  },
+  {
+    icon: Users,
+    title: "Relationship-aware Prompting",
+    text: "Preserve subject priority, relationships, and group context for personal and professional events.",
+  },
+  {
+    icon: Building2,
+    title: "Professional Workflows",
+    text: "Support studios documenting conferences, seminars, expert visits, corporate events, culture, and sports.",
+  },
+  {
+    icon: Download,
+    title: "High-resolution Export",
+    text: "Prepare final imagery for client review, premium albums, social delivery, and print-focused handoff.",
   },
 ];
 
-const pricing = [
-  { name: "Free", price: "$0", text: "Preview the studio", items: ["3 generations", "Watermarked previews", "Core wedding themes"] },
-  { name: "Premium", price: "$29", text: "For couples", items: ["60 generations", "HD downloads", "All wedding themes", "Private gallery"], featured: true },
-  { name: "Studio", price: "$99", text: "For creators", items: ["250 generations", "4K exports", "Priority queue", "Commercial usage"] },
+const workflow = [
+  "Create Project",
+  "Choose Event",
+  "Add Subjects",
+  "Define Relationships",
+  "Choose Theme",
+  "Choose Template",
+  "Generate",
+  "Review",
+  "Export",
 ];
 
-const faqs = [
-  ["Will the portraits still look like us?", "ALANKAR is designed around identity preservation, using your uploaded photos as the visual foundation for every generated portrait."],
-  ["Can we choose cultural wedding styles?", "Yes. Themes include Indian regional styles, palace ceremonies, beach weddings, Christian weddings, Muslim weddings, receptions, and more."],
-  ["Are the images ready for print?", "Premium and Studio exports are prepared for high-resolution albums, announcements, framed prints, and social sharing."],
-  ["Do we need professional source photos?", "Professional photos help, but clear phone portraits with visible faces and balanced lighting are enough to start."],
+const reasons = [
+  "Built for photographers, studios, and creative teams.",
+  "Photography-first presentation with restrained AI language.",
+  "Supports personal milestones and professional event coverage.",
+  "Designed as a workflow platform ready for authentication in Phase 2.",
 ];
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 34 },
+  hidden: { opacity: 0, y: 28 },
   show: { opacity: 1, y: 0 },
 };
 
@@ -131,11 +125,11 @@ function SectionHeading({
       whileInView="show"
       viewport={{ once: true, amount: 0.35 }}
       variants={fadeUp}
-      transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
-      className="mx-auto mb-14 max-w-3xl text-center"
+      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+      className="mx-auto mb-14 max-w-4xl text-center"
     >
-      <p className="text-xs uppercase tracking-[0.38em] text-primary/80">{eyebrow}</p>
-      <h2 className="mt-5 font-serif text-5xl leading-[0.98] text-foreground sm:text-6xl">
+      <p className="text-xs uppercase tracking-[0.36em] text-primary/80">{eyebrow}</p>
+      <h2 className="mt-5 font-serif text-5xl leading-[0.95] text-foreground sm:text-6xl lg:text-7xl">
         {title}
       </h2>
       <p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
@@ -145,171 +139,181 @@ function SectionHeading({
   );
 }
 
-function ArtPanel({ label, tall = false }: { label: string; tall?: boolean }) {
-  return (
-    <div className={`group relative overflow-hidden rounded-[2rem] border border-border bg-card ${tall ? "min-h-[520px]" : "min-h-[320px]"}`}>
-      <Image
-        src="/alankar-hero-preview.png"
-        alt={`${label} wedding portrait`}
-        fill
-        sizes="(max-width: 768px) 100vw, 40vw"
-        className="object-cover opacity-80 transition duration-700 group-hover:scale-105"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-transparent" />
-      <div className="absolute bottom-6 left-6 right-6 flex items-end justify-between gap-4">
-        <p className="font-serif text-3xl text-white">{label}</p>
-        <span className="rounded-full border border-primary/30 bg-black/40 px-4 py-2 text-xs uppercase tracking-[0.2em] text-primary backdrop-blur">
-          ALANKAR
-        </span>
-      </div>
-    </div>
-  );
-}
-
-function ComparisonSlider() {
-  const [value, setValue] = useState(52);
-
-  return (
-    <div className="relative mx-auto max-w-5xl overflow-hidden rounded-[2rem] border border-border bg-card shadow-2xl shadow-black/15">
-      <div className="relative aspect-[4/5] sm:aspect-[16/9]">
-        <Image src="/alankar-hero-preview.png" alt="Original uploaded couple photo" fill sizes="100vw" className="object-cover grayscale saturate-50 opacity-55" />
-        <div className="absolute inset-0 overflow-hidden" style={{ width: `${value}%` }}>
-          <Image src="/alankar-hero-preview.png" alt="AI-generated cinematic wedding portrait" fill sizes="100vw" className="object-cover saturate-125" />
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/15 to-transparent" />
-        </div>
-        <div className="absolute inset-y-0 z-10 w-px bg-primary" style={{ left: `${value}%` }} />
-        <div className="absolute top-5 left-5 rounded-full bg-black/55 px-4 py-2 text-xs uppercase tracking-[0.22em] text-white backdrop-blur">Before</div>
-        <div className="absolute top-5 right-5 rounded-full bg-primary/90 px-4 py-2 text-xs uppercase tracking-[0.22em] text-black">After</div>
-      </div>
-      <input
-        aria-label="Compare original and AI wedding portrait"
-        type="range"
-        min="18"
-        max="82"
-        value={value}
-        onChange={(event) => setValue(Number(event.target.value))}
-        className="absolute inset-x-6 bottom-6 z-20 accent-primary"
-      />
-    </div>
-  );
-}
-
 function Hero() {
+  const { isAuthenticated } = useAuth();
   const { scrollY } = useScroll();
-  const y = useTransform(scrollY, [0, 700], [0, 180]);
-  const scale = useTransform(scrollY, [0, 700], [1, 1.12]);
-  const opacity = useTransform(scrollY, [0, 620], [1, 0.25]);
+  const y = useTransform(scrollY, [0, 700], [0, 150]);
+  const scale = useTransform(scrollY, [0, 700], [1, 1.08]);
+  const primaryHref = isAuthenticated ? "/projects" : "/login";
 
   return (
-    <section className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 py-28">
-      <motion.div style={{ y, scale }} className="absolute inset-0">
-        <Image src="/alankar-hero-preview.png" alt="Cinematic AI wedding portrait" fill priority sizes="100vw" className="object-cover" />
-      </motion.div>
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(213,171,93,0.18),transparent_34rem),linear-gradient(180deg,rgba(6,5,4,0.48),rgba(6,5,4,0.9)_72%,#0b0908)]" />
-      <motion.div style={{ opacity }} className="relative z-10 mx-auto max-w-6xl text-center">
-        <motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-xs uppercase tracking-[0.46em] text-primary">
-          AI wedding portrait studio
-        </motion.p>
-        <motion.h1 initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12, duration: 0.9 }} className="mt-7 font-serif text-6xl leading-[0.9] text-white sm:text-7xl lg:text-8xl">
-          Timeless Wedding Memories, Reimagined by AI.
-        </motion.h1>
-        <motion.p initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.24, duration: 0.8 }} className="mx-auto mt-8 max-w-2xl whitespace-pre-line text-lg leading-8 text-white/85 sm:text-xl">
-          {"Upload your photos.\nChoose a wedding style.\nGenerate breathtaking portraits in seconds."}
-        </motion.p>
-        <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.36, duration: 0.75 }} className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <Button asChild size="lg" className="rounded-full px-8">
-            <a href="/choose-style">Generate Now <ArrowRight className="size-4" /></a>
-          </Button>
-          <Button asChild size="lg" variant="outline" className="rounded-full border-white/25 bg-black/25 px-8 text-white backdrop-blur hover:border-primary/50 hover:bg-black/35 hover:text-white">
-            <a href="#gallery">Explore Gallery</a>
-          </Button>
+    <section className="relative min-h-[100svh] overflow-hidden">
+      <motion.img
+        alt="Editorial professional photography workspace"
+        className="absolute inset-0 h-full w-full object-cover"
+        src={heroImage}
+        style={{ y, scale }}
+      />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(12,12,11,0.34),rgba(12,12,11,0.76)_72%,rgb(247,246,242)),linear-gradient(90deg,rgba(12,12,11,0.72),rgba(12,12,11,0.16)_62%)]" />
+      <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-7xl flex-col justify-end px-6 pb-20 pt-32 sm:px-8 lg:pb-24">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+          className="max-w-5xl"
+        >
+          <p className="text-xs uppercase tracking-[0.44em] text-white/75">
+            Photography workflow platform
+          </p>
+          <h1 className="mt-7 max-w-5xl font-serif text-6xl leading-[0.86] text-white sm:text-7xl lg:text-9xl">
+            Photography, elevated by intelligence.
+          </h1>
+          <p className="mt-8 max-w-2xl text-lg leading-8 text-white/82 sm:text-xl">
+            ALANKAAR gives photographers and studios a modern workspace for creative direction, event-aware editing, album planning, and client-ready exports.
+          </p>
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+            <Button asChild size="lg" className="px-7">
+              <a href={primaryHref}>
+                Explore Workflows <ArrowRight aria-hidden="true" />
+              </a>
+            </Button>
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="border-white/25 bg-white/8 px-7 text-white hover:bg-white/14 hover:text-white"
+            >
+              <a href="#categories">View Categories</a>
+            </Button>
+          </div>
         </motion.div>
-      </motion.div>
-      <motion.a href="#process" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }} className="absolute bottom-8 z-10 flex flex-col items-center gap-2 text-xs uppercase tracking-[0.25em] text-white/70">
-        Scroll <ChevronDown className="size-5" />
-      </motion.a>
+      </div>
+      <a
+        aria-label="Scroll to categories"
+        className="absolute bottom-7 left-1/2 z-10 grid -translate-x-1/2 place-items-center text-white/70 transition hover:text-white"
+        href="#categories"
+      >
+        <ChevronDown className="size-6" aria-hidden="true" />
+      </a>
     </section>
   );
 }
 
 export function LandingPage() {
+  const { isAuthenticated, logout, user } = useAuth();
+  const initials = user?.email.slice(0, 2).toUpperCase() ?? "AL";
+  const primaryHref = isAuthenticated ? "/projects" : "/login";
+
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/80 backdrop-blur-2xl">
-        <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 sm:px-8">
-          <a href="/" className="font-serif text-3xl tracking-wide">ALANKAR</a>
+      <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#11100e]/70 text-white backdrop-blur-2xl">
+        <nav className="mx-auto flex h-18 max-w-7xl items-center justify-between px-6 sm:h-20 sm:px-8">
+          <a href="/" className="font-serif text-3xl tracking-wide">
+            ALANKAAR
+          </a>
           <div className="hidden items-center gap-8 lg:flex">
             {navItems.map((item) => (
-              <a key={item.href} href={item.href} className="text-sm text-muted-foreground transition hover:text-primary">{item.label}</a>
+              <a
+                key={item.href}
+                href={item.href}
+                className="text-sm text-white/68 transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35"
+              >
+                {item.label}
+              </a>
             ))}
           </div>
-          <Button asChild size="sm" className="rounded-full">
-            <a href="/choose-style">Generate Now</a>
-          </Button>
+          {isAuthenticated ? (
+            <div className="flex items-center gap-3">
+              <Button asChild size="sm" variant="outline" className="hidden border-white/20 bg-white/8 text-white hover:text-white sm:inline-flex">
+                <a href="/projects">Projects</a>
+              </Button>
+              <details className="group relative">
+                <summary className="flex cursor-pointer list-none items-center gap-2 rounded-full border border-white/20 bg-white/8 px-2 py-1.5 text-sm text-white outline-none transition hover:bg-white/14 focus-visible:ring-2 focus-visible:ring-white/35">
+                  <span className="grid size-8 place-items-center rounded-full bg-white text-xs font-semibold text-[#171614]">
+                    {initials}
+                  </span>
+                  <span className="hidden max-w-32 truncate md:inline">{user?.email}</span>
+                </summary>
+                <div className="absolute right-0 mt-3 w-64 rounded-2xl border border-border bg-card p-2 text-foreground shadow-2xl shadow-black/20">
+                  <div className="px-3 py-3">
+                    <p className="text-xs uppercase tracking-[0.22em] text-primary">Signed in</p>
+                    <p className="mt-2 truncate text-sm text-muted-foreground">{user?.email}</p>
+                  </div>
+                  <a className="block rounded-xl px-3 py-2 text-sm hover:bg-muted" href="/account">
+                    Account
+                  </a>
+                  <button className="w-full rounded-xl px-3 py-2 text-left text-sm text-muted-foreground hover:bg-muted hover:text-foreground" onClick={() => void logout()} type="button">
+                    Logout
+                  </button>
+                </div>
+              </details>
+            </div>
+          ) : (
+            <Button asChild size="sm" variant="outline" className="border-white/20 bg-white/8 text-white hover:text-white">
+              <a href="/login">Sign In</a>
+            </Button>
+          )}
         </nav>
       </header>
 
       <main>
         <Hero />
 
-        <section id="process" className="px-6 py-28 sm:px-8">
-          <SectionHeading eyebrow="How ALANKAR Works" title="A calm, cinematic path from portrait to keepsake." text="The experience feels more like entering a private creative studio than filling out a form." />
-          <div className="mx-auto grid max-w-7xl gap-5 lg:grid-cols-4">
-            {steps.map((step, index) => {
-              const Icon = step.icon;
-              return (
-                <motion.article key={step.title} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.3 }} variants={fadeUp} transition={{ delay: index * 0.08, duration: 0.7 }} className="relative overflow-hidden rounded-[1.75rem] border border-border bg-card/80 p-6 shadow-xl shadow-black/5 backdrop-blur">
-                  <span className="font-serif text-6xl text-primary/30">0{index + 1}</span>
-                  <Icon className="mt-9 size-7 text-primary" />
-                  <h3 className="mt-6 font-serif text-3xl leading-tight">{step.title}</h3>
-                  <p className="mt-4 text-sm leading-6 text-muted-foreground">{step.text}</p>
-                </motion.article>
-              );
-            })}
-          </div>
-        </section>
-
-        <section id="themes" className="px-6 py-28 sm:px-8">
-          <SectionHeading eyebrow="Wedding Themes" title="Every ceremony imagined with restraint and reverence." text="Choose a visual direction that honors the mood, culture, and atmosphere of your celebration." />
-          <div className="mx-auto grid max-w-7xl gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {themes.map((theme, index) => (
-              <motion.div key={theme} initial={{ opacity: 0, y: 28, scale: 0.96 }} whileInView={{ opacity: 1, y: 0, scale: 1 }} whileHover={{ y: -8 }} viewport={{ once: true, amount: 0.25 }} transition={{ delay: index * 0.045, duration: 0.55 }} className="group relative min-h-[310px] overflow-hidden rounded-[1.75rem] border border-border bg-card p-6 text-white">
-                <Image src="/alankar-hero-preview.png" alt={`${theme} theme`} fill sizes="(max-width: 768px) 100vw, 25vw" className="object-cover opacity-45 transition duration-700 group-hover:scale-110 group-hover:opacity-65" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-                <div className="relative flex h-full flex-col justify-end">
-                  <p className="font-serif text-3xl">{theme}</p>
-                  <p className="mt-3 text-sm text-white/70">Cinematic wedding direction</p>
+        <section id="categories" className="px-6 py-24 sm:px-8 lg:py-32">
+          <SectionHeading
+            eyebrow="Supported photography"
+            title="Personal stories and professional assignments, handled with the same care."
+            text="ALANKAAR supports intimate portrait work, family celebrations, cultural documentation, corporate coverage, and sports-event storytelling."
+          />
+          <div className="mx-auto grid max-w-7xl gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            {categories.map((category, index) => (
+              <motion.article
+                className="group relative min-h-[320px] overflow-hidden rounded-[1.25rem] border border-border bg-card text-white shadow-sm"
+                initial="hidden"
+                key={category.title}
+                transition={{ delay: index * 0.035, duration: 0.55 }}
+                variants={fadeUp}
+                viewport={{ once: true, amount: 0.25 }}
+                whileHover={{ y: -5 }}
+                whileInView="show"
+              >
+                <img
+                  alt={`${category.title} photography`}
+                  className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                  src={category.image}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/22 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 p-5">
+                  <p className="text-xs uppercase tracking-[0.24em] text-white/62">{category.type}</p>
+                  <h3 className="mt-3 font-serif text-3xl leading-none">{category.title}</h3>
                 </div>
-              </motion.div>
+              </motion.article>
             ))}
           </div>
         </section>
 
-        <section className="px-6 py-28 sm:px-8">
-          <SectionHeading eyebrow="Before / After" title="Slide between source and story." text="Compare the quiet simplicity of an uploaded portrait with the finished cinematic wedding frame." />
-          <ComparisonSlider />
-        </section>
-
-        <section id="gallery" className="px-6 py-28 sm:px-8">
-          <SectionHeading eyebrow="Gallery" title="Portraits with the stillness of heirlooms." text="A masonry-inspired gallery for romantic, editorial, and ceremony-led wedding transformations." />
-          <div className="mx-auto grid max-w-7xl auto-rows-[260px] gap-5 md:grid-cols-3">
-            {gallery.map((item, index) => (
-              <motion.div key={item.title} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.2 }} variants={fadeUp} transition={{ delay: index * 0.06, duration: 0.65 }} className={item.size}>
-                <ArtPanel label={item.title} tall={item.size.includes("row-span")} />
-              </motion.div>
-            ))}
-          </div>
-        </section>
-
-        <section id="features" className="px-6 py-28 sm:px-8">
-          <SectionHeading eyebrow="Features" title="Built for romance, tuned for precision." text="Every detail supports a luxury creative flow: speed, privacy, high resolution, and identity-aware generation." />
-          <div className="mx-auto grid max-w-7xl gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <section id="features" className="border-y border-border bg-[#fdfcf8] px-6 py-24 sm:px-8 lg:py-32">
+          <SectionHeading
+            eyebrow="Platform features"
+            title="A complete creative workflow, not a prompt box."
+            text="The product surface is designed around photography operations: selection, context, subject relationships, theme direction, templates, review, and delivery."
+          />
+          <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-2 lg:grid-cols-3">
             {features.map((feature, index) => {
               const Icon = feature.icon;
+
               return (
-                <motion.article key={feature.title} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.25 }} variants={fadeUp} transition={{ delay: index * 0.06, duration: 0.6 }} className="rounded-[1.5rem] border border-border bg-card/80 p-7 shadow-sm backdrop-blur transition hover:border-primary/35 hover:bg-primary/5">
-                  <Icon className="size-7 text-primary" />
-                  <h3 className="mt-8 font-serif text-3xl">{feature.title}</h3>
+                <motion.article
+                  className="rounded-[1.25rem] border border-border bg-card p-7 shadow-sm transition hover:-translate-y-1 hover:border-primary/45 hover:shadow-xl hover:shadow-black/5"
+                  initial="hidden"
+                  key={feature.title}
+                  transition={{ delay: index * 0.05, duration: 0.55 }}
+                  variants={fadeUp}
+                  viewport={{ once: true, amount: 0.25 }}
+                  whileInView="show"
+                >
+                  <Icon className="size-7 text-primary" aria-hidden="true" />
+                  <h3 className="mt-8 font-serif text-3xl leading-tight">{feature.title}</h3>
                   <p className="mt-4 text-sm leading-6 text-muted-foreground">{feature.text}</p>
                 </motion.article>
               );
@@ -317,59 +321,89 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section className="px-6 py-28 sm:px-8">
-          <SectionHeading eyebrow="Testimonials" title="Couples remember the feeling first." text="A refined AI studio for people who want their first wedding visuals to feel personal, intimate, and cinematic." />
-          <div className="mx-auto grid max-w-7xl gap-5 lg:grid-cols-3">
-            {testimonials.map((item, index) => (
-              <motion.figure key={item.name} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.3 }} variants={fadeUp} transition={{ delay: index * 0.08, duration: 0.65 }} className="rounded-[1.75rem] border border-border bg-card p-8 shadow-sm">
-                <blockquote className="font-serif text-2xl leading-9 text-foreground">"{item.quote}"</blockquote>
-                <figcaption className="mt-8 text-sm uppercase tracking-[0.25em] text-primary">{item.name}</figcaption>
-              </motion.figure>
-            ))}
+        <section id="workflow" className="px-6 py-24 sm:px-8 lg:py-32">
+          <SectionHeading
+            eyebrow="Future workflow"
+            title="From client brief to finished album direction."
+            text="This visual map shows the intended product journey for Phase 2 and beyond. It is presentation only in this phase."
+          />
+          <div className="mx-auto max-w-6xl rounded-[1.5rem] border border-border bg-card p-5 shadow-xl shadow-black/5 sm:p-8">
+            <div className="grid gap-3 md:grid-cols-3">
+              {workflow.map((step, index) => (
+                <motion.div
+                  className="relative min-h-28 rounded-2xl border border-border bg-background p-5"
+                  initial="hidden"
+                  key={step}
+                  transition={{ delay: index * 0.045, duration: 0.5 }}
+                  variants={fadeUp}
+                  viewport={{ once: true, amount: 0.25 }}
+                  whileInView="show"
+                >
+                  <p className="text-xs uppercase tracking-[0.24em] text-primary/75">
+                    {String(index + 1).padStart(2, "0")}
+                  </p>
+                  <h3 className="mt-5 font-serif text-3xl leading-none">{step}</h3>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </section>
 
-        <section id="pricing" className="px-6 py-28 sm:px-8">
-          <SectionHeading eyebrow="Pricing" title="Choose the album your story deserves." text="Start small, create a full wedding portrait collection, or scale ALANKAR for studio workflows." />
-          <div className="mx-auto grid max-w-6xl gap-5 lg:grid-cols-3">
-            {pricing.map((tier) => (
-              <motion.article key={tier.name} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.25 }} variants={fadeUp} className={`rounded-[1.75rem] border p-8 ${tier.featured ? "border-primary/50 bg-primary/10 shadow-2xl shadow-primary/10" : "border-border bg-card/80"}`}>
-                <p className="font-serif text-4xl">{tier.name}</p>
-                <p className="mt-5 font-serif text-6xl text-primary">{tier.price}</p>
-                <p className="mt-3 text-sm text-muted-foreground">{tier.text}</p>
-                <div className="mt-8 space-y-4">
-                  {tier.items.map((item) => (
-                    <p key={item} className="flex items-center gap-3 text-sm text-foreground/85"><Check className="size-4 text-primary" />{item}</p>
-                  ))}
-                </div>
-                <Button asChild className="mt-9 w-full rounded-full" variant={tier.featured ? "default" : "outline"}>
-                  <a href="/choose-style">Select {tier.name}</a>
-                </Button>
-              </motion.article>
-            ))}
+        <section id="why" className="overflow-hidden bg-[#171614] px-6 py-24 text-white sm:px-8 lg:py-32">
+          <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+            <motion.div initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.35 }} variants={fadeUp}>
+              <p className="text-xs uppercase tracking-[0.36em] text-white/54">Why ALANKAAR</p>
+              <h2 className="mt-5 font-serif text-5xl leading-[0.95] sm:text-6xl lg:text-7xl">
+                Built for the quiet discipline behind memorable photographs.
+              </h2>
+            </motion.div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {reasons.map((reason, index) => (
+                <motion.div
+                  className="rounded-[1.25rem] border border-white/10 bg-white/[0.04] p-6"
+                  initial="hidden"
+                  key={reason}
+                  transition={{ delay: index * 0.06, duration: 0.55 }}
+                  variants={fadeUp}
+                  viewport={{ once: true, amount: 0.25 }}
+                  whileInView="show"
+                >
+                  <Check className="size-5 text-primary" aria-hidden="true" />
+                  <p className="mt-5 text-base leading-7 text-white/78">{reason}</p>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </section>
 
-        <section id="faq" className="px-6 py-28 sm:px-8">
-          <SectionHeading eyebrow="FAQ" title="Quiet answers before you begin." text="The essentials for creating wedding portraits from your own couple photos." />
-          <div className="mx-auto max-w-4xl space-y-4">
-            {faqs.map(([question, answer], index) => (
-              <motion.details key={question} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.35 }} variants={fadeUp} transition={{ delay: index * 0.05 }} className="group rounded-[1.25rem] border border-border bg-card/80 p-6">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-5 font-serif text-2xl">
-                  {question}
-                  <ChevronDown className="size-5 shrink-0 text-primary transition group-open:rotate-180" />
-                </summary>
-                <p className="mt-5 text-sm leading-6 text-muted-foreground">{answer}</p>
-              </motion.details>
-            ))}
+        <section className="px-6 py-24 sm:px-8 lg:py-32">
+          <div className="mx-auto grid max-w-7xl gap-8 border-y border-border py-16 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div>
+              <p className="text-xs uppercase tracking-[0.36em] text-primary/80">Begin with direction</p>
+              <h2 className="mt-5 max-w-4xl font-serif text-5xl leading-[0.95] sm:text-6xl">
+                Open a workspace designed for photographers, not generic generation.
+              </h2>
+            </div>
+            <Button asChild size="lg" className="w-fit px-8">
+              <a href={primaryHref}>
+                Start in ALANKAAR <ArrowRight aria-hidden="true" />
+              </a>
+            </Button>
           </div>
         </section>
       </main>
 
-      <footer className="border-t border-border px-6 py-12 sm:px-8">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <p className="font-serif text-3xl text-foreground">ALANKAR</p>
-          <p>AI wedding portraits for modern love stories.</p>
+      <footer className="border-t border-border px-6 py-10 sm:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col gap-5 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="font-serif text-3xl text-foreground">ALANKAAR</p>
+            <p className="mt-2">AI-powered photography workflows for modern studios.</p>
+          </div>
+          <div className="flex items-center gap-4">
+            <Aperture className="size-4" aria-hidden="true" />
+            <Layers3 className="size-4" aria-hidden="true" />
+            <span>Personal and professional photography</span>
+          </div>
         </div>
       </footer>
     </div>

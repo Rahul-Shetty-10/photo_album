@@ -16,6 +16,8 @@ const envSchema = z.object({
   CLOUDINARY_CLOUD_NAME: z.string().min(1),
   CORS_ORIGIN: z.string().min(1).default("*"),
   DATABASE_URL: z.string().url().startsWith("postgresql://"),
+  JWT_EXPIRES_IN: z.string().min(1).default("7d"),
+  JWT_SECRET: z.string().min(32),
   LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]).default("info"),
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   POLLINATIONS_API_KEY: z.string().min(1),

@@ -10,6 +10,8 @@ export const config = {
   },
   corsOrigin: env.CORS_ORIGIN,
   databaseUrl: env.DATABASE_URL,
+  jwtExpiresIn: env.JWT_EXPIRES_IN,
+  jwtSecret: env.JWT_SECRET,
   logLevel: env.LOG_LEVEL,
   nodeEnv: env.NODE_ENV,
   pollinations: {

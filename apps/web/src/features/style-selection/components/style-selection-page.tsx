@@ -1109,7 +1109,7 @@ const buildTemplatePrompt = ({
   const templateContext = templateCategoryContext[template.category] ?? "use a polished professional composition";
 
   return [
-    `Create a highly detailed premium ALANKAR photo album design for ${styleName}.`,
+    `Create a highly detailed premium ALANKAAR photo album design for ${styleName}.`,
     `Album context: ${styleContext}.`,
     `Selected theme: ${themeName}.`,
     `Theme visual direction: ${getThemeVisualDirection(themeName)}.`,

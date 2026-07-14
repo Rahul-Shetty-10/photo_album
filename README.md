@@ -1,12 +1,12 @@
-# ALANKAR
+# ALANKAAR
 
-ALANKAR is an AI wedding portrait studio. Users upload separate bride and groom portraits, choose a wedding style, and create generated wedding portraits through an asynchronous API pipeline.
+ALANKAAR is an AI-powered photography workflow platform for photographers, studios, and creative professionals. The current frontend positions the product around personal and professional photography workflows, while the existing MVP backend still provides the asynchronous image upload and generation pipeline.
 
 ## Current Status
 
 This repository is an Nx monorepo with:
 
-- `apps/web`: Next.js 16 frontend with a landing page and generation workspace.
+- `apps/web`: Next.js 16 frontend with an editorial ALANKAAR landing page, style selection flow, and generation workspace.
 - `apps/api`: Express 5 API with PostgreSQL persistence, Cloudinary uploads, BullMQ job processing, and a Pollinations image-generation provider.
 - `docs`: implementation-aligned project documentation.
 

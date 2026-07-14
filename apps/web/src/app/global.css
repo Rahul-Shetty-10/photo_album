@@ -55,24 +55,24 @@
     BlinkMacSystemFont, "Segoe UI", sans-serif;
   --radius: 0.625rem;
   color-scheme: light;
-  --background: oklch(0.975 0.012 86);
-  --foreground: oklch(0.27 0.025 55);
-  --card: oklch(0.995 0.007 86 / 88%);
-  --card-foreground: oklch(0.27 0.025 55);
-  --popover: oklch(0.995 0.007 86);
-  --popover-foreground: oklch(0.27 0.025 55);
-  --primary: oklch(0.57 0.12 70);
+  --background: oklch(0.975 0.006 90);
+  --foreground: oklch(0.22 0.006 85);
+  --card: oklch(0.995 0.004 90 / 92%);
+  --card-foreground: oklch(0.22 0.006 85);
+  --popover: oklch(0.995 0.004 90);
+  --popover-foreground: oklch(0.22 0.006 85);
+  --primary: oklch(0.48 0.045 78);
   --primary-foreground: oklch(0.99 0.006 86);
-  --secondary: oklch(0.93 0.025 78);
-  --secondary-foreground: oklch(0.31 0.032 57);
-  --muted: oklch(0.945 0.014 82);
-  --muted-foreground: oklch(0.48 0.03 62);
-  --accent: oklch(0.9 0.055 80);
-  --accent-foreground: oklch(0.3 0.035 58);
+  --secondary: oklch(0.92 0.006 90);
+  --secondary-foreground: oklch(0.28 0.006 85);
+  --muted: oklch(0.94 0.005 90);
+  --muted-foreground: oklch(0.48 0.006 85);
+  --accent: oklch(0.88 0.025 78);
+  --accent-foreground: oklch(0.24 0.006 85);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.68 0.035 72 / 28%);
-  --input: oklch(0.68 0.035 72 / 35%);
-  --ring: oklch(0.57 0.12 70);
+  --border: oklch(0.72 0.006 85 / 32%);
+  --input: oklch(0.72 0.006 85 / 38%);
+  --ring: oklch(0.48 0.045 78);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -96,7 +96,7 @@
   --card-foreground: oklch(0.92 0.024 88);
   --popover: oklch(0.18 0.014 65);
   --popover-foreground: oklch(0.92 0.024 88);
-  --primary: oklch(0.78 0.112 82);
+  --primary: oklch(0.73 0.07 82);
   --primary-foreground: oklch(0.16 0.012 65);
   --secondary: oklch(0.26 0.018 68);
   --secondary-foreground: oklch(0.91 0.04 88);
@@ -131,9 +131,8 @@
   body {
     @apply bg-background font-sans text-foreground antialiased;
     background:
-      radial-gradient(circle at 18% 0%, oklch(0.91 0.055 83 / 48%), transparent 32rem),
-      radial-gradient(circle at 86% 12%, oklch(0.89 0.045 58 / 32%), transparent 28rem),
-      linear-gradient(135deg, oklch(0.985 0.01 88), oklch(0.955 0.018 78));
+      radial-gradient(circle at 14% 0%, oklch(0.9 0.015 85 / 42%), transparent 30rem),
+      linear-gradient(135deg, oklch(0.99 0.003 90), oklch(0.955 0.006 90));
     min-height: 100vh;
   }
 
@@ -225,4 +224,64 @@
     radial-gradient(circle at 20% 0%, rgba(213, 171, 93, 0.18), transparent 30rem),
     radial-gradient(circle at 86% 16%, rgba(122, 84, 45, 0.22), transparent 28rem),
     linear-gradient(180deg, rgba(11, 9, 8, 0), #0b0908 90%);
+}
+
+@keyframes auth-scene-crossfade {
+  0% {
+    opacity: 0;
+    transform: scale(1.03) translate3d(-0.8%, 0, 0);
+    filter: blur(8px) saturate(0.8);
+  }
+
+  8%,
+  31% {
+    opacity: 1;
+    filter: blur(0) saturate(0.92);
+  }
+
+  42%,
+  100% {
+    opacity: 0;
+    transform: scale(1.11) translate3d(1.2%, -0.6%, 0);
+    filter: blur(5px) saturate(0.78);
+  }
+}
+
+@keyframes auth-dust-drift {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+
+  18%,
+  72% {
+    opacity: 0.58;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(18px, -42px, 0);
+  }
+}
+
+.auth-scene-frame {
+  animation: auth-scene-crossfade 21s ease-in-out infinite;
+  opacity: 0;
+  transform-origin: center;
+}
+
+.auth-dust {
+  animation: auth-dust-drift 9s ease-in-out infinite;
+  box-shadow: 0 0 18px rgba(247, 232, 201, 0.42);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-scene-frame,
+  .auth-dust {
+    animation: none;
+  }
+
+  .auth-scene-frame:first-child {
+    opacity: 1;
+  }
 }
