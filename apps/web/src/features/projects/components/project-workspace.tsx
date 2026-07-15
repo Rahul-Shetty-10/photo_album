@@ -126,16 +126,24 @@ const previousImageSlots = Array.from({ length: 32 }, (_, index) => ({
 }));
 
 const relationshipRolesByStyle: Record<string, string[]> = {
+  "Traditional Indian Events with Rituals": ["Bride", "Groom", "Husband", "Wife", "Mother", "Father", "Brother", "Sister", "Relative", "Friend"],
+  "Couple Photoshoots": ["Partner", "Husband", "Wife", "Fiance", "Fiancee"],
+  "Formal Family Events": ["Mother", "Father", "Son", "Daughter", "Brother", "Sister", "Grandparent", "Relative"],
+  Conferences: ["Speaker", "Host", "Panelist", "Guest", "Organizer", "Team"],
+  Seminars: ["Speaker", "Host", "Trainer", "Attendee", "Guest", "Organizer"],
+  "Expert Visit for Official Audit": ["Auditor", "Expert", "Manager", "Employee", "Delegate"],
+  "Cultural Events": ["Performer", "Host", "Guest", "Organizer", "Team"],
+  "Sports Events": ["Player", "Coach", "Captain", "Official", "Team"],
+  "Official Parties": ["Host", "Guest", "Manager", "Employee", "Team"],
   Wedding: ["Bride", "Groom", "Husband", "Wife", "Mother", "Father", "Brother", "Sister", "Friend"],
   Portrait: ["Self", "Friend", "Family"],
   Personal: ["Self", "Friend", "Family"],
   Professional: ["Manager", "CEO", "Employee", "Team"],
   Corporate: ["Manager", "CEO", "Employee", "Team"],
-  Conferences: ["Speaker", "Host", "Panelist", "Guest", "Team"],
   "Movie Shoot": ["Director", "Actor", "Producer", "Crew", "Lead"],
 };
 
-const singleSubjectStyles = new Set(["Personal", "Portrait", "Professional", "Fashion", "Product", "Sports"]);
+const singleSubjectStyles = new Set(["Individual Portraits", "Personal", "Portrait", "Professional", "Fashion", "Product", "Sports"]);
 
 
 

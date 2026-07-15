@@ -9,22 +9,22 @@ const maxGroupPeople = 12;
 
 export const personalThemes = [
   {
-    name: "Personal",
-    image:
-      "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    name: "Portrait",
+    name: "Individual Portraits",
     image:
       "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=900&q=85",
   },
   {
-    name: "Couple",
+    name: "Couple Photoshoots",
     image:
       "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=900&q=85",
   },
   {
-    name: "Family",
+    name: "Traditional Indian Events with Rituals",
+    image:
+      "https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&w=900&q=85",
+  },
+  {
+    name: "Formal Family Events",
     image:
       "https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=900&q=85",
   },
@@ -37,43 +37,55 @@ export const personalThemes = [
 
 export const professionalThemes = [
   {
-    name: "Professional",
-    image:
-      "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    name: "Corporate",
-    image:
-      "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=900&q=85",
-  },
-  {
     name: "Conferences",
     image:
       "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=900&q=85",
   },
   {
-    name: "Movie Shoot",
+    name: "Seminars",
     image:
-      "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=900&q=85",
+      "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=900&q=85",
   },
   {
-    name: "Sports",
+    name: "Expert Visit for Official Audit",
+    image:
+      "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=900&q=85",
+  },
+  {
+    name: "Cultural Events",
+    image:
+      "https://images.unsplash.com/photo-1504609813442-a8924e83f76e?auto=format&fit=crop&w=900&q=85",
+  },
+  {
+    name: "Sports Events",
     image:
       "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=900&q=85",
   },
   {
-    name: "Fashion",
+    name: "Official Parties",
     image:
-      "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    name: "Product",
-    image:
-      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=85",
+      "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=900&q=85",
   },
 ];
 
 export const themesByStyle: Record<string, string[]> = {
+  "Individual Portraits": [
+    "Studio Portrait",
+    "Outdoor Natural",
+    "Urban City",
+    "Nature & Forest",
+    "Beach",
+    "Mountain",
+    "Sunset",
+    "Golden Hour",
+    "Traditional Indian",
+    "Ethnic Wear",
+    "Royal Heritage",
+    "Black & White",
+    "Luxury Lifestyle",
+    "Casual Lifestyle",
+    "Festival Portrait",
+  ],
   Personal: ["Editorial", "Studio", "Lifestyle", "Outdoor", "Black & White", "Fine Art"],
   Wedding: [
     "Royal Palace",
@@ -125,6 +137,20 @@ export const themesByStyle: Record<string, string[]> = {
     "Festival Celebration",
     "Pooja Ceremony",
   ],
+  "Formal Family Events": [
+    "Family Portrait",
+    "Family Reunion",
+    "Anniversary Celebration",
+    "Birthday Celebration",
+    "Graduation",
+    "Farewell Gathering",
+    "Housewarming Celebration",
+    "Holiday Celebration",
+    "Family Dinner",
+    "Outdoor Picnic",
+    "Luxury Banquet",
+    "Garden Gathering",
+  ],
   Family: [
     "Family Portrait",
     "Family Reunion",
@@ -154,10 +180,24 @@ export const themesByStyle: Record<string, string[]> = {
     "Theme Party",
   ],
   Conferences: [
-    "Conference Hall",
-    "Office",
-    "Keynote",
-    "Award Ceremony",
+    "Keynote Session",
+    "Business Conference",
+    "Technology Conference",
+    "Leadership Summit",
+    "Corporate Meet",
+    "Panel Discussion",
+    "Networking Event",
+    "Product Launch",
+  ],
+  Seminars: [
+    "Educational Seminar",
+    "Corporate Seminar",
+    "Technical Workshop",
+    "Guest Lecture",
+    "Knowledge Session",
+    "Training Program",
+    "Interactive Session",
+    "Industry Talk",
   ],
   Professional: ["Office", "Studio", "Keynote", "Award Ceremony"],
   Corporate: ["Conference Hall", "Office", "Keynote", "Award Ceremony"],
