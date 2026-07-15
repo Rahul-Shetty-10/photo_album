@@ -38,6 +38,8 @@ const creationNavSteps = [
   { label: "Subject", step: "Subjects" },
   { label: "Relation", step: "Relationships" },
   { label: "Theme", step: "Theme" },
+  { label: "Review", step: "Review" },
+  { label: "Generate", step: "Gallery" },
 ] as const;
 
 type WorkflowStep = (typeof workflowSteps)[number];
@@ -110,6 +112,11 @@ const generatedImages: GeneratedImage[] = [
     title: "Wide Story",
   },
 ];
+
+const previousImageSlots = Array.from({ length: 32 }, (_, index) => ({
+  id: `previous-slot-${index + 1}`,
+  label: `Image ${index + 1}`,
+}));
 
 const relationshipRolesByStyle: Record<string, string[]> = {
   Wedding: ["Bride", "Groom", "Husband", "Wife", "Mother", "Father", "Brother", "Sister", "Friend"],
@@ -203,6 +210,9 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
 
   const activeIndex = activeStep === "Dashboard" ? -1 : workflowSteps.indexOf(activeStep);
   const relationshipRoles = selectedStyle ? relationshipRolesByStyle[selectedStyle.name] ?? relationshipRolesByStyle.Wedding : relationshipRolesByStyle.Wedding;
+  const canNavigateStep = (step: WorkflowStep) => {
+    return step !== "Gallery" || activeStep === "Gallery";
+  };
   const pushWorkspaceStep = (step: WorkspaceStep) => {
     const nextUrl = new URL(window.location.href);
     const stepParam = stepParamByStep[step];
@@ -298,7 +308,7 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
   };
 
   const navigateCreationStep = (step: (typeof creationNavSteps)[number]["step"]) => {
-    if (step !== "Style" && !selectedStyle) {
+    if (!canNavigateStep(step)) {
       return;
     }
 
@@ -333,18 +343,16 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
                 Back
               </Link>
             </Button>
-          ) : activeStep !== "Gallery" ? (
+          ) : (
             <Button onClick={goBack} type="button" variant="outline">
               <ArrowLeft aria-hidden="true" />
               Back
             </Button>
-          ) : (
-            <span />
           )}
-          {activeStep !== "Dashboard" && activeStep !== "Gallery" ? (
+          {activeStep !== "Dashboard" ? (
             <CreationNav
               activeStep={activeStep}
-              canNavigatePastStyle={Boolean(selectedStyle)}
+              canNavigateStep={canNavigateStep}
               onNavigate={navigateCreationStep}
             />
           ) : (
@@ -446,11 +454,11 @@ function LoadingScreen() {
 
 function CreationNav({
   activeStep,
-  canNavigatePastStyle,
+  canNavigateStep,
   onNavigate,
 }: {
   activeStep: WorkflowStep | "Dashboard";
-  canNavigatePastStyle: boolean;
+  canNavigateStep: (step: WorkflowStep) => boolean;
   onNavigate: (step: (typeof creationNavSteps)[number]["step"]) => void;
 }) {
   return (
@@ -460,7 +468,7 @@ function CreationNav({
     >
       {creationNavSteps.map((item) => {
         const isActive = activeStep === item.step;
-        const isDisabled = item.step !== "Style" && !canNavigatePastStyle;
+        const isDisabled = !canNavigateStep(item.step);
 
         return (
           <button
@@ -492,20 +500,26 @@ function ProjectDashboardView({
   return (
     <motion.section
       animate={{ opacity: 1, y: 0 }}
-      className="grid gap-8 py-6"
+      className="grid gap-5 py-4"
       exit={{ opacity: 0, y: -12 }}
       initial={{ opacity: 0, y: 12 }}
       transition={{ duration: 0.24 }}
     >
-      <div>
+      <div className="grid gap-1">
         <p className="text-sm font-medium text-primary">Project</p>
-        <h2 className="mt-1 font-sans text-4xl leading-none sm:text-5xl">{project.name}</h2>
-        <p className="mt-2 text-base text-muted-foreground">{project.eventCategory}</p>
+        <h2 className="font-sans text-4xl leading-none sm:text-5xl">{project.name}</h2>
+        <p className="text-base text-muted-foreground">{project.eventCategory}</p>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <section className="grid min-h-0 gap-3">
+        <div className="flex items-center justify-between gap-4">
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Previous images</p>
+          <p className="text-xs text-muted-foreground">{previousImageSlots.length} empty slots</p>
+        </div>
+        <div className="max-h-[58vh] overflow-y-auto rounded-xl border border-border bg-card/40 p-3 shadow-inner shadow-black/5">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
         <button
-          className="group flex min-h-36 items-center gap-5 rounded-xl border-2 border-primary/40 bg-gradient-to-br from-primary/8 to-primary/3 p-6 text-left shadow-lg shadow-primary/5 transition hover:-translate-y-0.5 hover:border-primary hover:shadow-xl hover:shadow-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/45"
+              className="group col-span-2 flex aspect-[2/1] items-center gap-5 rounded-xl border-2 border-primary/40 bg-gradient-to-br from-primary/8 to-primary/3 p-6 text-left shadow-lg shadow-primary/5 transition hover:-translate-y-0.5 hover:border-primary hover:shadow-xl hover:shadow-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/45"
           onClick={onCreateNewImage}
           type="button"
         >
@@ -518,35 +532,24 @@ function ProjectDashboardView({
           </span>
         </button>
 
-        <div className="grid gap-3">
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Recent activity</p>
-          {generatedImages.length > 0 ? (
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {generatedImages.slice(0, 4).map((image) => (
-                <div
-                  key={image.id}
-                  className="group relative overflow-hidden rounded-lg border border-border bg-card shadow-sm"
-                >
-                  <img
-                    alt={image.title}
-                    src={image.image}
-                    className="aspect-[4/5] w-full object-cover transition duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3">
-                    <p className="truncate text-xs font-medium text-white">{image.title}</p>
-                    <p className="text-[10px] text-white/70">{image.meta}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="flex min-h-full flex-col items-center justify-center rounded-lg border border-dashed border-border bg-card/50 px-4 text-center">
-              <ImageIcon className="size-8 text-muted-foreground/50" aria-hidden="true" />
-              <p className="mt-3 text-sm text-muted-foreground/60">Your generated images will appear here</p>
-            </div>
-          )}
+            {previousImageSlots.map((slot) => (
+              <button
+                aria-label={slot.label}
+                className="group grid aspect-[4/3] overflow-hidden rounded-lg border border-dashed border-border bg-secondary/70 transition hover:border-primary/45 hover:bg-primary/8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35"
+                key={slot.id}
+                type="button"
+              >
+                <span className="grid h-full place-items-center bg-gradient-to-br from-muted/25 to-background/20">
+                  <span className="grid justify-items-center gap-2 text-muted-foreground/55 transition group-hover:text-primary">
+                    <ImageIcon className="size-5" aria-hidden="true" />
+                    <span className="text-xs font-medium">{slot.label}</span>
+                  </span>
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
     </motion.section>
   );
 }
@@ -822,7 +825,15 @@ function SubjectCard({
         <Input onChange={(event) => onChange(subject.id, { name: event.target.value })} placeholder="Name" value={subject.name} />
         <div className="grid grid-cols-2 gap-3">
           <Input inputMode="numeric" onChange={(event) => onChange(subject.id, { age: event.target.value })} placeholder="Age" value={subject.age} />
-          <Input onChange={(event) => onChange(subject.id, { gender: event.target.value })} placeholder="Gender" value={subject.gender} />
+          <select
+            value={subject.gender}
+            onChange={(event) => onChange(subject.id, { gender: event.target.value })}
+            className="flex h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground transition focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 focus-visible:outline-none"
+          >
+            <option value="" disabled>Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
         </div>
         <button
           className={cn(
