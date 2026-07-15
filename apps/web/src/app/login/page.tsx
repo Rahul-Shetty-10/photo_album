@@ -46,7 +46,7 @@ export default function LoginPage() {
           footer={
             <span>
               New to ALANKAAR?{" "}
-              <a className="font-medium text-[#f0c982] transition hover:text-white" href="/register">
+              <a className="font-medium text-[#5eead4] transition hover:text-white" href="/register">
                 Create an account
               </a>
             </span>
@@ -59,7 +59,7 @@ export default function LoginPage() {
               <AuthCheckbox registration={register("rememberMe")}>
                 Remember me
               </AuthCheckbox>
-              <a className="text-[#f0c982] transition hover:text-white" href="/forgot-password">
+              <a className="text-[#5eead4] transition hover:text-white" href="/forgot-password">
                 Forgot password?
               </a>
             </div>

@@ -182,7 +182,7 @@ function SectionHeading({
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       className="mx-auto mb-14 max-w-4xl text-center"
     >
-      <p className="text-xs uppercase tracking-[0.12em] text-[#d7ad57]">{eyebrow}</p>
+      <p className="text-xs uppercase tracking-[0.12em] text-[#2dd4bf]">{eyebrow}</p>
       <h2 className="mt-5 font-sans text-5xl leading-[0.9] text-[#f8fafc] sm:text-6xl lg:text-7xl">
         {title}
       </h2>
@@ -232,7 +232,7 @@ function Hero() {
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
             className="max-w-6xl"
           >
-            <p className="text-xs uppercase tracking-[0.14em] text-[#d7ad57]">{activeSlide.label}</p>
+            <p className="text-xs uppercase tracking-[0.14em] text-[#2dd4bf]">{activeSlide.label}</p>
             <h1 className="mx-auto mt-8 max-w-5xl font-sans text-5xl leading-[0.88] text-[#f8fafc] sm:text-6xl lg:text-[5.9rem] xl:text-[6.7rem]">
               {activeSlide.title}
             </h1>
@@ -263,7 +263,7 @@ function Hero() {
               type="button"
               aria-label={`Show ${slide.label}`}
               onClick={() => setActiveIndex(index)}
-              className={`h-1.5 rounded-full transition-all ${index === activeIndex ? "w-10 bg-[#d7ad57]" : "w-5 bg-white/28 hover:bg-white/45"}`}
+              className={`h-1.5 rounded-full transition-all ${index === activeIndex ? "w-10 bg-[#2dd4bf]" : "w-5 bg-white/28 hover:bg-white/45"}`}
             />
           ))}
         </div>
@@ -395,7 +395,7 @@ export function LandingPage() {
                 </summary>
                 <div className="absolute right-0 mt-3 w-64 rounded-2xl border border-white/10 bg-[#111827] p-2 text-[#f8fafc] shadow-2xl shadow-black/40">
                   <div className="px-3 py-3">
-                    <p className="text-xs uppercase tracking-[0.12em] text-[#d7ad57]">Signed in</p>
+                    <p className="text-xs uppercase tracking-[0.12em] text-[#2dd4bf]">Signed in</p>
                     <p className="mt-2 truncate text-sm text-white/62">{user?.email}</p>
                   </div>
                   <a className="block rounded-xl px-3 py-2 text-sm hover:bg-white/8" href="/dashboard/profile">
@@ -439,7 +439,7 @@ export function LandingPage() {
                   transition={{ delay: index * 0.06, duration: 0.55 }}
                 >
                   <p className="font-sans text-5xl font-semibold text-[#64748b]/75">{String(index + 1).padStart(2, "0")}</p>
-                  <Icon className="mt-8 size-6 text-[#d7ad57]" aria-hidden="true" />
+                  <Icon className="mt-8 size-6 text-[#2dd4bf]" aria-hidden="true" />
                   <h3 className="mt-5 font-sans text-3xl leading-tight">{step.title}</h3>
                   <p className="mt-4 text-sm leading-6 text-[#cbd5e1]/72">{step.text}</p>
                 </motion.article>
@@ -532,7 +532,7 @@ export function LandingPage() {
                   variants={fadeUp}
                   transition={{ delay: index * 0.05, duration: 0.55 }}
                 >
-                  <Icon className="size-7 text-[#d7ad57]" aria-hidden="true" />
+                  <Icon className="size-7 text-[#2dd4bf]" aria-hidden="true" />
                   <h3 className="mt-8 font-sans text-3xl leading-tight">{feature.title}</h3>
                   <p className="mt-4 text-sm leading-6 text-[#cbd5e1]/72">{feature.text}</p>
                 </motion.article>
@@ -544,7 +544,7 @@ export function LandingPage() {
         <section id="faq" className="px-6 py-24 sm:px-8 lg:py-32">
           <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.9fr_1.1fr]">
             <div>
-              <p className="text-xs uppercase tracking-[0.12em] text-[#d7ad57]">FAQ</p>
+              <p className="text-xs uppercase tracking-[0.12em] text-[#2dd4bf]">FAQ</p>
               <h2 className="mt-5 font-sans text-5xl leading-[0.9] text-[#f8fafc] sm:text-6xl">A broader platform, same premium promise.</h2>
             </div>
             <div className="grid gap-4">
@@ -561,7 +561,7 @@ export function LandingPage() {
         <section className="px-6 pb-24 sm:px-8 lg:pb-32">
           <div className="mx-auto grid max-w-7xl gap-8 border-y border-white/12 py-16 lg:grid-cols-[1fr_auto] lg:items-center">
             <div>
-              <p className="text-xs uppercase tracking-[0.12em] text-[#d7ad57]">Begin with direction</p>
+              <p className="text-xs uppercase tracking-[0.12em] text-[#2dd4bf]">Begin with direction</p>
               <h2 className="mt-5 max-w-4xl font-sans text-5xl leading-[0.92] text-[#f8fafc] sm:text-6xl">
                 Open a workspace designed for photographers, not generic generation.
               </h2>

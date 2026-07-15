@@ -18,13 +18,13 @@ export default function ForgotPasswordPage() {
           title="Forgot password"
           subtitle="Email delivery is not configured yet, so ALANKAAR avoids presenting a fake recovery flow."
           footer={
-            <a className="font-medium text-[#f0c982] transition hover:text-white" href="/login">
+            <a className="font-medium text-[#5eead4] transition hover:text-white" href="/login">
               Back to sign in
             </a>
           }
         >
           <div className="rounded-3xl border border-white/12 bg-white/[0.055] p-5">
-            <Mail className="size-6 text-[#f0c982]" aria-hidden="true" />
+            <Mail className="size-6 text-[#5eead4]" aria-hidden="true" />
             <p className="mt-4 text-sm leading-6 text-white/62">
               Ask an administrator to configure transactional email before enabling password reset links.
             </p>

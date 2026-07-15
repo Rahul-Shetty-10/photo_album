@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { ChevronDown, LogOut, Settings, User } from "lucide-react";
+import { ChevronDown, FolderOpen, LayoutTemplate, LogOut, Settings, User } from "lucide-react";
 import Link from "next/link";
 
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -45,6 +45,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </p>
             </div>
           </Link>
+          <nav className="hidden items-center gap-1 md:flex">
+            <Link className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-secondary hover:text-foreground" href="/dashboard">
+              <FolderOpen className="mr-2 inline size-4 align-[-3px]" aria-hidden="true" />
+              Projects
+            </Link>
+            <Link className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition hover:bg-secondary hover:text-foreground" href="/dashboard/templates">
+              <LayoutTemplate className="mr-2 inline size-4 align-[-3px]" aria-hidden="true" />
+              Templates
+            </Link>
+          </nav>
           <div className="ml-auto flex items-center gap-2">
             <ThemeToggle />
             <details className="group relative">
@@ -68,6 +78,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   </div>
                 </div>
                 <div className="p-2">
+                  <Link className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground md:hidden" href="/dashboard">
+                    <FolderOpen className="size-4" aria-hidden="true" />
+                    Projects
+                  </Link>
+                  <Link className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground md:hidden" href="/dashboard/templates">
+                    <LayoutTemplate className="size-4" aria-hidden="true" />
+                    Templates
+                  </Link>
                   <Link className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground" href="/dashboard/profile">
                     <User className="size-4" aria-hidden="true" />
                     Profile

@@ -221,7 +221,7 @@ type GroupPerson = {
   relationship: string;
 };
 
-type ParticipantDetails = {
+export type ParticipantDetails = {
   coupleRelationship?: string;
   groupPeople?: GroupPerson[];
   peopleCount?: number;
@@ -1101,7 +1101,7 @@ const getShotVarietyPrompt = (styleName?: string, themeName?: string) => {
   ].join("; ");
 };
 
-const buildTemplatePrompt = ({
+export const buildTemplatePrompt = ({
   participantDetails,
   selectedStyle,
   selectedThemeName,

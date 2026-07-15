@@ -27,17 +27,22 @@ import {
   professionalThemes,
   ThemeCarousel,
   ThemeSelectionScreen,
+  buildTemplatePrompt,
+  type ParticipantDetails,
   type ThemeCard,
 } from "@/features/style-selection/components/style-selection-page";
 import { getProject, type Project } from "@/features/projects/api";
+import { TemplateGallery, getTemplateById } from "@/features/templates/components/template-selection";
+import type { PhotoTemplate } from "@/features/templates/template-library";
 import { cn } from "@/lib/utils";
 
-const workflowSteps = ["Style", "Subjects", "Relationships", "Theme", "Review", "Gallery"] as const;
+const workflowSteps = ["Style", "Subjects", "Relationships", "Theme", "Template", "Review", "Gallery"] as const;
 const creationNavSteps = [
   { label: "Style", step: "Style" },
   { label: "Subject", step: "Subjects" },
   { label: "Relation", step: "Relationships" },
   { label: "Theme", step: "Theme" },
+  { label: "Template", step: "Template" },
   { label: "Review", step: "Review" },
   { label: "Generate", step: "Gallery" },
 ] as const;
@@ -51,6 +56,7 @@ const stepParamByStep: Partial<Record<WorkspaceStep, string>> = {
   Review: "review",
   Style: "style",
   Subjects: "subjects",
+  Template: "template",
   Theme: "theme",
 };
 
@@ -60,6 +66,7 @@ const stepByStepParam: Record<string, WorkflowStep> = {
   review: "Review",
   style: "Style",
   subjects: "Subjects",
+  template: "Template",
   theme: "Theme",
 };
 
@@ -162,6 +169,7 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
   const [activeStep, setActiveStep] = React.useState<WorkspaceStep>("Dashboard");
   const [selectedStyle, setSelectedStyle] = React.useState<ThemeCard | null>(null);
   const [selectedThemeName, setSelectedThemeName] = React.useState<string>();
+  const [selectedTemplateId, setSelectedTemplateId] = React.useState<string>();
   const [subjects, setSubjects] = React.useState<Subject[]>([]);
   const [relationships, setRelationships] = React.useState<Relationship[]>([]);
   const [previewImage, setPreviewImage] = React.useState<GeneratedImage | null>(null);
@@ -209,6 +217,7 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
   }, []);
 
   const activeIndex = activeStep === "Dashboard" ? -1 : workflowSteps.indexOf(activeStep);
+  const selectedTemplate = getTemplateById(selectedTemplateId);
   const relationshipRoles = selectedStyle ? relationshipRolesByStyle[selectedStyle.name] ?? relationshipRolesByStyle.Wedding : relationshipRolesByStyle.Wedding;
   const canNavigateStep = (step: WorkflowStep) => {
     return step !== "Gallery" || activeStep === "Gallery";
@@ -278,6 +287,7 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
   const startWorkflow = () => {
     setSelectedStyle(null);
     setSelectedThemeName(undefined);
+    setSelectedTemplateId(undefined);
     pushWorkspaceStep("Style");
   };
 
@@ -295,6 +305,10 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
     }
 
     if (activeStep === "Theme" && !selectedThemeName) {
+      return;
+    }
+
+    if (activeStep === "Template" && !selectedTemplate) {
       return;
     }
 
@@ -401,11 +415,18 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
               selectedStyle={selectedStyle}
               selectedThemeName={selectedThemeName}
             />
+          ) : activeStep === "Template" ? (
+            <TemplateStep
+              key="template"
+              onSelectTemplate={setSelectedTemplateId}
+              selectedTemplateId={selectedTemplateId}
+            />
           ) : activeStep === "Review" ? (
             <ReviewStep
               key="review"
               relationships={relationships}
               selectedStyle={selectedStyle}
+              selectedTemplate={selectedTemplate}
               selectedThemeName={selectedThemeName}
               subjects={subjects}
             />
@@ -417,7 +438,7 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
         {activeStep !== "Dashboard" && activeStep !== "Gallery" ? (
           <footer className="mt-auto flex items-center justify-end gap-3 border-t border-border py-5">
             {activeStep !== "Style" ? (
-              <Button disabled={activeStep === "Theme" && !selectedThemeName} onClick={goForward} type="button">
+              <Button disabled={(activeStep === "Theme" && !selectedThemeName) || (activeStep === "Template" && !selectedTemplate)} onClick={goForward} type="button">
                 {activeStep === "Review" ? "Generate Images" : "Continue"}
                 <ArrowRight aria-hidden="true" />
               </Button>
@@ -430,7 +451,7 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
         <button
           onClick={startWorkflow}
           type="button"
-          className="fixed bottom-6 right-6 z-40 grid size-14 place-items-center rounded-full bg-amber-500 text-white shadow-lg shadow-amber-500/30 transition hover:scale-105 hover:shadow-xl hover:shadow-amber-500/40 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50 sm:hidden"
+          className="fixed bottom-6 right-6 z-40 grid size-14 place-items-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/30 transition hover:scale-105 hover:shadow-xl hover:shadow-primary/40 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 sm:hidden"
           aria-label="Create New Image"
         >
           <Plus className="size-7" />
@@ -528,7 +549,7 @@ function ProjectDashboardView({
           </span>
           <span className="grid gap-1">
             <span className="block font-sans text-2xl leading-none sm:text-3xl">Create New Image</span>
-            <span className="block text-sm text-muted-foreground">Choose a style, subjects, and generate.</span>
+            <span className="block text-sm text-muted-foreground">Choose a style, subjects, template, and generate.</span>
           </span>
         </button>
 
@@ -676,17 +697,46 @@ function ThemeStep({
   );
 }
 
+function TemplateStep({
+  onSelectTemplate,
+  selectedTemplateId,
+}: {
+  onSelectTemplate: (templateId: string) => void;
+  selectedTemplateId?: string | null;
+}) {
+  return (
+    <WorkflowScreen title="Choose a Template">
+      <TemplateGallery
+        onSelectTemplate={(template) => onSelectTemplate(template.id)}
+        selectedTemplateId={selectedTemplateId}
+      />
+    </WorkflowScreen>
+  );
+}
+
 function ReviewStep({
   relationships,
   selectedStyle,
+  selectedTemplate,
   selectedThemeName,
   subjects,
 }: {
   relationships: Relationship[];
   selectedStyle: ThemeCard | null;
+  selectedTemplate?: PhotoTemplate;
   selectedThemeName?: string;
   subjects: Subject[];
 }) {
+  const participantDetails = getParticipantDetails(subjects, relationships);
+  const prompt = selectedTemplate
+    ? buildTemplatePrompt({
+        participantDetails,
+        selectedStyle,
+        selectedThemeName,
+        template: selectedTemplate,
+      })
+    : "";
+
   return (
     <WorkflowScreen title="Does everything look correct?">
       <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
@@ -716,6 +766,10 @@ function ReviewStep({
               <dd className="mt-1 text-xl">{selectedThemeName ?? "Not selected"}</dd>
             </div>
             <div>
+              <dt className="text-muted-foreground">Template</dt>
+              <dd className="mt-1 text-xl">{selectedTemplate?.name ?? "Not selected"}</dd>
+            </div>
+            <div>
               <dt className="text-muted-foreground">People</dt>
               <dd className="mt-1 text-xl">{subjects.map((subject) => subject.name || "Unnamed").join(", ")}</dd>
             </div>
@@ -725,10 +779,50 @@ function ReviewStep({
             </div>
           </dl>
         </section>
+        <section className="xl:col-span-2 rounded-lg border border-border bg-card p-6 shadow-xl shadow-black/5">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="text-xs uppercase tracking-[0.12em] text-primary">AI Prompt</p>
+              <h2 className="mt-2 font-sans text-4xl">Generated prompt</h2>
+            </div>
+            {selectedTemplate ? (
+              <span className="rounded-full border border-primary/30 px-3 py-1 text-xs font-medium text-primary">
+                {selectedTemplate.imageCount} image{selectedTemplate.imageCount === 1 ? "" : "s"}
+              </span>
+            ) : null}
+          </div>
+          <pre className="mt-5 max-h-[46vh] overflow-auto whitespace-pre-wrap rounded-lg border border-border bg-background/70 p-5 text-sm leading-7 text-foreground">
+            {prompt || "Choose a template to generate the full AI prompt."}
+          </pre>
+        </section>
       </div>
     </WorkflowScreen>
   );
 }
+
+const getParticipantDetails = (subjects: Subject[], relationships: Relationship[]): ParticipantDetails => {
+  if (subjects.length <= 1) {
+    return {
+      personName: subjects[0]?.name.trim() || undefined,
+    };
+  }
+
+  if (subjects.length === 2) {
+    return {
+      coupleRelationship: relationships[0]?.role || undefined,
+    };
+  }
+
+  return {
+    groupPeople: subjects.map((subject, index) => ({
+      priority: subject.isPrimary ? "1" : String(index + 1),
+      relationship: relationships.find(
+        (relationship) => relationship.fromSubjectId === subject.id || relationship.toSubjectId === subject.id,
+      )?.role ?? (subject.name.trim() || `Person ${index + 1}`),
+    })),
+    peopleCount: subjects.length,
+  };
+};
 
 function GalleryStep({ onPreview }: { onPreview: (image: GeneratedImage) => void }) {
   return (
