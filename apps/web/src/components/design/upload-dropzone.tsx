@@ -91,12 +91,12 @@ export function UploadDropzone({
   };
 
   return (
-    <GlassCard className="p-5">
+    <GlassCard className="p-4">
       <motion.div
         animate={{ scale: isDragging ? 1.01 : 1 }}
         className={cn(
-          "relative overflow-hidden rounded-[1.5rem] border border-dashed border-primary/30 bg-background/45 p-6 text-center transition-colors",
-          isDragging && "border-primary/70 bg-primary/10"
+          "relative overflow-hidden rounded-lg border border-dashed border-border bg-background/50 p-6 text-center transition-colors",
+          isDragging && "border-primary/70 bg-primary/5"
         )}
         onClick={() => {
           if (!value) {
@@ -136,13 +136,13 @@ export function UploadDropzone({
             <img
               src={previewUrl}
               alt={`${title} preview`}
-              className="h-72 w-full rounded-[1.25rem] object-cover"
+                className="h-80 w-full rounded-lg object-cover"
             />
             <div className="flex flex-col gap-3 text-left sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
                 <h3
                   id={titleId}
-                  className="font-serif text-2xl text-foreground"
+                  className="text-2xl font-semibold tracking-tight text-foreground"
                 >
                   {title}
                 </h3>
@@ -169,10 +169,10 @@ export function UploadDropzone({
           </div>
         ) : (
           <>
-            <div className="mx-auto flex size-14 items-center justify-center rounded-full border border-primary/25 bg-primary/10 text-primary">
+            <div className="mx-auto flex size-14 items-center justify-center rounded-lg border border-primary/25 bg-primary/8 text-primary">
               <UploadCloud className="size-6" aria-hidden="true" />
             </div>
-            <h3 id={titleId} className="mt-5 font-serif text-3xl text-foreground">
+            <h3 id={titleId} className="mt-5 text-3xl font-semibold tracking-tight text-foreground">
               {title}
             </h3>
             <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-muted-foreground">

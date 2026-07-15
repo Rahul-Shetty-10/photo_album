@@ -1,10 +1,5 @@
-import { ProtectedRoute } from "@/features/auth/protected-route";
-import { ProjectsDashboard } from "@/features/projects/components/projects-dashboard";
+import { redirect } from "next/navigation";
 
 export default function ProjectsPage() {
-  return (
-    <ProtectedRoute>
-      <ProjectsDashboard />
-    </ProtectedRoute>
-  );
+  redirect("/dashboard");
 }

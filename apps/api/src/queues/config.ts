@@ -13,3 +13,6 @@ export const queueConnection: RedisOptions = {
   tls: redisUrl.protocol === "rediss:" ? {} : undefined,
   username: redisUrl.username || undefined,
 };
+
+export const isRedisRequestLimitError = (error: unknown) =>
+  error instanceof Error && error.message.toLowerCase().includes("max requests limit exceeded");

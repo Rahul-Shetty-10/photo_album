@@ -49,7 +49,7 @@ export function FaqSection() {
             <GlassCard>
               <details className="group">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-6 p-6 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
-                  <span className="font-serif text-xl text-foreground">
+                  <span className="font-sans text-xl text-foreground">
                     {faq.question}
                   </span>
                   <Plus className="size-5 shrink-0 text-primary transition-transform group-open:rotate-45" />

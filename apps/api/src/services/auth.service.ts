@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import jwt, { type SignOptions } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 import { config } from "../config";
 import { createUser, findUserByEmail, findUserById } from "../repositories/user.repository";
@@ -32,9 +32,8 @@ const signToken = (user: AuthUser) =>
     },
     config.jwtSecret,
     {
-      expiresIn: config.jwtExpiresIn,
       subject: user.id,
-    } as SignOptions,
+    },
   );
 
 export const registerUser = async (input: RegisterInput) => {

@@ -14,7 +14,7 @@ export default function AccountPage() {
       <main className="min-h-screen px-6 py-8 sm:px-8">
         <div className="mx-auto max-w-4xl">
           <nav className="flex items-center justify-between" aria-label="Account navigation">
-            <a className="font-serif text-3xl tracking-wide" href="/">
+            <a className="font-sans text-3xl tracking-tight" href="/">
               ALANKAAR
             </a>
             <Button onClick={() => void logout()} size="sm" variant="outline" type="button">
@@ -27,8 +27,8 @@ export default function AccountPage() {
                 <UserRound className="size-7" aria-hidden="true" />
               </span>
               <div>
-                <p className="text-xs uppercase tracking-[0.28em] text-primary">Account</p>
-                <h1 className="mt-2 font-serif text-4xl">Studio profile</h1>
+                <p className="text-xs uppercase tracking-[0.12em] text-primary">Account</p>
+                <h1 className="mt-2 font-sans text-4xl">Studio profile</h1>
                 <p className="mt-2 text-sm text-muted-foreground">{user?.email}</p>
               </div>
             </div>

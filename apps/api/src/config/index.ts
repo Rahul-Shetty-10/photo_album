@@ -10,7 +10,6 @@ export const config = {
   },
   corsOrigin: env.CORS_ORIGIN,
   databaseUrl: env.DATABASE_URL,
-  jwtExpiresIn: env.JWT_EXPIRES_IN,
   jwtSecret: env.JWT_SECRET,
   logLevel: env.LOG_LEVEL,
   nodeEnv: env.NODE_ENV,
@@ -19,5 +18,6 @@ export const config = {
     imageModel: env.POLLINATIONS_IMAGE_MODEL,
   },
   port: env.PORT,
+  queueEnabled: env.QUEUE_ENABLED,
   upstashRedisUrl: env.UPSTASH_REDIS_URL,
 } as const;

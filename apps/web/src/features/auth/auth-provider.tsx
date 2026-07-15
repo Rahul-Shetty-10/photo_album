@@ -4,7 +4,7 @@ import * as React from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { authTokenKey, getCurrentUser, login, logout, register, type AuthUser } from "./api";
+import { AuthApiError, authTokenKey, getCurrentUser, login, logout, register, type AuthUser } from "./api";
 
 type AuthContextValue = {
   isAuthenticated: boolean;
@@ -17,6 +17,48 @@ type AuthContextValue = {
 };
 
 const AuthContext = React.createContext<AuthContextValue | null>(null);
+
+const getSafeReturnTo = () => {
+  const returnTo = new URLSearchParams(window.location.search).get("returnTo");
+
+  if (!returnTo?.startsWith("/") || returnTo.startsWith("//")) {
+    return "/dashboard";
+  }
+
+  return returnTo;
+};
+
+const decodeUserFromToken = (storedToken: string): AuthUser | null => {
+  try {
+    const encodedPayload = storedToken.split(".")[1];
+    if (!encodedPayload) {
+      return null;
+    }
+
+    const paddedPayload = encodedPayload.padEnd(encodedPayload.length + ((4 - (encodedPayload.length % 4)) % 4), "=");
+    const payload = JSON.parse(window.atob(paddedPayload.replace(/-/g, "+").replace(/_/g, "/"))) as {
+      email?: string;
+      exp?: number;
+      sub?: string;
+    };
+
+    if (!payload.sub || !payload.email) {
+      return null;
+    }
+
+    if (payload.exp && payload.exp * 1000 < Date.now()) {
+      return null;
+    }
+
+    return {
+      createdAt: new Date(0).toISOString(),
+      email: payload.email,
+      id: payload.sub,
+    };
+  } catch {
+    return null;
+  }
+};
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = React.useState<AuthUser | null>(null);
@@ -44,8 +86,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         setToken(storedToken);
         setUser(result.user);
-      } catch {
-        window.localStorage.removeItem(authTokenKey);
+      } catch (error) {
+        if (error instanceof AuthApiError && error.status === 401) {
+          window.localStorage.removeItem(authTokenKey);
+          return;
+        }
+
+        const decodedUser = decodeUserFromToken(storedToken);
+
+        if (decodedUser && isMounted) {
+          setToken(storedToken);
+          setUser(decodedUser);
+        }
       } finally {
         if (isMounted) {
           setIsRestoring(false);
@@ -60,23 +112,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  const persistSession = React.useCallback((nextToken: string, rememberMe: boolean) => {
+  const persistSession = React.useCallback((nextToken: string) => {
     setToken(nextToken);
-
-    if (rememberMe) {
-      window.localStorage.setItem(authTokenKey, nextToken);
-    } else {
-      window.localStorage.removeItem(authTokenKey);
-    }
+    window.localStorage.setItem(authTokenKey, nextToken);
   }, []);
 
   const handleLogin = React.useCallback(
     async (payload: { email: string; password: string; rememberMe: boolean }) => {
       const result = await login(payload);
-      persistSession(result.token, payload.rememberMe);
+      persistSession(result.token);
       setUser(result.user);
       toast.success("Welcome back to ALANKAAR");
-      router.replace("/projects");
+      router.replace(getSafeReturnTo());
     },
     [persistSession, router],
   );
@@ -84,10 +131,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const handleRegister = React.useCallback(
     async (payload: { email: string; password: string; rememberMe: boolean }) => {
       const result = await register(payload);
-      persistSession(result.token, payload.rememberMe);
+      persistSession(result.token);
       setUser(result.user);
       toast.success("Your account is ready");
-      router.replace("/projects");
+      router.replace(getSafeReturnTo());
     },
     [persistSession, router],
   );
@@ -106,7 +153,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    if (pathname?.startsWith("/account") || pathname?.startsWith("/projects")) {
+    if (pathname?.startsWith("/account") || pathname?.startsWith("/dashboard") || pathname?.startsWith("/projects")) {
       router.replace("/login");
     } else {
       router.refresh();

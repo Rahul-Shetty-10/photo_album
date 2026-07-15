@@ -3,7 +3,9 @@
 import { Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 
-export function ThemeToggle() {
+import { cn } from "@/lib/utils";
+
+export function ThemeToggle({ className }: { className?: string }) {
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [mounted, setMounted] = useState(false);
 
@@ -24,7 +26,10 @@ export function ThemeToggle() {
   return (
     <button
       aria-label={mounted ? `Switch to ${nextTheme} theme` : "Change color theme"}
-      className="fixed right-5 bottom-5 z-[120] grid size-12 place-items-center rounded-full border border-border bg-card text-foreground shadow-xl shadow-black/10 backdrop-blur-xl transition hover:-translate-y-0.5 hover:border-primary/60 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:right-7 sm:bottom-7"
+      className={cn(
+        "grid size-10 place-items-center rounded-full border border-border bg-card text-foreground shadow-xl shadow-black/10 backdrop-blur-xl transition hover:-translate-y-0.5 hover:border-primary/60 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        className,
+      )}
       onClick={changeTheme}
       title={mounted ? `Switch to ${nextTheme} theme` : "Change color theme"}
       type="button"

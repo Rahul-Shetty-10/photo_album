@@ -7,13 +7,11 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useAuth } from "@/features/auth/auth-provider";
 import { createProject, listProjects, type Project } from "@/features/projects/api";
 import { ProjectCard } from "./project-card";
 import { ProjectCreateModal } from "./project-create-modal";
 
 export function ProjectsDashboard() {
-  const { logout, user } = useAuth();
   const router = useRouter();
   const [projects, setProjects] = React.useState<Project[]>([]);
   const [query, setQuery] = React.useState("");
@@ -58,7 +56,7 @@ export function ProjectsDashboard() {
     try {
       const result = await createProject(payload);
       toast.success("Project created");
-      router.push(`/projects/${result.project.id}`);
+      router.push(`/dashboard/${result.project.id}`);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Unable to create project");
     } finally {
@@ -67,22 +65,14 @@ export function ProjectsDashboard() {
   };
 
   return (
-    <main className="min-h-screen px-6 py-8 sm:px-8">
-      <div className="mx-auto max-w-6xl">
-        <nav className="flex items-center justify-between gap-4" aria-label="Dashboard navigation">
-          <a className="font-serif text-3xl tracking-wide" href="/">
-            ALANKAAR
-          </a>
-          <Button onClick={() => void logout()} size="sm" variant="outline" type="button">
-            Logout
-          </Button>
-        </nav>
-        <section className="mt-12 flex flex-col gap-6 border-b border-border pb-10 lg:flex-row lg:items-end lg:justify-between">
+    <>
+      <div>
+        <section className="flex flex-col gap-6 border-b border-border pb-8 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <p className="text-xs uppercase tracking-[0.28em] text-primary">Dashboard</p>
-            <h1 className="mt-3 font-serif text-5xl leading-none sm:text-6xl">Welcome back.</h1>
+            <p className="text-xs uppercase tracking-[0.12em] text-primary">Projects</p>
+            <h1 className="mt-3 font-sans text-5xl leading-none sm:text-6xl">Project Library</h1>
             <p className="mt-4 max-w-2xl text-sm leading-6 text-muted-foreground">
-              {user?.email ? `Signed in as ${user.email}.` : "Your project studio is ready."}
+              Open a project dashboard before entering the image creation workflow.
             </p>
           </div>
           <Button onClick={() => setIsModalOpen(true)} size="lg" type="button">
@@ -92,7 +82,7 @@ export function ProjectsDashboard() {
         </section>
         <section className="mt-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <h2 className="font-serif text-3xl">Recent Projects</h2>
+            <h2 className="font-sans text-3xl">Recent Projects</h2>
             <label className="relative w-full sm:max-w-sm">
               <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input
@@ -108,20 +98,20 @@ export function ProjectsDashboard() {
               <div className="h-10 w-10 animate-spin rounded-full border border-border border-t-primary" />
             </div>
           ) : filteredProjects.length > 0 ? (
-            <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
               {filteredProjects.map((project) => (
                 <ProjectCard key={project.id} project={project} />
               ))}
             </div>
           ) : (
             <div className="mt-6 rounded-[1.5rem] border border-dashed border-border bg-card/60 px-6 py-14 text-center">
-              <p className="text-xs uppercase tracking-[0.28em] text-primary">No Projects</p>
-              <h3 className="mt-3 font-serif text-4xl">
+              <p className="text-xs uppercase tracking-[0.12em] text-primary">No Projects</p>
+              <h3 className="mt-3 font-sans text-4xl">
                 {projects.length === 0 ? "Create your first album foundation." : "No matching projects."}
               </h3>
               <p className="mx-auto mt-4 max-w-md text-sm leading-6 text-muted-foreground">
                 {projects.length === 0
-                  ? "Start with an event category and project name. The workspace opens immediately after creation."
+                  ? "Start with an event category and project name. The project dashboard opens after creation."
                   : "Adjust the search text to find another project."}
               </p>
             </div>
@@ -135,6 +125,6 @@ export function ProjectsDashboard() {
           onCreate={handleCreate}
         />
       ) : null}
-    </main>
+    </>
   );
 }

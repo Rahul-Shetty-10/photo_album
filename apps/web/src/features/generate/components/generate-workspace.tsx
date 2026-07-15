@@ -20,10 +20,8 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import { AnimatedGradient } from "@/components/design/animated-gradient";
 import { UploadDropzone } from "@/components/design/upload-dropzone";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
@@ -243,7 +241,7 @@ function GeneratedImageLightbox({
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-50 flex items-stretch justify-center bg-[#070403]/90 p-3 text-foreground backdrop-blur-xl sm:p-5"
+        className="fixed inset-0 z-50 flex items-stretch justify-center bg-[#070a10]/90 p-3 text-foreground backdrop-blur-xl sm:p-5"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -257,7 +255,7 @@ function GeneratedImageLightbox({
         }}
       >
         <motion.div
-          className="grid h-full w-full max-w-7xl grid-rows-[auto_1fr_auto] overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#100b08]/95 shadow-2xl shadow-black/50"
+          className="grid h-full w-full max-w-7xl grid-rows-[auto_1fr_auto] overflow-hidden rounded-lg border border-white/10 bg-[#111827]/95 shadow-2xl shadow-black/40"
           initial={{ opacity: 0, scale: 0.96, y: 18 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.98, y: 10 }}
@@ -265,8 +263,8 @@ function GeneratedImageLightbox({
         >
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-4 py-3 sm:px-5">
             <div className="min-w-0">
-              <p className="text-xs uppercase tracking-[0.28em] text-primary">Generated portrait</p>
-              <p className="mt-1 truncate font-serif text-xl text-[#fff8e8]">{activeImage.theme ?? "Generated photograph"}</p>
+              <p className="text-xs uppercase tracking-[0.12em] text-primary">Generated portrait</p>
+              <p className="mt-1 truncate font-sans text-xl text-[#f8fafc]">{activeImage.theme ?? "Generated photograph"}</p>
             </div>
             <div className="flex items-center gap-2">
               <Button type="button" variant="outline" size="icon-sm" aria-label="Zoom out" onClick={() => setZoom((value) => Math.max(1, value - 0.25))}>
@@ -318,21 +316,21 @@ function GeneratedImageLightbox({
           <div className="grid gap-3 border-t border-white/10 px-4 py-3 sm:grid-cols-[1fr_auto] sm:items-center sm:px-5">
             <dl className="grid grid-cols-2 gap-3 text-xs text-muted-foreground sm:flex sm:flex-wrap sm:gap-x-6">
               <div>
-                <dt className="text-[#eee3cf]/55">Theme</dt>
-                <dd className="mt-1 text-[#fff8e8]">{activeImage.theme ?? "Not available"}</dd>
+                <dt className="text-[#cbd5e1]/55">Theme</dt>
+                <dd className="mt-1 text-[#f8fafc]">{activeImage.theme ?? "Not available"}</dd>
               </div>
               <div>
-                <dt className="text-[#eee3cf]/55">Generated</dt>
-                <dd className="mt-1 text-[#fff8e8]">{formatDateTime(activeImage.createdAt)}</dd>
+                <dt className="text-[#cbd5e1]/55">Generated</dt>
+                <dd className="mt-1 text-[#f8fafc]">{formatDateTime(activeImage.createdAt)}</dd>
               </div>
               <div>
-                <dt className="text-[#eee3cf]/55">Dimensions</dt>
-                <dd className="mt-1 text-[#fff8e8]">{displayWidth && displayHeight ? `${displayWidth} x ${displayHeight}` : "Loading..."}</dd>
+                <dt className="text-[#cbd5e1]/55">Dimensions</dt>
+                <dd className="mt-1 text-[#f8fafc]">{displayWidth && displayHeight ? `${displayWidth} x ${displayHeight}` : "Loading..."}</dd>
               </div>
               {hasMultipleImages && (
                 <div>
-                  <dt className="text-[#eee3cf]/55">Image</dt>
-                  <dd className="mt-1 text-[#fff8e8]">{activeIndex + 1} of {images.length}</dd>
+                  <dt className="text-[#cbd5e1]/55">Image</dt>
+                  <dd className="mt-1 text-[#f8fafc]">{activeIndex + 1} of {images.length}</dd>
                 </div>
               )}
             </dl>
@@ -533,7 +531,7 @@ export function GenerateWorkspace() {
       <AnimatedGradient />
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-8">
         <nav className="flex items-center justify-between" aria-label="Workspace navigation">
-          <a className="font-serif text-2xl tracking-wide text-foreground" href="/">
+          <a className="font-sans text-2xl tracking-tight text-foreground" href="/">
             ALANKAAR
           </a>
           <Button asChild variant="outline" size="sm">
@@ -551,13 +549,9 @@ export function GenerateWorkspace() {
           className="grid gap-4 pt-8 lg:grid-cols-[1fr_auto] lg:items-end"
         >
           <div>
-            <Badge>AI workspace</Badge>
-            <h1 className="mt-5 max-w-4xl font-serif text-5xl leading-tight text-foreground sm:text-6xl">
-              Prepare a polished photography output
+            <h1 className="mt-5 max-w-4xl font-sans text-5xl leading-tight text-foreground sm:text-6xl">
+              Create an image
             </h1>
-            <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
-              Upload subject references, choose a creative direction, and prepare the generation inputs in one focused studio.
-            </p>
           </div>
           <Button size="lg" type="button" disabled={!canGenerate} onClick={handleGenerate}>
             <Sparkles aria-hidden="true" />
@@ -596,10 +590,7 @@ export function GenerateWorkspace() {
           >
             <Card>
               <CardHeader>
-                <CardTitle>Creative Direction</CardTitle>
-                <CardDescription>
-                  Select the visual direction for the final portrait.
-                </CardDescription>
+                <CardTitle>Choose a style</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-2">
@@ -613,8 +604,8 @@ export function GenerateWorkspace() {
                         aria-pressed={isSelected}
                         onClick={() => setSelectedStyle(style)}
                         className={cn(
-                          "group relative min-h-24 rounded-2xl border border-border/70 bg-background/50 p-4 text-left transition-all hover:border-primary/50 hover:bg-primary/10 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:outline-none",
-                          isSelected && "border-primary/70 bg-primary/15 shadow-lg shadow-primary/10"
+                          "group relative min-h-24 rounded-lg border border-border/70 bg-background/50 p-4 text-left transition-all hover:border-primary/50 hover:bg-primary/5 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:outline-none",
+                          isSelected && "border-primary/70 bg-primary/10 shadow-sm"
                         )}
                       >
                         <span className="absolute inset-x-3 top-3 h-10 rounded-xl bg-gradient-to-br from-primary/20 via-accent/10 to-transparent" />
@@ -633,18 +624,18 @@ export function GenerateWorkspace() {
               </CardContent>
             </Card>
 
-            <details className="group rounded-3xl border border-border/70 bg-card text-card-foreground shadow-2xl shadow-black/20">
+            <details className="group rounded-lg border border-border/70 bg-card text-card-foreground shadow-sm shadow-black/5">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-6 focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:outline-none">
-                <span className="flex items-center gap-3">
-                  <span className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <span className="flex items-center gap-3">
+                  <span className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
                     <SlidersHorizontal className="size-4" aria-hidden="true" />
                   </span>
                   <span>
-                    <span className="block font-serif text-2xl text-foreground">
-                      Advanced Options
+                    <span className="block font-sans text-2xl text-foreground">
+                      More choices
                     </span>
                     <span className="mt-1 block text-sm text-muted-foreground">
-                      Optional prompt, framing, and output quality.
+                      Optional details.
                     </span>
                   </span>
                 </span>
@@ -652,9 +643,9 @@ export function GenerateWorkspace() {
               </summary>
               <div className="grid gap-5 px-6 pb-6">
                 <label className="grid gap-2 text-sm text-muted-foreground">
-                  Additional prompt (optional)
+                  Add details
                   <Textarea
-                    placeholder="Add wardrobe, location, lighting, or cultural details."
+                    placeholder="Wardrobe, place, lighting, or cultural details."
                     value={customPrompt}
                     onChange={(event) => setCustomPrompt(event.target.value)}
                   />
@@ -670,7 +661,7 @@ export function GenerateWorkspace() {
                           aria-pressed={aspectRatio === ratio}
                           onClick={() => setAspectRatio(ratio)}
                           className={cn(
-                            "rounded-full border border-border/70 bg-background/50 px-4 py-2 text-sm text-foreground transition-colors hover:border-primary/50 hover:bg-primary/10 focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:outline-none",
+                            "rounded-lg border border-border/70 bg-background/50 px-4 py-2 text-sm text-foreground transition-colors hover:border-primary/50 hover:bg-primary/5 focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:outline-none",
                             aspectRatio === ratio && "border-primary/70 bg-primary/15 text-primary"
                           )}
                         >
@@ -689,7 +680,7 @@ export function GenerateWorkspace() {
                           aria-pressed={quality === item}
                           onClick={() => setQuality(item)}
                           className={cn(
-                            "rounded-full border border-border/70 bg-background/50 px-4 py-2 text-sm text-foreground transition-colors hover:border-primary/50 hover:bg-primary/10 focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:outline-none",
+                            "rounded-lg border border-border/70 bg-background/50 px-4 py-2 text-sm text-foreground transition-colors hover:border-primary/50 hover:bg-primary/5 focus-visible:ring-2 focus-visible:ring-primary/35 focus-visible:outline-none",
                             quality === item && "border-primary/70 bg-primary/15 text-primary"
                           )}
                         >
@@ -704,22 +695,21 @@ export function GenerateWorkspace() {
 
             {(error || generationStatus) && (
               <Card>
-                <CardHeader>
-                  <CardTitle>Generation Status</CardTitle>
+              <CardHeader>
+                  <CardTitle>{error ? "Something went wrong" : isGenerating ? "Creating your image" : "Image ready"}</CardTitle>
                   <CardDescription>
-                    {error ?? `${generationStatus?.status ?? "Preparing"} - ${generationStatus?.progress ?? 0}%`}
+                    {error ?? (isGenerating ? "This can take a little while." : "Open the image below.")}
                   </CardDescription>
                 </CardHeader>
                 {generationStatus && (
                   <CardContent className="grid gap-4">
-                    <Progress value={generationStatus.progress} />
                     {galleryImages.length > 0 && (
                       <div className="grid grid-cols-2 gap-3">
                         {galleryImages.map((image, index) => (
                           <button
                             key={image.id ?? image.url}
                             type="button"
-                            className="group relative overflow-hidden rounded-2xl border border-border bg-card text-left outline-none transition hover:border-primary/45 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/35"
+                            className="group relative overflow-hidden rounded-lg border border-border bg-card text-left outline-none transition hover:border-primary/45 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/35"
                             onClick={() => setActiveGalleryIndex(index)}
                           >
                             <img

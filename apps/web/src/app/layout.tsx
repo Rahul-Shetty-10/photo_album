@@ -2,7 +2,6 @@ import './global.css';
 
 import { Toaster } from 'sonner';
 
-import { ThemeToggle } from '@/components/theme-toggle';
 import { AuthProvider } from '@/features/auth/auth-provider';
 
 export const metadata = {
@@ -21,12 +20,12 @@ export default function RootLayout({
       <body>
         <script
           dangerouslySetInnerHTML={{
-            __html: "try{document.documentElement.classList.toggle('dark',localStorage.getItem('alankar-theme')==='dark')}catch(e){}",
+            __html:
+              "try{var t=localStorage.getItem('alankar-theme');var d=t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.classList.toggle('dark',d)}catch(e){}",
           }}
         />
         <AuthProvider>
           {children}
-          <ThemeToggle />
           <Toaster richColors position="top-right" />
         </AuthProvider>
       </body>

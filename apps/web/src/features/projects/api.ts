@@ -31,6 +31,8 @@ const projectFetch = async <T>(path: string, options: RequestInit = {}) => {
   const token = window.localStorage.getItem(authTokenKey);
 
   if (!token) {
+    const returnTo = `${window.location.pathname}${window.location.search}`;
+    window.location.replace(`/login?returnTo=${encodeURIComponent(returnTo)}`);
     throw new Error("Authentication required");
   }
 
@@ -44,6 +46,12 @@ const projectFetch = async <T>(path: string, options: RequestInit = {}) => {
   });
 
   if (!response.ok) {
+    if (response.status === 401) {
+      window.localStorage.removeItem(authTokenKey);
+      const returnTo = `${window.location.pathname}${window.location.search}`;
+      window.location.replace(`/login?returnTo=${encodeURIComponent(returnTo)}`);
+    }
+
     throw new Error(await getErrorMessage(response, `Request failed with status ${response.status}`));
   }
 

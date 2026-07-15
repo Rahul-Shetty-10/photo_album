@@ -39,7 +39,7 @@ export function StylesSection() {
             <GlassCard className="group relative overflow-hidden p-5">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-transparent to-accent/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
               <div className="relative">
-                <p className="font-serif text-2xl text-foreground">{style}</p>
+                <p className="font-sans text-2xl text-foreground">{style}</p>
                 <p className="mt-3 text-xs leading-5 text-muted-foreground">
                   Cinematic portrait direction
                 </p>

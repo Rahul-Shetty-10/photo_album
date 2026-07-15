@@ -26,7 +26,7 @@ export function Section({
         <div className="mx-auto mb-12 max-w-3xl text-center">
           {eyebrow && <Badge>{eyebrow}</Badge>}
           {title && (
-            <h2 className="mt-5 font-serif text-4xl leading-tight text-foreground sm:text-5xl">
+            <h2 className="mt-5 font-sans text-4xl leading-tight text-foreground sm:text-5xl">
               {title}
             </h2>
           )}

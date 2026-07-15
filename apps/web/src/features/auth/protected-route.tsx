@@ -11,7 +11,8 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   React.useEffect(() => {
     if (!isRestoring && !isAuthenticated) {
-      router.replace("/login");
+      const returnTo = `${window.location.pathname}${window.location.search}`;
+      router.replace(`/login?returnTo=${encodeURIComponent(returnTo)}`);
     }
   }, [isAuthenticated, isRestoring, router]);
 

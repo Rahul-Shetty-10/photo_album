@@ -42,10 +42,10 @@ export function HowItWorksSection() {
             key={step.title}
           >
             <GlassCard className="relative h-full p-6">
-              <div className="mb-8 flex size-12 items-center justify-center rounded-full border border-primary/20 bg-primary/10 font-serif text-2xl text-primary">
+              <div className="mb-8 flex size-12 items-center justify-center rounded-full border border-primary/20 bg-primary/10 font-sans text-2xl text-primary">
                 {index + 1}
               </div>
-              <h3 className="font-serif text-2xl text-foreground">{step.title}</h3>
+              <h3 className="font-sans text-2xl text-foreground">{step.title}</h3>
               <p className="mt-3 text-sm leading-6 text-muted-foreground">
                 {step.description}
               </p>

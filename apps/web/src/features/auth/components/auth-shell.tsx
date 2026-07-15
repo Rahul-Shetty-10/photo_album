@@ -45,10 +45,10 @@ export function AuthShell({
 
   return (
     <main
-      className="relative isolate min-h-screen overflow-hidden bg-[#090806] px-5 py-5 text-[#fff9ed] sm:px-8 sm:py-7"
+      className="relative isolate min-h-screen overflow-hidden bg-[#0b0d12] px-5 py-5 text-white sm:px-8 sm:py-7"
       onPointerMove={handlePointerMove}
     >
-      <div className="absolute inset-0 -z-30 bg-[#090806]" />
+      <div className="absolute inset-0 -z-30 bg-[#0b0d12]" />
       <motion.div className="absolute inset-[-4%] -z-20" style={{ x: sceneX, y: sceneY }}>
         {sceneImages.map((image, index) => (
           <div
@@ -62,16 +62,16 @@ export function AuthShell({
           />
         ))}
       </motion.div>
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_34%_56%,rgba(229,177,95,0.18),transparent_22rem),linear-gradient(90deg,rgba(8,7,6,0.68),rgba(8,7,6,0.34)_42%,rgba(8,7,6,0.8)_72%,rgba(8,7,6,0.95)),linear-gradient(180deg,rgba(8,7,6,0.36),rgba(8,7,6,0.86))]" />
+      <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(7,9,13,0.72),rgba(7,9,13,0.32)_42%,rgba(7,9,13,0.82)_72%,rgba(7,9,13,0.96)),linear-gradient(180deg,rgba(7,9,13,0.34),rgba(7,9,13,0.88))]" />
       <motion.div
         aria-hidden="true"
-        className="absolute -z-10 h-80 w-80 rounded-full bg-[#e4b56a]/18 blur-3xl"
+        className="absolute -z-10 h-80 w-80 rounded-full bg-primary/10 blur-3xl"
         style={{ left: lightX, top: lightY }}
       />
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
         {dustParticles.map((particle, index) => (
           <span
-            className="auth-dust absolute rounded-full bg-[#f7e8c9]/55"
+            className="auth-dust absolute rounded-full bg-white/30"
             key={index}
             style={{
               animationDelay: particle.delay,
@@ -85,11 +85,11 @@ export function AuthShell({
       </div>
 
       <nav className="mx-auto flex max-w-[92rem] items-center justify-between" aria-label="Authentication navigation">
-        <a className="flex items-center gap-3 font-serif text-2xl tracking-[0.18em] text-white sm:text-3xl" href="/">
-          <Aperture className="size-6 text-[#e7bd72]" aria-hidden="true" />
+        <a className="flex items-center gap-3 text-2xl font-semibold tracking-tight text-white sm:text-3xl" href="/">
+          <Aperture className="size-6 text-primary" aria-hidden="true" />
           ALANKAAR
         </a>
-        <a className="rounded-full border border-white/12 bg-white/[0.06] px-4 py-2 text-sm text-white/72 backdrop-blur-xl transition hover:border-[#e7bd72]/45 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#e7bd72]/45" href="/">
+        <a className="rounded-lg border border-white/12 bg-white/[0.06] px-4 py-2 text-sm text-white/72 backdrop-blur-xl transition hover:border-primary/45 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/45" href="/">
           Home
         </a>
       </nav>
@@ -101,26 +101,26 @@ export function AuthShell({
           initial={{ opacity: 0, y: 22 }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/14 bg-black/22 px-3 py-1.5 text-xs uppercase tracking-[0.28em] text-[#e7bd72] backdrop-blur-xl">
+          <div className="inline-flex items-center gap-2 rounded-lg border border-white/14 bg-black/22 px-3 py-1.5 text-xs uppercase tracking-[0.12em] text-primary backdrop-blur-xl">
             <Sparkles className="size-3.5" aria-hidden="true" />
             {eyebrow}
           </div>
-          <h1 className="mt-7 max-w-4xl font-serif text-6xl leading-[0.82] text-white text-balance sm:text-7xl lg:text-8xl xl:text-9xl">
+          <h1 className="mt-7 max-w-4xl text-6xl font-semibold leading-[0.88] tracking-tight text-white text-balance sm:text-7xl lg:text-8xl xl:text-9xl">
             {title}
           </h1>
           <p className="mt-7 max-w-xl text-base leading-7 text-white/78 sm:text-lg">{text}</p>
           <div className="mt-10 grid max-w-xl gap-3 sm:grid-cols-2">
-            <div className="rounded-3xl border border-white/12 bg-black/24 p-4 backdrop-blur-xl">
-              <Camera className="size-5 text-[#e7bd72]" aria-hidden="true" />
+            <div className="rounded-lg border border-white/12 bg-black/24 p-4 backdrop-blur-xl">
+              <Camera className="size-5 text-primary" aria-hidden="true" />
               <p className="mt-4 text-sm leading-6 text-white/74">A private studio entry for photographers, projects, and crafted image direction.</p>
             </div>
-            <div className="rounded-3xl border border-white/12 bg-black/24 p-4 backdrop-blur-xl">
-              <ShieldCheck className="size-5 text-[#e7bd72]" aria-hidden="true" />
+            <div className="rounded-lg border border-white/12 bg-black/24 p-4 backdrop-blur-xl">
+              <ShieldCheck className="size-5 text-primary" aria-hidden="true" />
               <p className="mt-4 text-sm leading-6 text-white/74">Secure session restoration with a quiet interface that stays out of the work.</p>
             </div>
           </div>
-          <div className="mt-10 flex items-center gap-3 text-xs uppercase tracking-[0.24em] text-white/48">
-            <span className="h-px w-12 bg-[#e7bd72]/70" />
+          <div className="mt-10 flex items-center gap-3 text-xs uppercase tracking-[0.12em] text-white/48">
+            <span className="h-px w-12 bg-primary/70" />
             Editorial workspace
             <span className="size-1 rounded-full bg-white/35" />
             ALANKAAR

@@ -4,6 +4,7 @@ import { enqueueGenerationJob } from "../queues";
 import {
   createGenerationJob,
   findGenerationJobById,
+  updateGenerationJob,
   updateGenerationJobStatus,
 } from "../repositories/generation-job.repository";
 import { findUploadById } from "../repositories/upload.repository";
@@ -94,8 +95,25 @@ export const createPendingGenerationJob = async (input: CreateGenerationJobReque
     "GenerationJob created",
   );
 
-  const queueJob = await enqueueGenerationJob(job.id);
-  logger.info({ bullJobId: queueJob.id, generationJobId: job.id }, "GenerationJob enqueued");
+  try {
+    const queueJob = await enqueueGenerationJob(job.id);
+    logger.info({ bullJobId: queueJob.id, generationJobId: job.id }, "GenerationJob enqueued");
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Generation queue is unavailable";
+
+    await withDatabaseRetry(
+      () =>
+        updateGenerationJob(job.id, {
+          errorMessage: message,
+          failedAt: new Date(),
+          progress: 100,
+          status: "Failed",
+        }),
+      "mark generation failed after enqueue error",
+    );
+
+    throw error;
+  }
 
   await withDatabaseRetry(() => updateGenerationJobStatus(job.id, "Queued"), "confirm generation queued status");
 

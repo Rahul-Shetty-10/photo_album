@@ -21,11 +21,9 @@ export function AuthCard({
   title: string;
 }) {
   return (
-    <section className="relative w-full overflow-hidden rounded-[2rem] border border-white/14 bg-[#11100e]/72 p-6 text-white shadow-2xl shadow-black/40 backdrop-blur-3xl sm:p-8 lg:p-10">
-      <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-[#f0c982]/70 to-transparent" />
-      <div className="pointer-events-none absolute -right-20 -top-24 h-56 w-56 rounded-full bg-[#e7bd72]/12 blur-3xl" />
+    <section className="relative w-full overflow-hidden rounded-lg border border-white/14 bg-[#111827]/78 p-6 text-white shadow-2xl shadow-black/30 backdrop-blur-3xl sm:p-8 lg:p-10">
       <div>
-        <h2 className="font-serif text-4xl leading-none text-white sm:text-5xl">{title}</h2>
+        <h2 className="text-4xl font-semibold leading-none tracking-tight text-white sm:text-5xl">{title}</h2>
         <p className="mt-4 text-sm leading-6 text-white/58">{subtitle}</p>
       </div>
       <div className="mt-8">{children}</div>
@@ -51,7 +49,7 @@ export function Field({
       <Input
         aria-invalid={Boolean(error)}
         className={cn(
-          "h-14 rounded-2xl border-white/12 bg-white/[0.055] px-5 text-base text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] placeholder:text-white/32 hover:border-white/22 focus-visible:border-[#e7bd72]/70 focus-visible:ring-[#e7bd72]/20",
+          "h-14 rounded-lg border-white/12 bg-white/[0.055] px-5 text-base text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] placeholder:text-white/32 hover:border-white/22 focus-visible:border-primary/70 focus-visible:ring-primary/20",
           error && "border-destructive/70 focus-visible:border-destructive/70 focus-visible:ring-destructive/20"
         )}
         type={type}
@@ -86,7 +84,7 @@ export function PasswordField({
         <Input
           aria-invalid={Boolean(error)}
           className={cn(
-            "h-14 rounded-2xl border-white/12 bg-white/[0.055] px-5 pr-14 text-base text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] placeholder:text-white/32 hover:border-white/22 focus-visible:border-[#e7bd72]/70 focus-visible:ring-[#e7bd72]/20",
+            "h-14 rounded-lg border-white/12 bg-white/[0.055] px-5 pr-14 text-base text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] placeholder:text-white/32 hover:border-white/22 focus-visible:border-primary/70 focus-visible:ring-primary/20",
             error && "border-destructive/70 focus-visible:border-destructive/70 focus-visible:ring-destructive/20"
           )}
           type={isVisible ? "text" : "password"}
@@ -95,7 +93,7 @@ export function PasswordField({
         />
         <button
           aria-label={isVisible ? "Hide password" : "Show password"}
-          className="absolute right-3 top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-full text-white/50 transition hover:bg-white/10 hover:text-[#f3d99f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#e7bd72]/35"
+          className="absolute right-3 top-1/2 grid size-9 -translate-y-1/2 place-items-center rounded-lg text-white/50 transition hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35"
           onClick={() => setIsVisible((value) => !value)}
           type="button"
         >
@@ -114,7 +112,7 @@ export function PasswordField({
 export function SubmitButton({ children, isLoading }: { children: React.ReactNode; isLoading: boolean }) {
   return (
     <Button
-      className="group mt-1 h-14 w-full rounded-full bg-[#e8bd72] text-base text-[#120f0a] shadow-[0_18px_55px_rgba(232,189,114,0.22)] hover:bg-[#f0cc86] hover:shadow-[0_22px_65px_rgba(232,189,114,0.3)]"
+      className="group mt-1 h-14 w-full rounded-lg text-base shadow-sm"
       disabled={isLoading}
       size="lg"
       type="submit"
@@ -136,8 +134,8 @@ export function AuthCheckbox({
   return (
     <label className="group flex cursor-pointer items-center gap-3 text-sm text-white/66">
       <span className="relative grid size-5 place-items-center">
-        <input className="peer absolute inset-0 size-5 cursor-pointer appearance-none rounded-md border border-white/18 bg-white/[0.06] transition checked:border-[#e7bd72] checked:bg-[#e7bd72] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#e7bd72]/35" type="checkbox" {...registration} />
-        <Check className="pointer-events-none size-3.5 text-[#120f0a] opacity-0 transition peer-checked:opacity-100" aria-hidden="true" />
+        <input className="peer absolute inset-0 size-5 cursor-pointer appearance-none rounded-md border border-white/18 bg-white/[0.06] transition checked:border-primary checked:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35" type="checkbox" {...registration} />
+        <Check className="pointer-events-none size-3.5 text-white opacity-0 transition peer-checked:opacity-100" aria-hidden="true" />
       </span>
       <span>{children}</span>
     </label>

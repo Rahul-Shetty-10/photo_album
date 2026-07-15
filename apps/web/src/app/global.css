@@ -51,28 +51,29 @@
 :root {
   --font-display: "Cormorant Garamond", Georgia, Cambria, "Times New Roman",
     serif;
-  --font-body: Inter, ui-sans-serif, system-ui, -apple-system,
-    BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-body: "Adobe Clean", "SF Pro Text", "Helvetica Neue", Arial,
+    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
   --radius: 0.625rem;
   color-scheme: light;
-  --background: oklch(0.975 0.006 90);
-  --foreground: oklch(0.22 0.006 85);
-  --card: oklch(0.995 0.004 90 / 92%);
-  --card-foreground: oklch(0.22 0.006 85);
-  --popover: oklch(0.995 0.004 90);
-  --popover-foreground: oklch(0.22 0.006 85);
-  --primary: oklch(0.48 0.045 78);
-  --primary-foreground: oklch(0.99 0.006 86);
-  --secondary: oklch(0.92 0.006 90);
-  --secondary-foreground: oklch(0.28 0.006 85);
-  --muted: oklch(0.94 0.005 90);
-  --muted-foreground: oklch(0.48 0.006 85);
-  --accent: oklch(0.88 0.025 78);
-  --accent-foreground: oklch(0.24 0.006 85);
+  --background: #f8f4ea;
+  --foreground: #221a12;
+  --card: #fffaf0;
+  --card-foreground: #221a12;
+  --popover: #fffaf0;
+  --popover-foreground: #221a12;
+  --primary: #b88a2c;
+  --primary-foreground: #ffffff;
+  --secondary: #efe6d4;
+  --secondary-foreground: #2a2117;
+  --muted: #efe6d4;
+  --muted-foreground: #6d5d48;
+  --accent: #d6a84d;
+  --accent-foreground: #ffffff;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.72 0.006 85 / 32%);
-  --input: oklch(0.72 0.006 85 / 38%);
-  --ring: oklch(0.48 0.045 78);
+  --border: #ded0b7;
+  --input: #ded0b7;
+  --ring: #b88a2c;
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -90,24 +91,24 @@
 
 .dark {
   color-scheme: dark;
-  --background: oklch(0.16 0.012 65);
-  --foreground: oklch(0.92 0.024 88);
-  --card: oklch(0.2 0.014 65 / 72%);
-  --card-foreground: oklch(0.92 0.024 88);
-  --popover: oklch(0.18 0.014 65);
-  --popover-foreground: oklch(0.92 0.024 88);
-  --primary: oklch(0.73 0.07 82);
-  --primary-foreground: oklch(0.16 0.012 65);
-  --secondary: oklch(0.26 0.018 68);
-  --secondary-foreground: oklch(0.91 0.04 88);
-  --muted: oklch(0.29 0.014 65);
-  --muted-foreground: oklch(0.74 0.028 82);
-  --accent: oklch(0.89 0.052 88);
-  --accent-foreground: oklch(0.18 0.012 65);
+  --background: #100d0a;
+  --foreground: #fff7e8;
+  --card: #211910;
+  --card-foreground: #fff7e8;
+  --popover: #211910;
+  --popover-foreground: #fff7e8;
+  --primary: #d7ad57;
+  --primary-foreground: #160f07;
+  --secondary: #2b2116;
+  --secondary-foreground: #fff7e8;
+  --muted: #2b2116;
+  --muted-foreground: #c9b897;
+  --accent: #d7ad57;
+  --accent-foreground: #160f07;
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --border: rgba(255, 247, 232, 0.14);
+  --input: rgba(255, 247, 232, 0.18);
+  --ring: #d7ad57;
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
@@ -131,16 +132,31 @@
   body {
     @apply bg-background font-sans text-foreground antialiased;
     background:
-      radial-gradient(circle at 14% 0%, oklch(0.9 0.015 85 / 42%), transparent 30rem),
-      linear-gradient(135deg, oklch(0.99 0.003 90), oklch(0.955 0.006 90));
+      radial-gradient(circle at 14% 0%, rgba(184, 138, 44, 0.14), transparent 30rem),
+      linear-gradient(135deg, #fffaf0, var(--background));
+    font-feature-settings:
+      "kern" 1,
+      "liga" 1,
+      "calt" 1;
+    letter-spacing: 0;
     min-height: 100vh;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    letter-spacing: 0;
   }
 
   .dark body {
     background:
-      radial-gradient(circle at 20% 0%, oklch(0.29 0.06 78 / 35%), transparent 32rem),
-      radial-gradient(circle at 84% 14%, oklch(0.44 0.05 45 / 25%), transparent 28rem),
-      linear-gradient(135deg, oklch(0.15 0.012 65), oklch(0.18 0.016 72));
+      radial-gradient(circle at 20% 0%, rgba(215, 173, 87, 0.15), transparent 32rem),
+      radial-gradient(circle at 84% 14%, rgba(123, 83, 36, 0.18), transparent 28rem),
+      linear-gradient(135deg, #100d0a, #1a120b);
   }
 
   html {
@@ -214,16 +230,16 @@
 
 .studio-ambient {
   background:
-    radial-gradient(circle at 20% 0%, oklch(0.82 0.09 80 / 22%), transparent 30rem),
-    radial-gradient(circle at 86% 16%, oklch(0.76 0.07 55 / 14%), transparent 28rem),
+    radial-gradient(circle at 20% 0%, rgba(184, 138, 44, 0.16), transparent 30rem),
+    radial-gradient(circle at 86% 16%, rgba(122, 84, 45, 0.1), transparent 28rem),
     linear-gradient(180deg, transparent, var(--background) 90%);
 }
 
 .dark .studio-ambient {
   background:
-    radial-gradient(circle at 20% 0%, rgba(213, 171, 93, 0.18), transparent 30rem),
-    radial-gradient(circle at 86% 16%, rgba(122, 84, 45, 0.22), transparent 28rem),
-    linear-gradient(180deg, rgba(11, 9, 8, 0), #0b0908 90%);
+    radial-gradient(circle at 20% 0%, rgba(215, 173, 87, 0.16), transparent 30rem),
+    radial-gradient(circle at 86% 16%, rgba(122, 84, 45, 0.2), transparent 28rem),
+    linear-gradient(180deg, rgba(16, 13, 10, 0), #100d0a 90%);
 }
 
 @keyframes auth-scene-crossfade {
@@ -272,7 +288,7 @@
 
 .auth-dust {
   animation: auth-dust-drift 9s ease-in-out infinite;
-  box-shadow: 0 0 18px rgba(247, 232, 201, 0.42);
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.18);
 }
 
 @media (prefers-reduced-motion: reduce) {

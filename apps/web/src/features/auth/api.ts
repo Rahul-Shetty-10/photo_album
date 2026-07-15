@@ -15,6 +15,16 @@ const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:400
 
 export const authTokenKey = "alankar:auth-token";
 
+export class AuthApiError extends Error {
+  status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = "AuthApiError";
+    this.status = status;
+  }
+}
+
 const getErrorMessage = async (response: Response, fallback: string) => {
   try {
     const body = (await response.json()) as { message?: string };
@@ -34,7 +44,7 @@ const authFetch = async <T>(path: string, options: RequestInit = {}) => {
   });
 
   if (!response.ok) {
-    throw new Error(await getErrorMessage(response, `Request failed with status ${response.status}`));
+    throw new AuthApiError(await getErrorMessage(response, `Request failed with status ${response.status}`), response.status);
   }
 
   return response.json() as Promise<T>;

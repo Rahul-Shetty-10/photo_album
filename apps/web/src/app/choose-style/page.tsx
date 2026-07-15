@@ -14,7 +14,7 @@ export default function ChooseStylePage() {
       return;
     }
 
-    router.replace(isAuthenticated ? "/projects" : "/login");
+    router.replace(isAuthenticated ? "/dashboard" : "/login");
   }, [isAuthenticated, isRestoring, router]);
 
   return (

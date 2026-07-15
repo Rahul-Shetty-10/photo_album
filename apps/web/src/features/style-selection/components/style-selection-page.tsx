@@ -7,24 +7,24 @@ import { photoTemplates, type PhotoTemplate } from "@/features/templates/templat
 
 const maxGroupPeople = 12;
 
-const personalThemes = [
+export const personalThemes = [
   {
-    name: "Individual Portraits",
+    name: "Personal",
+    image:
+      "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=900&q=85",
+  },
+  {
+    name: "Portrait",
     image:
       "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=900&q=85",
   },
   {
-    name: "Couple Photoshoots",
+    name: "Couple",
     image:
       "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=900&q=85",
   },
   {
-    name: "Traditional Indian Events with Rituals",
-    image:
-      "https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    name: "Formal Family Events",
+    name: "Family",
     image:
       "https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=900&q=85",
   },
@@ -35,57 +35,62 @@ const personalThemes = [
   },
 ];
 
-const professionalThemes = [
+export const professionalThemes = [
+  {
+    name: "Professional",
+    image:
+      "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=900&q=85",
+  },
+  {
+    name: "Corporate",
+    image:
+      "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=900&q=85",
+  },
   {
     name: "Conferences",
     image:
       "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=900&q=85",
   },
   {
-    name: "Seminars",
+    name: "Movie Shoot",
     image:
-      "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=900&q=85",
+      "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=900&q=85",
   },
   {
-    name: "Expert Visit for Official Audit",
-    image:
-      "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    name: "Cultural Events",
-    image:
-      "https://images.unsplash.com/photo-1504609813442-a8924e83f76e?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    name: "Sports Events",
+    name: "Sports",
     image:
       "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=900&q=85",
   },
   {
-    name: "Official Parties",
+    name: "Fashion",
     image:
-      "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=900&q=85",
+      "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=900&q=85",
+  },
+  {
+    name: "Product",
+    image:
+      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=85",
   },
 ];
 
-const themesByStyle: Record<string, string[]> = {
-  "Individual Portraits": [
-    "Studio Portrait",
-    "Outdoor Natural",
-    "Urban City",
-    "Nature & Forest",
-    "Beach",
-    "Mountain",
-    "Sunset",
-    "Golden Hour",
-    "Traditional Indian",
-    "Ethnic Wear",
-    "Royal Heritage",
-    "Black & White",
-    "Luxury Lifestyle",
-    "Casual Lifestyle",
-    "Festival Portrait",
+export const themesByStyle: Record<string, string[]> = {
+  Personal: ["Editorial", "Studio", "Lifestyle", "Outdoor", "Black & White", "Fine Art"],
+  Wedding: [
+    "Royal Palace",
+    "North Indian",
+    "South Indian",
+    "Christian",
+    "Muslim",
+    "Temple",
+    "Reception",
+    "Beach Wedding",
+    "Haldi",
+    "Mehendi",
+    "Garden",
+    "Heritage Palace",
   ],
+  Portrait: ["Editorial", "Studio", "Lifestyle", "Outdoor", "Black & White", "Fine Art"],
+  Couple: ["Editorial", "Studio", "Lifestyle", "Outdoor", "Royal Palace", "Garden"],
   "Couple Photoshoots": [
     "Beach Romance",
     "Mountain Escape",
@@ -120,7 +125,7 @@ const themesByStyle: Record<string, string[]> = {
     "Festival Celebration",
     "Pooja Ceremony",
   ],
-  "Formal Family Events": [
+  Family: [
     "Family Portrait",
     "Family Reunion",
     "Anniversary Celebration",
@@ -149,25 +154,21 @@ const themesByStyle: Record<string, string[]> = {
     "Theme Party",
   ],
   Conferences: [
-    "Keynote Session",
-    "Business Conference",
-    "Technology Conference",
-    "Leadership Summit",
-    "Corporate Meet",
-    "Panel Discussion",
-    "Networking Event",
-    "Product Launch",
+    "Conference Hall",
+    "Office",
+    "Keynote",
+    "Award Ceremony",
   ],
-  Seminars: [
-    "Educational Seminar",
-    "Corporate Seminar",
-    "Technical Workshop",
-    "Guest Lecture",
-    "Knowledge Session",
-    "Training Program",
-    "Interactive Session",
-    "Industry Talk",
-  ],
+  Professional: ["Office", "Studio", "Keynote", "Award Ceremony"],
+  Corporate: ["Conference Hall", "Office", "Keynote", "Award Ceremony"],
+  "Movie Shoot": ["Action", "Neo Noir", "Golden Hour", "Vintage Film", "Cinematic"],
+  Sports: ["Stadium", "Indoor Arena", "Training Ground", "Award Ceremony"],
+  Fashion: ["Editorial", "Studio", "Runway", "Lifestyle"],
+  Product: ["Studio Product", "Lifestyle Product", "Luxury Detail", "Catalog Clean"],
+  "Corporate Events": ["Leadership Summit", "Annual Meet", "Product Launch", "Town Hall", "Networking Evening"],
+  "Award Ceremonies": ["Gala Awards", "Stage Honors", "Red Carpet", "Trophy Moment", "Leadership Recognition"],
+  "Product Shoots": ["Studio Product", "Lifestyle Product", "Luxury Detail", "Catalog Clean", "Launch Campaign"],
+  "Movie Shoots": ["Action", "Romantic", "Noir", "Fantasy", "Vintage"],
   "Expert Visit for Official Audit": [
     "Office Inspection",
     "Site Audit",
@@ -210,7 +211,7 @@ const themesByStyle: Record<string, string[]> = {
   ],
 };
 
-type ThemeCard = {
+export type ThemeCard = {
   image: string;
   name: string;
 };
@@ -268,7 +269,7 @@ const getThemeFlow = (themeName: string) => {
   return "group";
 };
 
-function ThemeCarousel({
+export function ThemeCarousel({
   direction,
   onSelectTheme,
   themes,
@@ -283,18 +284,18 @@ function ThemeCarousel({
 
   return (
     <section className="space-y-5">
-      <h2 className="px-6 font-serif text-3xl leading-none text-foreground sm:px-8 sm:text-4xl lg:px-12">
+      <h2 className="px-6 font-sans text-2xl leading-none text-foreground sm:px-8 sm:text-3xl lg:px-12">
         {title}
       </h2>
       <div className="group overflow-hidden">
         <div
-          className={`flex w-max gap-5 px-6 sm:gap-6 sm:px-8 lg:px-12 ${
+          className={`flex w-max gap-3 px-6 sm:gap-4 sm:px-8 lg:px-12 ${
             direction === "right" ? "animate-style-scroll-right" : "animate-style-scroll-left"
           } group-hover:[animation-play-state:paused]`}
         >
           {repeatedThemes.map((theme, index) => (
             <button
-              className="group/card relative h-[240px] w-[250px] shrink-0 overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#15110e] text-left shadow-2xl shadow-black/30 outline-none transition duration-300 hover:-translate-y-1 hover:border-primary/40 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/45 sm:h-[300px] sm:w-[320px] lg:h-[340px] lg:w-[380px]"
+              className="group/card relative h-[150px] w-[160px] shrink-0 overflow-hidden rounded-lg border border-white/10 bg-[#15110e] text-left shadow-xl shadow-black/25 outline-none transition duration-300 hover:-translate-y-0.5 hover:border-primary/40 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/45 sm:h-[180px] sm:w-[200px] lg:h-[210px] lg:w-[230px]"
               key={`${theme.name}-${index}`}
               onClick={() => onSelectTheme(theme)}
               type="button"
@@ -306,8 +307,8 @@ function ThemeCarousel({
                 src={theme.image}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 p-5 sm:p-7">
-                <h3 className="font-serif text-3xl leading-[0.95] text-[#fff8e8] drop-shadow-[0_2px_14px_rgba(0,0,0,0.65)] sm:text-4xl">
+              <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+                <h3 className="font-sans text-2xl leading-[0.95] text-[#f8fafc] drop-shadow-[0_2px_14px_rgba(0,0,0,0.65)] sm:text-3xl">
                   {theme.name}
                 </h3>
               </div>
@@ -385,7 +386,7 @@ function StyleModal({
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 px-4 py-6 backdrop-blur-md">
       <div className="animate-modal-in relative flex max-h-[88vh] w-full max-w-2xl flex-col overflow-hidden rounded-[1.75rem] border border-border bg-popover/95 text-popover-foreground shadow-2xl shadow-black/25">
         <div className="flex items-start justify-between gap-5 border-b border-border px-6 py-5 sm:px-8">
-          <h2 className="font-serif text-3xl leading-none text-foreground sm:text-4xl">{selectedTheme.name}</h2>
+          <h2 className="font-sans text-3xl leading-none text-foreground sm:text-4xl">{selectedTheme.name}</h2>
           <button
             aria-label="Close"
             className="grid size-10 shrink-0 place-items-center rounded-full border border-border bg-background/60 text-foreground transition hover:border-primary/40 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
@@ -455,25 +456,30 @@ function StyleModal({
                           value={person.relationship}
                         />
                       </label>
-                      <label className="block space-y-2">
-                        <span className="text-sm text-muted-foreground">Priority</span>
-                        <select
-                          className="h-12 w-full rounded-xl border border-border bg-background px-4 text-foreground outline-none transition focus:border-primary/55 focus:ring-2 focus:ring-primary/20"
-                          onChange={(event) => updateGroupPerson(index, "priority", event.target.value)}
-                          value={person.priority}
-                        >
-                          <option value="">Select</option>
+                      <fieldset className="space-y-2">
+                        <legend className="text-sm text-muted-foreground">Priority</legend>
+                        <div className="flex flex-wrap gap-2">
                           {Array.from({ length: normalizedPeopleCount }, (_, priorityIndex) => {
                             const priority = String(priorityIndex + 1);
+                            const isSelected = person.priority === priority;
 
                             return (
-                              <option key={priority} value={priority}>
+                              <button
+                                className={`grid size-10 place-items-center rounded-full border text-sm transition ${
+                                  isSelected
+                                    ? "border-primary bg-primary text-primary-foreground"
+                                    : "border-border bg-background/60 text-foreground hover:border-primary/50"
+                                }`}
+                                key={priority}
+                                onClick={() => updateGroupPerson(index, "priority", priority)}
+                                type="button"
+                              >
                                 {priority}
-                              </option>
+                              </button>
                             );
                           })}
-                        </select>
-                      </label>
+                        </div>
+                      </fieldset>
                     </div>
                   ))}
                 </div>
@@ -806,25 +812,29 @@ function ThemeIllustration({ styleName, themeName }: { styleName: string; themeN
   );
 }
 
-function ThemeSelectionScreen({
+export function ThemeSelectionScreen({
   onBack,
   onSelectTheme,
   selectedStyle,
   selectedThemeName,
+  showBack = true,
 }: {
   onBack: () => void;
   onSelectTheme: (themeName: string) => void;
   selectedStyle: ThemeCard;
   selectedThemeName?: string;
+  showBack?: boolean;
 }) {
   const themeNames = themesByStyle[selectedStyle.name] ?? [];
 
   return (
     <div className="relative mx-auto w-full max-w-7xl px-6 sm:px-8">
-      <div className="mb-8">
-        <BackControl onClick={onBack} />
-      </div>
-      <h1 className="pb-12 text-center font-serif text-6xl leading-[0.9] text-foreground sm:text-7xl lg:text-8xl">
+      {showBack ? (
+        <div className="mb-8">
+          <BackControl onClick={onBack} />
+        </div>
+      ) : null}
+      <h1 className="pb-12 text-center font-sans text-6xl leading-[0.9] text-foreground sm:text-7xl lg:text-8xl">
         Choose a Theme
       </h1>
       <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
@@ -843,7 +853,7 @@ function ThemeSelectionScreen({
               <ThemeIllustration styleName={selectedStyle.name} themeName={themeName} />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/5" />
               <div className="absolute inset-x-0 bottom-0 p-5">
-                <h2 className="font-serif text-3xl leading-[0.95] text-[#fff8e8] drop-shadow-[0_2px_14px_rgba(0,0,0,0.7)]">
+                <h2 className="font-sans text-3xl leading-[0.95] text-[#f8fafc] drop-shadow-[0_2px_14px_rgba(0,0,0,0.7)]">
                   {themeName}
                 </h2>
               </div>
@@ -919,7 +929,7 @@ function TemplateSelectionScreen({
       <div className="mb-8">
         <BackControl onClick={onBack} />
       </div>
-      <h1 className="pb-12 text-center font-serif text-6xl leading-[0.9] text-foreground sm:text-7xl lg:text-8xl">
+      <h1 className="pb-12 text-center font-sans text-6xl leading-[0.9] text-foreground sm:text-7xl lg:text-8xl">
         Choose a Template
       </h1>
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -940,8 +950,8 @@ function TemplateSelectionScreen({
             >
               <TemplatePreview template={template} />
               <div className="px-5 py-4">
-                <h2 className="font-serif text-2xl leading-tight text-foreground">{template.name}</h2>
-                <p className="mt-2 text-xs uppercase tracking-[0.2em] text-primary/80">
+                <h2 className="font-sans text-2xl leading-tight text-foreground">{template.name}</h2>
+                <p className="mt-2 text-xs uppercase tracking-[0.12em] text-primary/80">
                   {template.imageCount} image{template.imageCount === 1 ? "" : "s"}
                 </p>
               </div>
@@ -1137,7 +1147,7 @@ function PromptModal({
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 px-4 py-6 backdrop-blur-md">
       <div className="animate-modal-in relative flex max-h-[88vh] w-full max-w-3xl flex-col overflow-hidden rounded-[1.75rem] border border-border bg-popover/95 text-popover-foreground shadow-2xl shadow-black/25">
         <div className="flex items-start justify-between gap-5 border-b border-border px-6 py-5 sm:px-8">
-          <h2 className="font-serif text-3xl leading-none text-foreground sm:text-4xl">{templateName}</h2>
+          <h2 className="font-sans text-3xl leading-none text-foreground sm:text-4xl">{templateName}</h2>
           <button
             aria-label="Close"
             className="grid size-10 shrink-0 place-items-center rounded-full border border-border bg-background/60 text-foreground transition hover:border-primary/40 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
@@ -1227,7 +1237,7 @@ export function StyleSelectionPage() {
           <div className="mx-auto mb-8 w-full max-w-7xl px-6 sm:px-8">
             <BackControl href="/" />
           </div>
-          <h1 className="px-6 pb-16 text-center font-serif text-6xl leading-[0.9] text-foreground sm:px-8 sm:text-7xl lg:text-8xl">
+          <h1 className="px-6 pb-16 text-center font-sans text-6xl leading-[0.9] text-foreground sm:px-8 sm:text-7xl lg:text-8xl">
             Choose your Style
           </h1>
           <div className="space-y-16 sm:space-y-20">

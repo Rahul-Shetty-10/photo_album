@@ -5,13 +5,23 @@ import { useRouter } from "next/navigation";
 
 import { useAuth } from "./auth-provider";
 
+const getSafeReturnTo = () => {
+  const returnTo = new URLSearchParams(window.location.search).get("returnTo");
+
+  if (!returnTo?.startsWith("/") || returnTo.startsWith("//")) {
+    return "/dashboard";
+  }
+
+  return returnTo;
+};
+
 export function AuthRedirect({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isRestoring } = useAuth();
   const router = useRouter();
 
   React.useEffect(() => {
     if (!isRestoring && isAuthenticated) {
-      router.replace("/projects");
+      router.replace(getSafeReturnTo());
     }
   }, [isAuthenticated, isRestoring, router]);
 

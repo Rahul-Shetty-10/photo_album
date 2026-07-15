@@ -24,7 +24,7 @@ export function Hero() {
           transition={{ duration: 0.7, ease: "easeOut" }}
         >
           <Badge>AI wedding portrait studio</Badge>
-          <h1 className="mt-7 max-w-4xl font-serif text-6xl leading-[0.95] tracking-tight text-foreground sm:text-7xl lg:text-8xl">
+          <h1 className="mt-7 max-w-4xl font-sans text-6xl leading-[0.95] tracking-tight text-foreground sm:text-7xl lg:text-8xl">
             Create Cinematic Wedding Memories with AI
           </h1>
           <p className="mt-7 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl">
@@ -48,7 +48,7 @@ export function Hero() {
               ["Minutes", "to preview"],
             ].map(([value, label]) => (
               <div key={label}>
-                <dt className="font-serif text-3xl text-primary">{value}</dt>
+                <dt className="font-sans text-3xl text-primary">{value}</dt>
                 <dd className="mt-1 text-xs leading-5 text-muted-foreground">
                   {label}
                 </dd>
