@@ -5,17 +5,33 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowLeft,
   ArrowRight,
+  Aperture,
+  Brush,
   Check,
+  Circle,
+  Contrast,
+  Crop,
+  Diamond,
+  Eraser,
+  Eye,
+  Film,
+  Gem,
   ImageIcon,
+  LampDesk,
   Maximize2,
+  Pencil,
   Plus,
-  Search,
+  ScanFace,
+  Sparkles,
   Star,
+  Sun,
   Trash2,
   Upload,
-  Users,
+  Wand2,
   X,
+  Zap,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
@@ -36,33 +52,47 @@ import { TemplateGallery, getTemplateById } from "@/features/templates/component
 import type { PhotoTemplate } from "@/features/templates/template-library";
 import { cn } from "@/lib/utils";
 
-const workflowSteps = ["Style", "Subjects", "Relationships", "Theme", "Template", "Review", "Gallery"] as const;
+const workflowSteps = ["Style", "Subjects", "Theme", "Template", "Review", "Gallery"] as const;
+const albumCreatorSteps = ["AlbumImage", "AlbumTemplate", "AlbumEnhance", "AlbumReview"] as const;
 const creationNavSteps = [
   { label: "Style", step: "Style" },
   { label: "Subject", step: "Subjects" },
-  { label: "Relation", step: "Relationships" },
   { label: "Theme", step: "Theme" },
   { label: "Template", step: "Template" },
   { label: "Review", step: "Review" },
   { label: "Generate", step: "Gallery" },
 ] as const;
+const albumCreatorNavSteps = [
+  { label: "Image", step: "AlbumImage" },
+  { label: "Template", step: "AlbumTemplate" },
+  { label: "Enhance", step: "AlbumEnhance" },
+  { label: "Review", step: "AlbumReview" },
+] as const;
 
 type WorkflowStep = (typeof workflowSteps)[number];
-type WorkspaceStep = WorkflowStep | "Dashboard";
+type AlbumCreatorStep = (typeof albumCreatorSteps)[number];
+type WorkspaceStep = WorkflowStep | AlbumCreatorStep | "Dashboard";
 
 const stepParamByStep: Partial<Record<WorkspaceStep, string>> = {
   Gallery: "gallery",
-  Relationships: "relationships",
   Review: "review",
   Style: "style",
   Subjects: "subjects",
   Template: "template",
   Theme: "theme",
+  AlbumEnhance: "album-enhance",
+  AlbumImage: "album-image",
+  AlbumReview: "album-review",
+  AlbumTemplate: "album-template",
 };
 
-const stepByStepParam: Record<string, WorkflowStep> = {
+const stepByStepParam: Record<string, Exclude<WorkspaceStep, "Dashboard">> = {
+  "album-enhance": "AlbumEnhance",
+  "album-image": "AlbumImage",
+  "album-review": "AlbumReview",
+  "album-template": "AlbumTemplate",
   gallery: "Gallery",
-  relationships: "Relationships",
+  relationships: "Subjects",
   review: "Review",
   style: "Style",
   subjects: "Subjects",
@@ -91,6 +121,22 @@ type GeneratedImage = {
   image: string;
   title: string;
   meta: string;
+};
+
+type AlbumSourceImage = {
+  id: string;
+  image: string;
+  meta: string;
+  title: string;
+  source: "generated" | "upload";
+};
+
+type Enhancement = {
+  description: string;
+  icon: LucideIcon;
+  id: string;
+  prompt: string;
+  title: string;
 };
 
 const generatedImages: GeneratedImage[] = [
@@ -125,27 +171,42 @@ const previousImageSlots = Array.from({ length: 32 }, (_, index) => ({
   label: `Image ${index + 1}`,
 }));
 
-const relationshipRolesByStyle: Record<string, string[]> = {
-  "Traditional Indian Events with Rituals": ["Bride", "Groom", "Husband", "Wife", "Mother", "Father", "Brother", "Sister", "Relative", "Friend"],
-  "Couple Photoshoots": ["Partner", "Husband", "Wife", "Fiance", "Fiancee"],
-  "Formal Family Events": ["Mother", "Father", "Son", "Daughter", "Brother", "Sister", "Grandparent", "Relative"],
-  Conferences: ["Speaker", "Host", "Panelist", "Guest", "Organizer", "Team"],
-  Seminars: ["Speaker", "Host", "Trainer", "Attendee", "Guest", "Organizer"],
-  "Expert Visit for Official Audit": ["Auditor", "Expert", "Manager", "Employee", "Delegate"],
-  "Cultural Events": ["Performer", "Host", "Guest", "Organizer", "Team"],
-  "Sports Events": ["Player", "Coach", "Captain", "Official", "Team"],
-  "Official Parties": ["Host", "Guest", "Manager", "Employee", "Team"],
-  Wedding: ["Bride", "Groom", "Husband", "Wife", "Mother", "Father", "Brother", "Sister", "Friend"],
-  Portrait: ["Self", "Friend", "Family"],
-  Personal: ["Self", "Friend", "Family"],
-  Professional: ["Manager", "CEO", "Employee", "Team"],
-  Corporate: ["Manager", "CEO", "Employee", "Team"],
-  "Movie Shoot": ["Director", "Actor", "Producer", "Crew", "Lead"],
+const enhancements: Enhancement[] = [
+  { description: "Shape soft, dimensional light with controlled highlights.", icon: LampDesk, id: "lighting", prompt: "refine lighting with soft professional direction and natural falloff", title: "Lighting" },
+  { description: "Recover highlights and shadows for a balanced file.", icon: Sun, id: "exposure", prompt: "balance exposure, protect highlights, and open important shadow detail", title: "Exposure" },
+  { description: "Clean casts and bring the palette into harmony.", icon: Brush, id: "color", prompt: "perform natural color correction with cohesive album-grade color harmony", title: "Color Correction" },
+  { description: "Improve local contrast without making the image harsh.", icon: Aperture, id: "clarity", prompt: "add refined clarity and micro-contrast while keeping faces natural", title: "Clarity" },
+  { description: "Crisp facial detail, jewellery, and fabric edges.", icon: Zap, id: "sharpness", prompt: "increase perceived sharpness with clean detail and no crunchy artifacts", title: "Sharpness" },
+  { description: "Preserve bright garments, skies, lamps, and deep shadows.", icon: Contrast, id: "hdr", prompt: "create tasteful high dynamic range with realistic contrast and no surreal tone mapping", title: "HDR" },
+  { description: "Keep identity intact while polishing facial presence.", icon: ScanFace, id: "face", prompt: "enhance faces while preserving identity, age, expression, and natural likeness", title: "Face Enhancement" },
+  { description: "Even tone and texture while retaining real skin character.", icon: Sparkles, id: "skin", prompt: "retouch skin subtly with natural texture, no plastic smoothing", title: "Skin Retouch" },
+  { description: "Make eyes clean, lively, and naturally sharp.", icon: Eye, id: "eyes", prompt: "enhance eyes with natural catchlights, crisp focus, and realistic color", title: "Eye Enhancement" },
+  { description: "Bring ornaments, stones, and metallic detail forward.", icon: Gem, id: "jewellery", prompt: "enhance jewellery sparkle, metal definition, gemstones, and fine ornament details", title: "Jewellery Enhancement" },
+  { description: "Reveal embroidery, silk, lace, and textile richness.", icon: Diamond, id: "fabric", prompt: "recover fabric detail, embroidery, weave, drape, and premium wardrobe texture", title: "Fabric Detail" },
+  { description: "Quiet the scene behind the subject without changing intent.", icon: Eraser, id: "background", prompt: "clean up background clutter while preserving the original scene and context", title: "Background Cleanup" },
+  { description: "Remove visual interruptions that pull attention away.", icon: Wand2, id: "distractions", prompt: "remove distracting objects and visual interruptions cleanly and realistically", title: "Remove Distractions" },
+  { description: "Smooth grain and compression while preserving detail.", icon: Circle, id: "noise", prompt: "reduce noise and compression artifacts while retaining true detail", title: "Noise Reduction" },
+  { description: "A polished magazine finish with tasteful contrast.", icon: Film, id: "editorial", prompt: "apply a luxury editorial look with refined contrast, depth, and premium tonality", title: "Luxury Editorial Look" },
+  { description: "Warm, glowing light suited for romantic albums.", icon: Sun, id: "golden-hour", prompt: "add believable golden hour warmth, glow, and soft rim light where appropriate", title: "Golden Hour Lighting" },
+  { description: "Cinematic tones with clean, elegant color separation.", icon: Crop, id: "cinematic", prompt: "apply cinematic color grading with natural skin tones and refined color separation", title: "Cinematic Color Grading" },
+  { description: "Protect true complexion and avoid over-processing.", icon: ScanFace, id: "skin-tone", prompt: "preserve natural skin tone, complexion, and realistic facial texture", title: "Natural Skin Tone" },
+  { description: "Studio-grade wedding polish for premium delivery.", icon: Star, id: "wedding-finish", prompt: "create a high-end wedding finish with luxurious yet realistic album polish", title: "High-End Wedding Finish" },
+  { description: "Optimize detail and tonality for large physical output.", icon: ImageIcon, id: "print", prompt: "enhance for print quality with high resolution feel, clean edges, and controlled sharpening", title: "Print Quality Enhancement" },
+];
+
+const maleRelationshipRoles = ["Father", "Son", "Brother", "Grandfather", "Grandson", "Uncle", "Nephew", "Husband"];
+const femaleRelationshipRoles = ["Mother", "Daughter", "Sister", "Grandmother", "Granddaughter", "Aunt", "Niece", "Wife"];
+const neutralRelationshipRoles = ["Friend", "Relative", "Guardian", "Cousin"];
+const genderByRelationshipRole: Record<string, Subject["gender"]> = {
+  Brother: "Male",
+  Daughter: "Female",
+  Father: "Male",
+  Husband: "Male",
+  Mother: "Female",
+  Sister: "Female",
+  Son: "Male",
+  Wife: "Female",
 };
-
-const singleSubjectStyles = new Set(["Individual Portraits", "Personal", "Portrait", "Professional", "Fashion", "Product", "Sports"]);
-
-
 
 const createBlankSubject = (index: number): Subject => ({
   age: "",
@@ -155,9 +216,36 @@ const createBlankSubject = (index: number): Subject => ({
   name: "",
 });
 
-const getDefaultSubjectsForStyle = (styleName: string) => {
-  const subjectCount = singleSubjectStyles.has(styleName) ? 1 : 2;
-  return Array.from({ length: subjectCount }, (_, index) => createBlankSubject(index));
+const getDefaultSubjectsForStyle = () => [createBlankSubject(0)];
+
+const getInverseRelationshipRole = (role: string, relatedPersonGender: Subject["gender"]) => {
+  const genderedRole = (maleRole: string, femaleRole: string) =>
+    relatedPersonGender === "Male" ? maleRole : relatedPersonGender === "Female" ? femaleRole : "Relative";
+
+  const inverseRoles: Record<string, string> = {
+    Aunt: genderedRole("Nephew", "Niece"),
+    Brother: genderedRole("Brother", "Sister"),
+    Cousin: "Cousin",
+    Daughter: genderedRole("Father", "Mother"),
+    Father: genderedRole("Son", "Daughter"),
+    Friend: "Friend",
+    Granddaughter: genderedRole("Grandfather", "Grandmother"),
+    Grandfather: genderedRole("Grandson", "Granddaughter"),
+    Grandmother: genderedRole("Grandson", "Granddaughter"),
+    Grandson: genderedRole("Grandfather", "Grandmother"),
+    Guardian: "Relative",
+    Husband: "Wife",
+    Mother: genderedRole("Son", "Daughter"),
+    Nephew: genderedRole("Uncle", "Aunt"),
+    Niece: genderedRole("Uncle", "Aunt"),
+    Relative: "Relative",
+    Sister: genderedRole("Brother", "Sister"),
+    Son: genderedRole("Father", "Mother"),
+    Uncle: genderedRole("Nephew", "Niece"),
+    Wife: "Husband",
+  };
+
+  return inverseRoles[role] ?? role;
 };
 
 const mockProject = (id: string): Project => ({
@@ -181,6 +269,10 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
   const [subjects, setSubjects] = React.useState<Subject[]>([]);
   const [relationships, setRelationships] = React.useState<Relationship[]>([]);
   const [previewImage, setPreviewImage] = React.useState<GeneratedImage | null>(null);
+  const [albumImage, setAlbumImage] = React.useState<AlbumSourceImage | null>(null);
+  const [albumTemplateId, setAlbumTemplateId] = React.useState<string>();
+  const [selectedEnhancements, setSelectedEnhancements] = React.useState<string[]>([]);
+  const [albumInstructions, setAlbumInstructions] = React.useState("");
 
   React.useEffect(() => {
     let isMounted = true;
@@ -224,11 +316,31 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
     return () => window.removeEventListener("popstate", syncStepFromUrl);
   }, []);
 
-  const activeIndex = activeStep === "Dashboard" ? -1 : workflowSteps.indexOf(activeStep);
+  const activeIndex = workflowSteps.includes(activeStep as WorkflowStep)
+    ? workflowSteps.indexOf(activeStep as WorkflowStep)
+    : -1;
   const selectedTemplate = getTemplateById(selectedTemplateId);
-  const relationshipRoles = selectedStyle ? relationshipRolesByStyle[selectedStyle.name] ?? relationshipRolesByStyle.Wedding : relationshipRolesByStyle.Wedding;
+  const albumActiveIndex = albumCreatorSteps.indexOf(activeStep as AlbumCreatorStep);
+  const selectedAlbumTemplate = getTemplateById(albumTemplateId);
+  const isAlbumCreatorStep = (step: WorkspaceStep): step is AlbumCreatorStep =>
+    albumCreatorSteps.includes(step as AlbumCreatorStep);
   const canNavigateStep = (step: WorkflowStep) => {
     return step !== "Gallery" || activeStep === "Gallery";
+  };
+  const canNavigateAlbumStep = (step: AlbumCreatorStep) => {
+    if (step === "AlbumImage") {
+      return true;
+    }
+
+    if (!albumImage) {
+      return false;
+    }
+
+    if (step === "AlbumEnhance" || step === "AlbumReview") {
+      return Boolean(selectedAlbumTemplate);
+    }
+
+    return true;
   };
   const pushWorkspaceStep = (step: WorkspaceStep) => {
     const nextUrl = new URL(window.location.href);
@@ -283,13 +395,48 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
     );
   };
 
-  const addRelationship = () => {
-    const firstSubject = subjects[0]?.id ?? "";
-    const secondSubject = subjects[1]?.id ?? firstSubject;
+  const addRelationship = (
+    currentSubjectId: string,
+    relatedPerson: Pick<Subject, "age" | "gender" | "image" | "name">,
+    role: string,
+  ) => {
+    const relatedSubject: Subject = {
+      ...relatedPerson,
+      id: crypto.randomUUID(),
+      isPrimary: false,
+    };
+
+    setSubjects((current) => [...current, relatedSubject]);
     setRelationships((current) => [
       ...current,
-      { fromSubjectId: firstSubject, id: crypto.randomUUID(), role: relationshipRoles[0] ?? "", toSubjectId: secondSubject },
+      {
+        fromSubjectId: currentSubjectId,
+        id: crypto.randomUUID(),
+        role,
+        toSubjectId: relatedSubject.id,
+      },
     ]);
+  };
+
+  const editRelationship = (
+    relationshipId: string,
+    currentSubjectId: string,
+    relatedSubjectId: string,
+    relatedPerson: Pick<Subject, "age" | "gender" | "image" | "name">,
+    role: string,
+  ) => {
+    updateSubject(relatedSubjectId, relatedPerson);
+    setRelationships((current) =>
+      current.map((relationship) =>
+        relationship.id === relationshipId
+          ? { ...relationship, fromSubjectId: currentSubjectId, role, toSubjectId: relatedSubjectId }
+          : relationship,
+      ),
+    );
+  };
+
+  const deleteRelationship = (relationshipId: string) => {
+    setRelationships((current) => current.filter((relationship) => relationship.id !== relationshipId));
   };
 
   const startWorkflow = () => {
@@ -299,8 +446,21 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
     pushWorkspaceStep("Style");
   };
 
+  const startAlbumCreator = () => {
+    setAlbumImage(null);
+    setAlbumTemplateId(undefined);
+    setSelectedEnhancements([]);
+    setAlbumInstructions("");
+    pushWorkspaceStep("AlbumImage");
+  };
+
   const goBack = () => {
     if (activeStep === "Dashboard") {
+      return;
+    }
+
+    if (isAlbumCreatorStep(activeStep)) {
+      pushWorkspaceStep(albumCreatorSteps[albumActiveIndex - 1] ?? "Dashboard");
       return;
     }
 
@@ -308,6 +468,25 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
   };
 
   const goForward = () => {
+    if (activeStep === "AlbumImage" && !albumImage) {
+      return;
+    }
+
+    if (activeStep === "AlbumTemplate" && !selectedAlbumTemplate) {
+      return;
+    }
+
+    if (activeStep === "AlbumReview") {
+      toast.success("Album-quality enhancement started");
+      pushWorkspaceStep("Gallery");
+      return;
+    }
+
+    if (isAlbumCreatorStep(activeStep)) {
+      pushWorkspaceStep(albumCreatorSteps[albumActiveIndex + 1] ?? "AlbumReview");
+      return;
+    }
+
     if (activeStep === "Style" && !selectedStyle) {
       return;
     }
@@ -331,6 +510,13 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
 
   const navigateCreationStep = (step: (typeof creationNavSteps)[number]["step"]) => {
     if (!canNavigateStep(step)) {
+      return;
+    }
+
+    pushWorkspaceStep(step);
+  };
+  const navigateAlbumCreatorStep = (step: (typeof albumCreatorNavSteps)[number]["step"]) => {
+    if (!canNavigateAlbumStep(step)) {
       return;
     }
 
@@ -372,11 +558,19 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
             </Button>
           )}
           {activeStep !== "Dashboard" ? (
-            <CreationNav
-              activeStep={activeStep}
-              canNavigateStep={canNavigateStep}
-              onNavigate={navigateCreationStep}
-            />
+            isAlbumCreatorStep(activeStep) ? (
+              <AlbumCreatorNav
+                activeStep={activeStep}
+                canNavigateStep={canNavigateAlbumStep}
+                onNavigate={navigateAlbumCreatorStep}
+              />
+            ) : (
+              <CreationNav
+                activeStep={activeStep}
+                canNavigateStep={canNavigateStep}
+                onNavigate={navigateCreationStep}
+              />
+            )
           ) : (
             <span />
           )}
@@ -385,14 +579,19 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
 
         <AnimatePresence mode="wait">
           {activeStep === "Dashboard" ? (
-            <ProjectDashboardView key="dashboard" onCreateNewImage={startWorkflow} project={project} />
+            <ProjectDashboardView
+              key="dashboard"
+              onCreateNewImage={startWorkflow}
+              onOpenAlbumCreator={startAlbumCreator}
+              project={project}
+            />
           ) : activeStep === "Style" ? (
             <StyleStep
               key="style"
               onSelectStyle={(style) => {
                 setSelectedStyle(style);
                 setSelectedThemeName(undefined);
-                setSubjects(getDefaultSubjectsForStyle(style.name));
+                setSubjects(getDefaultSubjectsForStyle());
                 setRelationships([]);
                 pushWorkspaceStep("Subjects");
               }}
@@ -400,20 +599,13 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
           ) : activeStep === "Subjects" ? (
             <SubjectsStep
               key="subjects"
+              onAddRelationship={addRelationship}
               onAddSubject={addSubject}
               onChange={updateSubject}
+              onDeleteRelationship={deleteRelationship}
               onDeleteSubject={deleteSubject}
-              subjects={subjects}
-            />
-          ) : activeStep === "Relationships" ? (
-            <RelationshipsStep
-              key="relationships"
-              onAdd={addRelationship}
-              onChange={(id, patch) =>
-                setRelationships((current) => current.map((item) => (item.id === id ? { ...item, ...patch } : item)))
-              }
+              onEditRelationship={editRelationship}
               relationships={relationships}
-              roles={relationshipRoles}
               subjects={subjects}
             />
           ) : activeStep === "Theme" ? (
@@ -438,6 +630,41 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
               selectedThemeName={selectedThemeName}
               subjects={subjects}
             />
+          ) : activeStep === "AlbumImage" ? (
+            <AlbumImageStep
+              key="album-image"
+              onSelectImage={setAlbumImage}
+              selectedImage={albumImage}
+            />
+          ) : activeStep === "AlbumTemplate" ? (
+            <AlbumTemplateStep
+              key="album-template"
+              onSelectTemplate={setAlbumTemplateId}
+              selectedTemplateId={albumTemplateId}
+            />
+          ) : activeStep === "AlbumEnhance" ? (
+            <AlbumEnhanceStep
+              key="album-enhance"
+              additionalInstructions={albumInstructions}
+              onChangeAdditionalInstructions={setAlbumInstructions}
+              onToggleEnhancement={(enhancementId) =>
+                setSelectedEnhancements((current) =>
+                  current.includes(enhancementId)
+                    ? current.filter((item) => item !== enhancementId)
+                    : [...current, enhancementId],
+                )
+              }
+              selectedEnhancements={selectedEnhancements}
+            />
+          ) : activeStep === "AlbumReview" ? (
+            <AlbumReviewStep
+              key="album-review"
+              additionalInstructions={albumInstructions}
+              project={project}
+              selectedEnhancementIds={selectedEnhancements}
+              selectedImage={albumImage}
+              selectedTemplate={selectedAlbumTemplate}
+            />
           ) : (
             <GalleryStep key="gallery" onPreview={setPreviewImage} />
           )}
@@ -446,8 +673,17 @@ export function ProjectWorkspace({ projectId }: { projectId: string }) {
         {activeStep !== "Dashboard" && activeStep !== "Gallery" ? (
           <footer className="mt-auto flex items-center justify-end gap-3 border-t border-border py-5">
             {activeStep !== "Style" ? (
-              <Button disabled={(activeStep === "Theme" && !selectedThemeName) || (activeStep === "Template" && !selectedTemplate)} onClick={goForward} type="button">
-                {activeStep === "Review" ? "Generate Images" : "Continue"}
+              <Button
+                disabled={
+                  (activeStep === "Theme" && !selectedThemeName) ||
+                  (activeStep === "Template" && !selectedTemplate) ||
+                  (activeStep === "AlbumImage" && !albumImage) ||
+                  (activeStep === "AlbumTemplate" && !selectedAlbumTemplate)
+                }
+                onClick={goForward}
+                type="button"
+              >
+                {activeStep === "Review" ? "Generate Images" : activeStep === "AlbumReview" ? "Enhance Image" : "Continue"}
                 <ArrowRight aria-hidden="true" />
               </Button>
             ) : null}
@@ -519,11 +755,51 @@ function CreationNav({
   );
 }
 
+function AlbumCreatorNav({
+  activeStep,
+  canNavigateStep,
+  onNavigate,
+}: {
+  activeStep: AlbumCreatorStep;
+  canNavigateStep: (step: AlbumCreatorStep) => boolean;
+  onNavigate: (step: (typeof albumCreatorNavSteps)[number]["step"]) => void;
+}) {
+  return (
+    <nav
+      aria-label="Album Creator steps"
+      className="flex w-full items-center gap-1 overflow-x-auto rounded-full border border-border bg-card/75 p-1 shadow-lg shadow-black/5 sm:mx-auto sm:w-fit"
+    >
+      {albumCreatorNavSteps.map((item) => {
+        const isActive = activeStep === item.step;
+        const isDisabled = !canNavigateStep(item.step);
+
+        return (
+          <button
+            aria-current={isActive ? "step" : undefined}
+            className={cn(
+              "h-10 rounded-full px-4 text-sm font-medium text-muted-foreground transition hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 disabled:pointer-events-none disabled:opacity-40",
+              isActive && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
+            )}
+            disabled={isDisabled}
+            key={item.step}
+            onClick={() => onNavigate(item.step)}
+            type="button"
+          >
+            {item.label}
+          </button>
+        );
+      })}
+    </nav>
+  );
+}
+
 function ProjectDashboardView({
   onCreateNewImage,
+  onOpenAlbumCreator,
   project,
 }: {
   onCreateNewImage: () => void;
+  onOpenAlbumCreator: () => void;
   project: Project;
 }) {
   return (
@@ -540,6 +816,21 @@ function ProjectDashboardView({
         <p className="text-base text-muted-foreground">{project.eventCategory}</p>
       </div>
 
+      <section className="grid gap-4 md:grid-cols-2">
+        <ProjectActionCard
+          description="Choose a style, subjects, template, and generate a new image."
+          icon={Plus}
+          onClick={onCreateNewImage}
+          title="Create New Image"
+        />
+        <ProjectActionCard
+          description="Enhance an existing photograph into polished album-quality output."
+          icon={Wand2}
+          onClick={onOpenAlbumCreator}
+          title="Album Creator"
+        />
+      </section>
+
       <section className="grid min-h-0 gap-3">
         <div className="flex items-center justify-between gap-4">
           <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Previous images</p>
@@ -547,20 +838,6 @@ function ProjectDashboardView({
         </div>
         <div className="max-h-[58vh] overflow-y-auto rounded-xl border border-border bg-card/40 p-3 shadow-inner shadow-black/5">
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-        <button
-              className="group col-span-2 flex aspect-[2/1] items-center gap-5 rounded-xl border-2 border-primary/40 bg-gradient-to-br from-primary/8 to-primary/3 p-6 text-left shadow-lg shadow-primary/5 transition hover:-translate-y-0.5 hover:border-primary hover:shadow-xl hover:shadow-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/45"
-          onClick={onCreateNewImage}
-          type="button"
-        >
-          <span className="grid size-14 shrink-0 place-items-center rounded-full bg-amber-500 text-white shadow-lg shadow-amber-500/25">
-            <Plus className="size-7" aria-hidden="true" />
-          </span>
-          <span className="grid gap-1">
-            <span className="block font-sans text-2xl leading-none sm:text-3xl">Create New Image</span>
-            <span className="block text-sm text-muted-foreground">Choose a style, subjects, template, and generate.</span>
-          </span>
-        </button>
-
             {previousImageSlots.map((slot) => (
               <button
                 aria-label={slot.label}
@@ -583,6 +860,342 @@ function ProjectDashboardView({
   );
 }
 
+function ProjectActionCard({
+  description,
+  icon: Icon,
+  onClick,
+  title,
+}: {
+  description: string;
+  icon: LucideIcon;
+  onClick: () => void;
+  title: string;
+}) {
+  return (
+    <motion.button
+      className="group relative flex min-h-40 items-center gap-5 overflow-hidden rounded-lg border border-border bg-card p-6 text-left shadow-xl shadow-black/5 outline-none transition hover:-translate-y-1 hover:border-primary/50 hover:shadow-primary/10 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/40"
+      onClick={onClick}
+      type="button"
+      whileHover={{ scale: 1.01 }}
+      whileTap={{ scale: 0.99 }}
+    >
+      <span className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(45,212,191,0.16),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.04),transparent_48%)] opacity-80 transition group-hover:opacity-100" />
+      <span className="relative grid size-14 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground shadow-lg shadow-primary/25">
+        <Icon className="size-7" aria-hidden="true" />
+      </span>
+      <span className="relative grid gap-2">
+        <span className="block font-sans text-3xl leading-none sm:text-4xl">{title}</span>
+        <span className="block max-w-md text-sm leading-6 text-muted-foreground">{description}</span>
+      </span>
+    </motion.button>
+  );
+}
+
+function AlbumImageStep({
+  onSelectImage,
+  selectedImage,
+}: {
+  onSelectImage: (image: AlbumSourceImage) => void;
+  selectedImage: AlbumSourceImage | null;
+}) {
+  const uploadInputId = React.useId();
+
+  const handleUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        onSelectImage({
+          id: crypto.randomUUID(),
+          image: reader.result,
+          meta: file.type || "Uploaded photograph",
+          source: "upload",
+          title: file.name.replace(/\.[^.]+$/, "") || "Uploaded photograph",
+        });
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  return (
+    <WorkflowScreen title="Select an image">
+      <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+        <section className="overflow-hidden rounded-lg border border-border bg-card shadow-2xl shadow-black/10">
+          <div className="grid min-h-[440px] place-items-center bg-[#090b10]">
+            {selectedImage ? (
+              <motion.img
+                alt={selectedImage.title}
+                className="max-h-[68vh] w-full object-contain"
+                key={selectedImage.id}
+                src={selectedImage.image}
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.24 }}
+              />
+            ) : (
+              <div className="grid justify-items-center gap-4 p-10 text-center text-muted-foreground">
+                <span className="grid size-16 place-items-center rounded-lg border border-white/10 bg-white/5 text-primary">
+                  <ImageIcon className="size-8" aria-hidden="true" />
+                </span>
+                <p className="max-w-sm text-sm leading-6">Choose a generated image or upload a photograph to begin enhancement.</p>
+              </div>
+            )}
+          </div>
+          {selectedImage ? (
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border px-5 py-4">
+              <div>
+                <h2 className="font-sans text-2xl">{selectedImage.title}</h2>
+                <p className="text-sm text-muted-foreground">{selectedImage.meta}</p>
+              </div>
+              <span className="rounded-full border border-primary/25 px-3 py-1 text-xs font-medium text-primary">
+                {selectedImage.source === "upload" ? "Uploaded photograph" : "Project image"}
+              </span>
+            </div>
+          ) : null}
+        </section>
+
+        <aside className="grid gap-5 content-start">
+          <section className="rounded-lg border border-border bg-card p-5 shadow-xl shadow-black/5">
+            <h2 className="font-sans text-3xl">Project images</h2>
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              {generatedImages.map((image) => {
+                const isSelected = selectedImage?.id === image.id;
+
+                return (
+                  <button
+                    className={cn(
+                      "group relative overflow-hidden rounded-lg border bg-background text-left outline-none transition hover:-translate-y-0.5 hover:border-primary/50 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/35",
+                      isSelected ? "border-primary ring-2 ring-primary/25" : "border-border",
+                    )}
+                    key={image.id}
+                    onClick={() => onSelectImage({ ...image, source: "generated" })}
+                    type="button"
+                  >
+                    <img alt={image.title} className="aspect-[4/5] w-full object-cover transition duration-500 group-hover:scale-105" src={image.image} />
+                    {isSelected ? (
+                      <span className="absolute right-2 top-2 grid size-7 place-items-center rounded-full bg-primary text-primary-foreground">
+                        <Check className="size-4" aria-hidden="true" />
+                      </span>
+                    ) : null}
+                    <span className="block p-3 text-sm font-medium">{image.title}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+
+          <section className="rounded-lg border border-border bg-card p-5 shadow-xl shadow-black/5">
+            <h2 className="font-sans text-3xl">Upload photograph</h2>
+            <label
+              className="mt-4 flex min-h-36 cursor-pointer flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-primary/40 bg-primary/8 p-6 text-center transition hover:bg-primary/12"
+              htmlFor={uploadInputId}
+            >
+              <Upload className="size-7 text-primary" aria-hidden="true" />
+              <span className="text-sm font-medium">Choose from your device</span>
+              <span className="text-xs text-muted-foreground">JPG, PNG, or WebP photograph</span>
+            </label>
+            <input accept="image/*" className="sr-only" id={uploadInputId} onChange={handleUpload} type="file" />
+          </section>
+        </aside>
+      </div>
+    </WorkflowScreen>
+  );
+}
+
+function AlbumTemplateStep({
+  onSelectTemplate,
+  selectedTemplateId,
+}: {
+  onSelectTemplate: (templateId: string) => void;
+  selectedTemplateId?: string | null;
+}) {
+  return (
+    <WorkflowScreen title="Choose an output template">
+      <TemplateGallery
+        onSelectTemplate={(template) => onSelectTemplate(template.id)}
+        selectedTemplateId={selectedTemplateId}
+      />
+    </WorkflowScreen>
+  );
+}
+
+function AlbumEnhanceStep({
+  additionalInstructions,
+  onChangeAdditionalInstructions,
+  onToggleEnhancement,
+  selectedEnhancements,
+}: {
+  additionalInstructions: string;
+  onChangeAdditionalInstructions: (value: string) => void;
+  onToggleEnhancement: (enhancementId: string) => void;
+  selectedEnhancements: string[];
+}) {
+  return (
+    <WorkflowScreen title="What would you like to improve?">
+      <div className="grid gap-7">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {enhancements.map((enhancement) => {
+            const isSelected = selectedEnhancements.includes(enhancement.id);
+            const Icon = enhancement.icon;
+
+            return (
+              <motion.button
+                aria-pressed={isSelected}
+                className={cn(
+                  "group relative min-h-36 overflow-hidden rounded-lg border bg-card p-5 text-left shadow-xl shadow-black/5 outline-none transition hover:-translate-y-1 hover:border-primary/45 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/35",
+                  isSelected ? "border-primary/80 bg-primary/10 shadow-primary/10" : "border-border",
+                )}
+                key={enhancement.id}
+                onClick={() => onToggleEnhancement(enhancement.id)}
+                type="button"
+                whileTap={{ scale: 0.98 }}
+              >
+                <motion.span
+                  className="absolute inset-0 bg-[radial-gradient(circle_at_20%_12%,rgba(45,212,191,0.18),transparent_34%)]"
+                  animate={{ opacity: isSelected ? 1 : 0 }}
+                  transition={{ duration: 0.2 }}
+                />
+                <span className="relative flex items-start justify-between gap-4">
+                  <span className="grid size-11 place-items-center rounded-lg bg-secondary text-primary transition group-hover:bg-primary group-hover:text-primary-foreground">
+                    <Icon className="size-5" aria-hidden="true" />
+                  </span>
+                  <motion.span
+                    className="grid size-7 place-items-center rounded-full bg-primary text-primary-foreground"
+                    animate={{ opacity: isSelected ? 1 : 0, scale: isSelected ? 1 : 0.7 }}
+                    transition={{ type: "spring", stiffness: 420, damping: 26 }}
+                  >
+                    <Check className="size-4" aria-hidden="true" />
+                  </motion.span>
+                </span>
+                <span className="relative mt-5 block font-sans text-2xl leading-none">{enhancement.title}</span>
+                <span className="relative mt-2 block text-sm leading-6 text-muted-foreground">{enhancement.description}</span>
+              </motion.button>
+            );
+          })}
+        </div>
+
+        <label className="grid gap-3 rounded-lg border border-border bg-card p-5 shadow-xl shadow-black/5">
+          <span className="font-sans text-3xl">Additional Instructions</span>
+          <textarea
+            className="min-h-32 resize-y rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30"
+            onChange={(event) => onChangeAdditionalInstructions(event.target.value)}
+            placeholder="Anything specific you'd like the AI to improve?"
+            value={additionalInstructions}
+          />
+        </label>
+      </div>
+    </WorkflowScreen>
+  );
+}
+
+function AlbumReviewStep({
+  additionalInstructions,
+  project,
+  selectedEnhancementIds,
+  selectedImage,
+  selectedTemplate,
+}: {
+  additionalInstructions: string;
+  project: Project;
+  selectedEnhancementIds: string[];
+  selectedImage: AlbumSourceImage | null;
+  selectedTemplate?: PhotoTemplate;
+}) {
+  const selectedEnhancementItems = enhancements.filter((enhancement) => selectedEnhancementIds.includes(enhancement.id));
+  const prompt = selectedImage && selectedTemplate
+    ? buildAlbumCreatorPrompt({
+        additionalInstructions,
+        project,
+        selectedEnhancements: selectedEnhancementItems,
+        selectedImage,
+        selectedTemplate,
+      })
+    : "";
+
+  return (
+    <WorkflowScreen title="Ready for album finish">
+      <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+        <section className="overflow-hidden rounded-lg border border-border bg-card shadow-2xl shadow-black/10">
+          {selectedImage ? (
+            <img alt={selectedImage.title} className="max-h-[68vh] w-full bg-[#090b10] object-contain" src={selectedImage.image} />
+          ) : (
+            <div className="grid min-h-96 place-items-center bg-secondary text-muted-foreground">No image selected</div>
+          )}
+        </section>
+        <section className="rounded-lg border border-border bg-card p-6 shadow-xl shadow-black/5">
+          <h2 className="font-sans text-4xl">Enhancement summary</h2>
+          <dl className="mt-6 grid gap-4">
+            <div>
+              <dt className="text-sm text-muted-foreground">Project</dt>
+              <dd className="mt-1 text-xl">{project.name}</dd>
+            </div>
+            <div>
+              <dt className="text-sm text-muted-foreground">Template</dt>
+              <dd className="mt-1 text-xl">{selectedTemplate?.name ?? "Not selected"}</dd>
+            </div>
+            <div>
+              <dt className="text-sm text-muted-foreground">Improvements</dt>
+              <dd className="mt-2 flex flex-wrap gap-2">
+                {selectedEnhancementItems.length > 0 ? (
+                  selectedEnhancementItems.map((item) => (
+                    <span className="rounded-full border border-primary/25 bg-primary/8 px-3 py-1 text-sm text-primary" key={item.id}>
+                      {item.title}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-xl">Professional album polish</span>
+                )}
+              </dd>
+            </div>
+            {additionalInstructions.trim() ? (
+              <div>
+                <dt className="text-sm text-muted-foreground">Notes</dt>
+                <dd className="mt-1 text-base leading-7">{additionalInstructions.trim()}</dd>
+              </div>
+            ) : null}
+          </dl>
+        </section>
+        <section className="sr-only" aria-label="Internal generated prompt">
+          {prompt}
+        </section>
+      </div>
+    </WorkflowScreen>
+  );
+}
+
+const buildAlbumCreatorPrompt = ({
+  additionalInstructions,
+  project,
+  selectedEnhancements,
+  selectedImage,
+  selectedTemplate,
+}: {
+  additionalInstructions: string;
+  project: Project;
+  selectedEnhancements: Enhancement[];
+  selectedImage: AlbumSourceImage;
+  selectedTemplate: PhotoTemplate;
+}) => {
+  const enhancementPrompt = selectedEnhancements.length
+    ? selectedEnhancements.map((enhancement) => enhancement.prompt).join("; ")
+    : "apply professional album-quality correction, tasteful detail recovery, natural skin tone protection, and print-ready polish";
+
+  return [
+    "Enhance the supplied photograph for premium album-quality delivery. Do not create a new album page or collage.",
+    `Project metadata: project name "${project.name}", event category "${project.eventCategory}", project status "${project.status}". Reuse this context internally and do not ask for theme or category again.`,
+    `Source image context: "${selectedImage.title}" from ${selectedImage.source === "upload" ? "uploaded photograph" : "previously generated project image"}; metadata "${selectedImage.meta}". Preserve the original subject identity, pose, composition intent, clothing, jewellery, event context, and emotional tone.`,
+    `Output template: "${selectedTemplate.name}" with ${selectedTemplate.imageCount} image frame behavior, category ${selectedTemplate.category}, orientation ${selectedTemplate.orientation}. Adapt crop, finish, sharpness, and detail for this output format without adding text, borders, logos, or extra people.`,
+    `Enhancement direction: ${enhancementPrompt}.`,
+    additionalInstructions.trim() ? `Studio notes: ${additionalInstructions.trim()}.` : "Studio notes: none.",
+    "Quality requirements: professional Lightroom or Capture One style finishing, photorealistic, natural skin texture, clean faces and eyes, controlled highlights, rich but believable color, detailed fabric and jewellery where visible, no artifacts, no watermarks, no prompt text, no layout page generation.",
+  ].join("\n\n");
+};
+
 function StyleStep({ onSelectStyle }: { onSelectStyle: (style: ThemeCard) => void }) {
   return (
     <WorkflowScreen title="What style do you want?">
@@ -597,84 +1210,103 @@ function StyleStep({ onSelectStyle }: { onSelectStyle: (style: ThemeCard) => voi
 }
 
 function SubjectsStep({
+  onAddRelationship,
   onAddSubject,
   onChange,
+  onDeleteRelationship,
   onDeleteSubject,
+  onEditRelationship,
+  relationships,
   subjects,
 }: {
+  onAddRelationship: (
+    currentSubjectId: string,
+    relatedPerson: Pick<Subject, "age" | "gender" | "image" | "name">,
+    role: string,
+  ) => void;
   onAddSubject: () => void;
   onChange: (id: string, patch: Partial<Subject>) => void;
+  onDeleteRelationship: (relationshipId: string) => void;
   onDeleteSubject: (id: string) => void;
+  onEditRelationship: (
+    relationshipId: string,
+    currentSubjectId: string,
+    relatedSubjectId: string,
+    relatedPerson: Pick<Subject, "age" | "gender" | "image" | "name">,
+    role: string,
+  ) => void;
+  relationships: Relationship[];
   subjects: Subject[];
 }) {
+  const [relationshipEditor, setRelationshipEditor] = React.useState<{
+    currentSubject: Subject;
+    relationship?: Relationship;
+    relatedSubject?: Subject;
+  } | null>(null);
+
   return (
-    <WorkflowScreen title="Who's in the photo?">
-      <div className="mx-auto grid w-full max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <WorkflowScreen title="Subject profiles">
+      <div className="mx-auto grid w-full max-w-5xl gap-5">
         <button
-          className="grid min-h-64 place-items-center rounded-lg border border-dashed border-primary/45 bg-primary/8 p-6 text-center transition hover:-translate-y-1 hover:bg-primary/12 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/45"
+          className="flex min-h-28 items-center justify-center gap-4 rounded-lg border border-dashed border-primary/45 bg-primary/8 p-6 text-center transition hover:bg-primary/12 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/45"
           onClick={onAddSubject}
           type="button"
         >
-          <span>
-            <span className="mx-auto grid size-12 place-items-center rounded-full bg-primary text-primary-foreground">
-              <Plus className="size-6" aria-hidden="true" />
-            </span>
-            <span className="mt-5 block font-sans text-3xl">Add Subject</span>
+          <span className="grid size-11 place-items-center rounded-full bg-primary text-primary-foreground">
+            <Plus className="size-5" aria-hidden="true" />
           </span>
+          <span className="font-sans text-3xl">Add Subject</span>
         </button>
-        {subjects.map((subject) => (
-          <SubjectCard key={subject.id} onChange={onChange} onDelete={onDeleteSubject} subject={subject} />
-        ))}
-      </div>
-    </WorkflowScreen>
-  );
-}
+        {subjects.map((subject) => {
+          const subjectRelationships = relationships.filter(
+            (relationship) => relationship.fromSubjectId === subject.id || relationship.toSubjectId === subject.id,
+          );
 
-function RelationshipsStep({
-  onAdd,
-  onChange,
-  relationships,
-  roles,
-  subjects,
-}: {
-  onAdd: () => void;
-  onChange: (id: string, patch: Partial<Relationship>) => void;
-  relationships: Relationship[];
-  roles: string[];
-  subjects: Subject[];
-}) {
-  return (
-    <WorkflowScreen title="How are they related?">
-      <div className="grid gap-5">
-        {relationships.length > 0 ? (
-          <>
-            {relationships.map((relationship) => (
-              <RelationshipCard
-                key={relationship.id}
-                onChange={onChange}
-                relationship={relationship}
-                roles={roles}
-                subjects={subjects}
-              />
-            ))}
-            <Button className="mx-auto" disabled={subjects.length < 2} onClick={onAdd} size="lg" type="button" variant="outline">
-              <Plus aria-hidden="true" />
-              Add Relationship
-            </Button>
-          </>
-        ) : (
-          <div className="grid min-h-96 place-items-center rounded-lg border border-dashed border-primary/35 bg-primary/8 p-10 text-center">
-            <div>
-              <Users className="mx-auto size-12 text-primary" aria-hidden="true" />
-              <h2 className="mt-5 font-sans text-4xl">Connect two people</h2>
-              <Button className="mt-7" disabled={subjects.length < 2} onClick={onAdd} size="lg" type="button">
-                <Plus aria-hidden="true" />
-                Add Relationship
-              </Button>
-            </div>
-          </div>
-        )}
+          return (
+            <SubjectCard
+              key={subject.id}
+              onAddRelationship={() => setRelationshipEditor({ currentSubject: subject })}
+              onChange={onChange}
+              onDelete={onDeleteSubject}
+              onDeleteRelationship={onDeleteRelationship}
+              onEditRelationship={(relationship, relatedSubject, displayRole) =>
+                setRelationshipEditor({
+                  currentSubject: subject,
+                  relatedSubject,
+                  relationship: { ...relationship, role: displayRole },
+                })
+              }
+              relationships={subjectRelationships}
+              subject={subject}
+              subjects={subjects}
+            />
+          );
+        })}
       </div>
+      <AnimatePresence>
+        {relationshipEditor ? (
+          <RelationshipModal
+            currentSubject={relationshipEditor.currentSubject}
+            onClose={() => setRelationshipEditor(null)}
+            onSave={(relatedPerson, role) => {
+              if (relationshipEditor.relationship && relationshipEditor.relatedSubject) {
+                onEditRelationship(
+                  relationshipEditor.relationship.id,
+                  relationshipEditor.currentSubject.id,
+                  relationshipEditor.relatedSubject.id,
+                  relatedPerson,
+                  role,
+                );
+              } else {
+                onAddRelationship(relationshipEditor.currentSubject.id, relatedPerson, role);
+              }
+              setRelationshipEditor(null);
+            }}
+            relationship={relationshipEditor.relationship}
+            relatedSubject={relationshipEditor.relatedSubject}
+          />
+        ) : null}
+      </AnimatePresence>
     </WorkflowScreen>
   );
 }
@@ -860,13 +1492,23 @@ function WorkflowScreen({ children, title }: { children: React.ReactNode; title:
 }
 
 function SubjectCard({
+  onAddRelationship,
   onChange,
   onDelete,
+  onDeleteRelationship,
+  onEditRelationship,
+  relationships,
   subject,
+  subjects,
 }: {
+  onAddRelationship: () => void;
   onChange: (id: string, patch: Partial<Subject>) => void;
   onDelete: (id: string) => void;
+  onDeleteRelationship: (relationshipId: string) => void;
+  onEditRelationship: (relationship: Relationship, relatedSubject: Subject, displayRole: string) => void;
+  relationships: Relationship[];
   subject: Subject;
+  subjects: Subject[];
 }) {
   const inputId = `subject-photo-${subject.id}`;
 
@@ -887,11 +1529,11 @@ function SubjectCard({
   };
 
   return (
-    <article className="rounded-lg border border-border bg-card p-5 shadow-xl shadow-black/5">
-      <div className="mb-5 flex items-center justify-between gap-4">
+    <article className="overflow-hidden rounded-xl border border-border bg-card shadow-xl shadow-black/5">
+      <div className="flex items-center justify-between gap-4 border-b border-border px-6 py-5">
         <div>
-          <p className="text-sm font-medium text-primary">Person</p>
-          <h2 className="mt-1 font-sans text-3xl">{subject.name || "Unnamed"}</h2>
+          <p className="text-sm font-medium text-primary">{subject.isPrimary ? "Primary Subject" : "Subject"}</p>
+          <h2 className="mt-1 font-sans text-4xl">{subject.name || "Unnamed"}</h2>
         </div>
         <div className="flex items-center gap-2">
           {subject.isPrimary ? (
@@ -909,165 +1551,282 @@ function SubjectCard({
           </button>
         </div>
       </div>
-      <div className="grid gap-4">
-        <label
-          className="group grid aspect-[4/3] cursor-pointer place-items-center overflow-hidden rounded-lg border border-dashed border-border bg-secondary text-center transition hover:border-primary/50 hover:bg-primary/10"
-          htmlFor={inputId}
-        >
-          {subject.image ? (
-            <img alt={subject.name || "Subject photo"} className="h-full w-full object-cover" src={subject.image} />
-          ) : (
-            <span className="grid justify-items-center gap-2 text-sm text-muted-foreground">
-              <Upload className="size-5 text-primary" aria-hidden="true" />
-              Upload photo
-            </span>
-          )}
-        </label>
-        <input accept="image/*" className="sr-only" id={inputId} onChange={handlePhotoChange} type="file" />
-        <Input onChange={(event) => onChange(subject.id, { name: event.target.value })} placeholder="Name" value={subject.name} />
-        <div className="grid grid-cols-2 gap-3">
-          <Input inputMode="numeric" onChange={(event) => onChange(subject.id, { age: event.target.value })} placeholder="Age" value={subject.age} />
-          <select
-            value={subject.gender}
-            onChange={(event) => onChange(subject.id, { gender: event.target.value })}
-            className="flex h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground transition focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 focus-visible:outline-none"
+      <div className="grid gap-6 p-6 lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1.25fr)]">
+        <section>
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Photos</h3>
+          <label
+            className="group mt-3 grid aspect-[4/3] cursor-pointer place-items-center overflow-hidden rounded-lg border border-dashed border-border bg-secondary text-center transition hover:border-primary/50 hover:bg-primary/10"
+            htmlFor={inputId}
           >
-            <option value="" disabled>Gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-          </select>
-        </div>
-        <button
-          className={cn(
-            "flex h-11 items-center justify-between rounded-md border px-4 text-sm font-medium transition",
-            subject.isPrimary ? "border-primary bg-primary/12 text-primary" : "border-border bg-secondary",
-          )}
-          onClick={() => onChange(subject.id, { isPrimary: true })}
-          type="button"
-        >
-          <span className="inline-flex items-center gap-2">
-            <Star className="size-4" aria-hidden="true" />
-            Primary Subject
-          </span>
-          {subject.isPrimary ? <Check className="size-4" aria-hidden="true" /> : null}
-        </button>
-      </div>
-    </article>
-  );
-}
+            {subject.image ? (
+              <img alt={subject.name || "Subject photo"} className="h-full w-full object-cover" src={subject.image} />
+            ) : (
+              <span className="grid justify-items-center gap-2 text-sm text-muted-foreground">
+                <Upload className="size-5 text-primary" aria-hidden="true" />
+                Upload photo
+              </span>
+            )}
+          </label>
+          <input accept="image/*" className="sr-only" id={inputId} onChange={handlePhotoChange} type="file" />
+        </section>
 
-function RelationshipCard({
-  onChange,
-  relationship,
-  roles,
-  subjects,
-}: {
-  onChange: (id: string, patch: Partial<Relationship>) => void;
-  relationship: Relationship;
-  roles: string[];
-  subjects: Subject[];
-}) {
-  const subjectOptions = subjects.map((subject, index) => ({
-    label: subject.name || `Subject ${index + 1}`,
-    value: subject.id,
-  }));
-
-  return (
-    <article className="mx-auto w-full max-w-3xl rounded-lg border border-border bg-card p-6 shadow-xl shadow-black/5">
-      <div className="grid gap-5">
-        <Combobox
-          icon={Users}
-          label="First person"
-          onChange={(value) => onChange(relationship.id, { fromSubjectId: value })}
-          options={subjectOptions}
-          value={relationship.fromSubjectId}
-        />
-        <ArrowRight className="mx-auto size-6 rotate-90 text-primary" aria-hidden="true" />
-        <Combobox
-          icon={Search}
-          label="Relationship"
-          onChange={(value) => onChange(relationship.id, { role: value })}
-          options={roles.map((role) => ({ label: role, value: role }))}
-          placeholder="Choose relationship"
-          value={relationship.role}
-        />
-        <ArrowRight className="mx-auto size-6 rotate-90 text-primary" aria-hidden="true" />
-        <Combobox
-          icon={Users}
-          label="Second person"
-          onChange={(value) => onChange(relationship.id, { toSubjectId: value })}
-          options={subjectOptions}
-          value={relationship.toSubjectId}
-        />
-      </div>
-    </article>
-  );
-}
-
-function Combobox({
-  icon: Icon,
-  label,
-  onChange,
-  options,
-  placeholder = "Search",
-  value,
-}: {
-  icon: React.ElementType;
-  label: string;
-  onChange: (value: string) => void;
-  options: { label: string; value: string }[];
-  placeholder?: string;
-  value: string;
-}) {
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [query, setQuery] = React.useState("");
-  const selected = options.find((option) => option.value === value);
-  const visibleOptions = options.filter((option) => option.label.toLowerCase().includes(query.trim().toLowerCase()));
-
-  return (
-    <div className="relative min-w-0">
-      <label className="grid gap-2 text-sm font-medium">
-        {label}
-        <div className="relative">
-          <Icon className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
-          <Input
-            className="pl-11"
-            onBlur={() => window.setTimeout(() => setIsOpen(false), 120)}
-            onChange={(event) => {
-              setQuery(event.target.value);
-              setIsOpen(true);
-            }}
-            onFocus={() => setIsOpen(true)}
-            placeholder={placeholder}
-            value={isOpen ? query : selected?.label ?? value}
-          />
-        </div>
-      </label>
-      {isOpen ? (
-        <div className="absolute z-20 mt-2 max-h-56 w-full overflow-auto rounded-lg border border-border bg-popover p-2 shadow-2xl shadow-black/15">
-          {visibleOptions.length > 0 ? (
-            visibleOptions.map((option) => (
-              <button
-                className="flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm hover:bg-secondary"
-                key={option.value}
-                onMouseDown={(event) => {
-                  event.preventDefault();
-                  onChange(option.value);
-                  setQuery("");
-                  setIsOpen(false);
-                }}
-                type="button"
+        <section>
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Subject Details</h3>
+          <div className="mt-3 grid gap-4">
+            <Input onChange={(event) => onChange(subject.id, { name: event.target.value })} placeholder="Name" value={subject.name} />
+            <div className="grid grid-cols-2 gap-3">
+              <Input inputMode="numeric" onChange={(event) => onChange(subject.id, { age: event.target.value })} placeholder="Age" value={subject.age} />
+              <select
+                value={subject.gender}
+                onChange={(event) => onChange(subject.id, { gender: event.target.value })}
+                className="flex h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground transition focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 focus-visible:outline-none"
               >
-                {option.label}
-                {option.value === value ? <Check className="size-4 text-primary" aria-hidden="true" /> : null}
-              </button>
-            ))
-          ) : (
-            <div className="px-3 py-4 text-sm text-muted-foreground">No matches</div>
-          )}
+                <option value="" disabled>Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+            </div>
+            <button
+              className={cn(
+                "flex h-11 items-center justify-between rounded-md border px-4 text-sm font-medium transition",
+                subject.isPrimary ? "border-primary bg-primary/12 text-primary" : "border-border bg-secondary",
+              )}
+              onClick={() => onChange(subject.id, { isPrimary: true })}
+              type="button"
+            >
+              <span className="inline-flex items-center gap-2">
+                <Star className="size-4" aria-hidden="true" />
+                Primary Subject
+              </span>
+              {subject.isPrimary ? <Check className="size-4" aria-hidden="true" /> : null}
+            </button>
+          </div>
+        </section>
+      </div>
+
+      <section className="border-t border-border px-6 py-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Relationships</h3>
+            <p className="mt-1 text-sm text-muted-foreground">People connected to {subject.name || "this subject"}.</p>
+          </div>
+          <Button onClick={onAddRelationship} type="button" variant="outline">
+            <Plus aria-hidden="true" />
+            Add Relationship
+          </Button>
         </div>
-      ) : null}
-    </div>
+        {relationships.length > 0 ? (
+          <div className="mt-4 overflow-hidden rounded-lg border border-border">
+            <div className="grid grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)_auto] gap-3 bg-secondary/70 px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              <span>Relationship Type</span>
+              <span>Person</span>
+              <span className="sr-only">Actions</span>
+            </div>
+            {relationships.map((relationship) => {
+              const isOutgoing = relationship.fromSubjectId === subject.id;
+              const relatedSubject = subjects.find((item) =>
+                item.id === (isOutgoing ? relationship.toSubjectId : relationship.fromSubjectId),
+              );
+              const displayRole = isOutgoing
+                ? relationship.role
+                : getInverseRelationshipRole(relationship.role, relatedSubject?.gender ?? "");
+
+              return (
+                <div
+                  className="grid grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)_auto] items-center gap-3 border-t border-border px-4 py-3"
+                  key={relationship.id}
+                >
+                  <span className="font-medium">{displayRole}</span>
+                  <span>{relatedSubject?.name || "Unnamed"}</span>
+                  <span className="flex items-center gap-1">
+                    <button
+                      aria-label={`Edit ${displayRole} relationship`}
+                      className="grid size-9 place-items-center rounded-full text-muted-foreground transition hover:bg-secondary hover:text-foreground"
+                      onClick={() => relatedSubject && onEditRelationship(relationship, relatedSubject, displayRole)}
+                      type="button"
+                    >
+                      <Pencil className="size-4" aria-hidden="true" />
+                    </button>
+                    <button
+                      aria-label={`Delete ${displayRole} relationship`}
+                      className="grid size-9 place-items-center rounded-full text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive"
+                      onClick={() => onDeleteRelationship(relationship.id)}
+                      type="button"
+                    >
+                      <Trash2 className="size-4" aria-hidden="true" />
+                    </button>
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="mt-4 rounded-lg border border-dashed border-border bg-secondary/35 px-5 py-8 text-center text-sm text-muted-foreground">
+            No relationships added yet.
+          </div>
+        )}
+      </section>
+    </article>
+  );
+}
+
+function RelationshipModal({
+  currentSubject,
+  onClose,
+  onSave,
+  relationship,
+  relatedSubject,
+}: {
+  currentSubject: Subject;
+  onClose: () => void;
+  onSave: (relatedPerson: Pick<Subject, "age" | "gender" | "image" | "name">, role: string) => void;
+  relationship?: Relationship;
+  relatedSubject?: Subject;
+}) {
+  const [name, setName] = React.useState(relatedSubject?.name ?? "");
+  const [gender, setGender] = React.useState(relatedSubject?.gender ?? "");
+  const [role, setRole] = React.useState(relationship?.role ?? "");
+  const [age, setAge] = React.useState(relatedSubject?.age ?? "");
+  const [image, setImage] = React.useState(relatedSubject?.image);
+  const photoInputId = React.useId();
+  const roles = [
+    ...(gender === "Male" ? maleRelationshipRoles : gender === "Female" ? femaleRelationshipRoles : []),
+    ...neutralRelationshipRoles,
+  ];
+  const canSave = name.trim().length > 0 && gender.length > 0 && role.length > 0;
+
+  const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        setImage(reader.result);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  return (
+    <motion.div
+      animate={{ opacity: 1 }}
+      className="fixed inset-0 z-50 grid place-items-center bg-black/65 p-4 backdrop-blur-sm"
+      exit={{ opacity: 0 }}
+      initial={{ opacity: 0 }}
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) {
+          onClose();
+        }
+      }}
+    >
+      <motion.form
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        className="max-h-[92vh] w-full max-w-xl overflow-y-auto rounded-xl border border-border bg-card p-6 shadow-2xl"
+        exit={{ opacity: 0, scale: 0.98 }}
+        initial={{ opacity: 0, scale: 0.97, y: 12 }}
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (canSave) {
+            onSave({ age, gender, image, name: name.trim() }, role);
+          }
+        }}
+      >
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-sm font-medium text-primary">Related Person</p>
+            <h2 className="mt-1 font-sans text-4xl">{relationship ? "Edit Relationship" : "Add Relationship"}</h2>
+          </div>
+          <button
+            aria-label="Close relationship modal"
+            className="grid size-10 place-items-center rounded-full bg-secondary text-muted-foreground transition hover:text-foreground"
+            onClick={onClose}
+            type="button"
+          >
+            <X className="size-5" aria-hidden="true" />
+          </button>
+        </div>
+
+        <div className="mt-6 grid gap-4">
+          <label className="grid gap-2 text-sm font-medium" htmlFor={photoInputId}>
+            Photo
+            <span
+              className="grid min-h-36 cursor-pointer place-items-center overflow-hidden rounded-lg border border-dashed border-border bg-secondary"
+            >
+              {image ? (
+                <img alt={name || "Related person"} className="max-h-56 w-full object-cover" src={image} />
+              ) : (
+                <span className="grid justify-items-center gap-2 text-muted-foreground">
+                  <Upload className="size-5 text-primary" aria-hidden="true" />
+                  Upload photo
+                </span>
+              )}
+            </span>
+          </label>
+          <input accept="image/*" className="sr-only" id={photoInputId} onChange={handlePhotoChange} type="file" />
+          <label className="grid gap-2 text-sm font-medium">
+            Name
+            <Input autoFocus onChange={(event) => setName(event.target.value)} placeholder="Name" value={name} />
+          </label>
+          <div className="grid grid-cols-2 gap-3">
+            <label className="grid gap-2 text-sm font-medium">
+              Gender
+              <select
+                className="flex h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground transition focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 focus-visible:outline-none"
+                onChange={(event) => {
+                  const nextGender = event.target.value;
+                  setGender(nextGender);
+                  if (
+                    (nextGender === "Male" && femaleRelationshipRoles.includes(role)) ||
+                    (nextGender === "Female" && maleRelationshipRoles.includes(role))
+                  ) {
+                    setRole("");
+                  }
+                }}
+                value={gender}
+              >
+                <option value="" disabled>Select gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+            </label>
+            <label className="grid gap-2 text-sm font-medium">
+              Age
+              <Input inputMode="numeric" onChange={(event) => setAge(event.target.value)} placeholder="Optional" value={age} />
+            </label>
+          </div>
+          <label className="grid gap-2 text-sm font-medium">
+            Relationship to {currentSubject.name || "Current Subject"}
+            <select
+              className="flex h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground transition focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 focus-visible:outline-none"
+              disabled={!gender}
+              onChange={(event) => {
+                const nextRole = event.target.value;
+                setRole(nextRole);
+                const assistedGender = genderByRelationshipRole[nextRole];
+                if (assistedGender) {
+                  setGender(assistedGender);
+                }
+              }}
+              value={role}
+            >
+              <option value="" disabled>{gender ? "Choose relationship" : "Select gender first"}</option>
+              {roles.map((option) => (
+                <option key={option} value={option}>{option}</option>
+              ))}
+            </select>
+          </label>
+        </div>
+
+        <div className="mt-7 flex justify-end gap-3">
+          <Button onClick={onClose} type="button" variant="outline">Cancel</Button>
+          <Button disabled={!canSave} type="submit">{relationship ? "Save Changes" : "Add Relationship"}</Button>
+        </div>
+      </motion.form>
+    </motion.div>
   );
 }
 
