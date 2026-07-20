@@ -1,20 +1,23 @@
 "use client";
 
 import * as React from "react";
-import { FolderOpen, Plus, Search, FileText, CheckCircle, Clock, AlertCircle } from "lucide-react";
+import { Calendar, FolderOpen, Plus, Search, FileText, CheckCircle, Clock, AlertCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import { toast } from "sonner";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { createProject, listProjects, type Project, type ProjectStatus } from "@/features/projects/api";
 import { ProjectCreateModal } from "@/features/projects/components/project-create-modal";
 
 const statusConfig: Record<ProjectStatus, { label: string; className: string }> = {
-  DRAFT: { label: "Draft", className: "bg-slate-500/8 text-slate-600 dark:text-slate-400" },
-  IN_PROGRESS: { label: "Active", className: "bg-amber-500/12 text-amber-600 dark:text-amber-400" },
-  COMPLETED: { label: "Completed", className: "bg-emerald-500/12 text-emerald-600 dark:text-emerald-400" },
-  ARCHIVED: { label: "Archived", className: "bg-slate-500/8 text-slate-500 dark:text-slate-500 line-through" },
+  DRAFT: { label: "Draft", className: "border-slate-400/30 bg-slate-400/10 text-slate-600 dark:text-slate-400" },
+  IN_PROGRESS: { label: "Active", className: "border-amber-400/30 bg-amber-400/12 text-amber-600 dark:text-amber-400" },
+  COMPLETED: { label: "Completed", className: "border-emerald-400/30 bg-emerald-400/12 text-emerald-600 dark:text-emerald-400" },
+  ARCHIVED: { label: "Archived", className: "border-slate-400/30 bg-slate-400/8 text-slate-500 dark:text-slate-500 line-through" },
 };
 
 function StatCard({ icon: Icon, label, value, className, hint }: {
@@ -165,58 +168,45 @@ export function DashboardHome() {
             <div className="h-8 w-8 animate-spin rounded-full border-2 border-border border-t-primary" />
           </div>
         ) : filteredProjects.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border bg-muted">
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    S.No.
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Project Name
-                  </th>
-                  <th className="hidden px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground sm:table-cell">
-                    Category
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Status
-                  </th>
-                  <th className="hidden px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground md:table-cell">
-                    Created
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredProjects.map((project, idx) => (
-                  <tr
-                    key={project.id}
-                    className="cursor-pointer border-b border-border transition last:border-0 hover:bg-muted/40"
-                    onClick={() => router.push(`/dashboard/${project.id}`)}
-                    onKeyDown={(e) => { if (e.key === "Enter") router.push(`/dashboard/${project.id}`); }}
-                    tabIndex={0}
-                    role="link"
-                  >
-                    <td className="px-4 py-3.5 text-muted-foreground">{idx + 1}</td>
-                    <td className="px-4 py-3.5">
-                      <span className="font-medium text-primary underline-offset-2 hover:underline">
+          <div className="grid gap-4 p-4 sm:grid-cols-2 xl:grid-cols-3">
+            {filteredProjects.map((project, idx) => (
+              <motion.div
+                key={project.id}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.25, delay: idx * 0.04 }}
+              >
+                <Card
+                  className="group cursor-pointer transition hover:border-primary/30 hover:shadow-md hover:shadow-primary/5"
+                  onClick={() => router.push(`/dashboard/${project.id}`)}
+                  onKeyDown={(e) => { if (e.key === "Enter") router.push(`/dashboard/${project.id}`); }}
+                  tabIndex={0}
+                  role="link"
+                >
+                  <CardHeader className="gap-3 p-5 pb-0">
+                    <div className="flex items-start justify-between gap-3">
+                      <h3 className="flex-1 truncate font-sans text-lg font-semibold leading-tight text-foreground group-hover:text-primary">
                         {project.name}
-                      </span>
-                    </td>
-                    <td className="hidden px-4 py-3.5 text-muted-foreground sm:table-cell">
-                      {project.eventCategory}
-                    </td>
-                    <td className="px-4 py-3.5">
-                      <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${statusConfig[project.status].className}`}>
+                      </h3>
+                      <Badge className={`shrink-0 text-[10px] tracking-wide ${statusConfig[project.status].className}`}>
                         {statusConfig[project.status].label}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-5 pt-3">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                      <span className="inline-flex items-center gap-1.5 rounded-md bg-muted/50 px-2 py-1 font-medium capitalize">
+                        {project.eventCategory}
                       </span>
-                    </td>
-                    <td className="hidden px-4 py-3.5 text-muted-foreground md:table-cell">
-                      {formatDate(project.createdAt)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                      <span className="inline-flex items-center gap-1.5">
+                        <Calendar className="size-3" />
+                        {formatDate(project.createdAt)}
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
           </div>
         ) : (
           <div className="grid min-h-64 place-items-center px-6 py-12 text-center">
